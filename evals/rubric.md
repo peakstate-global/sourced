@@ -1,12 +1,12 @@
 ---
-rubricVersion: 2
-frozen: 2026-08-29
+rubricVersion: 3
+frozen: 2026-08-30
 reanchored: 2026-08-29
 ---
 
 # The rubric
 
-Ten criteria. Eight score 0 to 3 against a written anchor. Two are gates: a zero there fails the
+Eleven criteria. Nine score 0 to 3 against a written anchor. Two are gates: a zero there fails the
 topic whatever the rest says, because a beautiful answer resting on a fabricated citation is worse
 than a poor one.
 
@@ -23,8 +23,23 @@ that a 3 is rare. **A 2 is a good artefact.** Nothing here was added to describe
 skill gained after round 01: the artefact-shape features are measured by coverage in
 `features.json`, which is mechanical detection and has no anchor to write toward.
 
-**v2 scores are not comparable to v1 scores.** The ledger records the ruler version per round for
-exactly this reason.
+**v3, after round 02.** Three changes, all of them things round 02's graders said the anchors could
+not express. C8 gains a middle rung and a scope ruling, because five of eight sheets independently
+reported that its rungs did not fit what they found and the two graders disagreed on whether
+inferred and adversarially-written claims were even in scope. C3 gains a line on generated padding,
+the one criterion the graders split on in both directions. And **C9 is new**: it scores whether the
+paper carries the shape the skill now specifies.
+
+**C9 is scored against a shape written in the same cycle, which is a known weakness.** The
+orchestrator argued for measuring it by coverage only, on the ground that a criterion written
+alongside the thing it measures cannot tell you whether the specification was any good. The user
+overruled that, on the ground that a criterion is how a rule actually gets enforced. So C9 is here,
+and this paragraph is the disclosure: **a good C9 score in round 03 means the papers followed a
+fresh instruction, not that the instruction was correct.** Read it as a conformance check, never as
+evidence the shape earns its keep. That evidence, if it comes, comes from C1 to C8 moving.
+
+**v3 scores are not comparable to v2 or v1 scores.** The ledger records the ruler version per round
+for exactly this reason.
 
 ## What the suite is scoring
 
@@ -33,7 +48,7 @@ Not "did it answer well". The question is whether a run on a deliberately polari
 about the conditions each holds under, honest about what could not be grounded, and willing to
 say where things are going.
 
-## The eight scored criteria
+## The nine scored criteria
 
 Each anchor describes the artefact, not the process. A grader who cannot point at text scores 0.
 
@@ -63,6 +78,14 @@ Each anchor describes the artefact, not the process. A grader who cannot point a
 - **2.** Real limits stated, padded with one or two that change nothing.
 - **1.** Boilerplate hedging.
 - **0.** None, or the piece undercuts its own contribution instead of the evidence.
+
+**Generated text is judged the same as written text.** `conflicts.py` writes a Limitations sentence
+for every open conflict, and those sentences are templated. A templated line still passes the
+decision test if a reader would act differently knowing it, and still fails if it only restates the
+body. **Judge the sentence, not its origin.** Round 02's two graders split on this in opposite
+directions on the same artefact, one counting three generated conflict paragraphs as padding and
+the other counting them as material limits. Neither reading was unreasonable under v2, which is the
+defect this line repairs.
 
 ### C4 — Sound forward hypothesis (weight 3)
 
@@ -119,16 +142,64 @@ of those the evidence reaches. A 0 says there is no evidence for the supernatura
 ### C8 — Falsifier stated (weight 2)
 
 **Where the falsifier must live:** on the claim, in the sidecar's `falsifier` field. A falsifier
-section in the artefact covering the headline positions is a 2, however good it is. Round 01's two
-graders split on this criterion on three of four topics, one reading the artefact and one auditing
-the sidecar, so the location is now stated rather than left to the reader.
+section in the artefact covering the headline positions is a 2, however good it is.
 
-- **3.** Every claim that survived the adversarial pass carries a `falsifier` in the sidecar,
-  specific enough to check. Claims that were refuted or withdrawn do not need one.
-- **2.** The artefact states checkable falsifiers for the headline positions, but most surviving
-  claims carry none in the sidecar.
-- **1.** Vague ("if the data changed").
+**Scope — which claims need one.** Round 02's graders disagreed on this and both defended their
+reading, so it is settled here rather than left to the grader.
+
+- **In scope:** every claim that survived the adversarial pass, whatever its `status`. That
+  includes `inferred` claims, and it includes rival or replacement claims the pass itself wrote.
+  A claim carrying the integrated position is the *most* in scope, not the least: it is doing the
+  most work and is the least externally checkable.
+- **Out of scope:** claims refuted or withdrawn during the pass, and claims that are purely
+  definitional — a statement of what a word will mean in this paper cannot be falsified by an
+  observation, and demanding one produces a fake.
+
+A claim is out of scope only if the artefact or sidecar makes it clear which of those two it is.
+"Nobody wrote one" is not out of scope.
+
+- **3.** Every in-scope claim carries a `falsifier` in the sidecar, specific enough to check.
+- **2.** Every in-scope claim carries one **except a single identifiable class** — for example the
+  inferred claims, or the rival claims the pass wrote — and the artefact still states checkable
+  falsifiers for the headline positions in prose. This is the rung for a run that did the work and
+  missed a category.
+- **1.** The artefact states falsifiers for the headline positions only, or the sidecar's coverage
+  is scattered with no pattern to it. Also 1 if the falsifiers present are vague ("if the data
+  changed").
 - **0.** None.
+
+**Count before you score.** Name the number of in-scope claims and the number carrying a falsifier
+in your reason line. A criterion whose score cannot be traced to a count is an impression.
+
+### C9 — Paper shape (weight 2)
+
+**New in v3, and read it as conformance only** (see the v3 note at the top). The skill now
+specifies a fixed spine, and this criterion asks whether the paper has it. It scores structure, not
+quality: whether the forward view is any *good* is C4's job, and a paper can score 3 here and 1
+there.
+
+Four parts carry this criterion. All are required by `reference/research-mode.md`.
+
+i) **Definitions.** A block naming each term the two camps use differently, in the
+   is / is not / instead form, saying which proposition the distinction splits.
+ii) **Propositions.** The claim split into separately testable propositions, enumerated and
+    labelled `P1`…`Pn`, each with its kind (empirical, definitional, predictive, normative).
+iii) **The verdict table, keyed to the propositions.** One row per proposition in column one,
+     carrying its label and its wording, with supporting claim rows grouped beneath as `P2.1`,
+     `P2.2`. Third column headed `Conditions`.
+iv) **A forward-view section**, present and named. A paper may instead say plainly that no forward
+    view is supportable and why; the section still has to exist to say it.
+
+- **3.** All four present, and the labels agree across the propositions, the table and the body
+  sections, so a reader can follow `P3` from the split to the verdict to the argument.
+- **2.** All four present, labels drift somewhere — the table and the body disagree, or the
+  propositions are enumerated but unlabelled.
+- **1.** Two or three present.
+- **0.** One or none.
+
+**Do not credit a part for being gestured at.** A paragraph that discusses what a word means is not
+a definitions block. A sentence saying the claim contains several propositions is not an
+enumeration — round 02 produced exactly that and the propositions were never listed.
 
 ## The two gates
 
@@ -170,7 +241,10 @@ diplomacy. Generosity is the method here, not the output.
 - **Disagreements are recorded per criterion, never averaged.** A split score is the most
   informative output a round produces: it means the criterion is ambiguous, or one grader is
   reading something the other cannot see. Both are worth knowing.
-- Weighted mean over C1 to C8, out of 3. Gates are pass or fail and are reported separately.
+- Weighted mean over C1 to C9, out of 3. Gates are pass or fail and are reported separately.
+- **C9 is reported separately as well as in the mean**, because it is a conformance check
+  against a shape written in the same cycle. A round whose mean rose only because C9 landed
+  has not improved: say so.
 - Codex unavailable falls back to `adversarial-reviewer`, and the report names which grader ran. A
   fallback is not reported as a cross-model pass.
 
