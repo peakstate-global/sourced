@@ -1,6 +1,7 @@
 ---
-rubricVersion: 1
+rubricVersion: 2
 frozen: 2026-08-29
+reanchored: 2026-08-29
 ---
 
 # The rubric
@@ -13,6 +14,17 @@ than a poor one.
 does is gaming. Writing a skill to match criteria set in advance is alignment. The two are
 distinguishable only by which came first, so the commit order is the evidence and this file is
 committed first.
+
+**v2, after round 01.** Round 01 returned 61 of 64 criterion readings at maximum, so the ruler
+could not rank four runs or detect any improvement. Three changes: G1's check target was wrong and
+produced a false gate failure on a correct artefact; C4 and C8 were ambiguous enough that the two
+graders split on them in the same direction every time; and C1, C5 and C6 have been re-anchored so
+that a 3 is rare. **A 2 is a good artefact.** Nothing here was added to describe a capability the
+skill gained after round 01: the artefact-shape features are measured by coverage in
+`features.json`, which is mechanical detection and has no anchor to write toward.
+
+**v2 scores are not comparable to v1 scores.** The ledger records the ruler version per round for
+exactly this reason.
 
 ## What the suite is scoring
 
@@ -27,9 +39,12 @@ Each anchor describes the artefact, not the process. A grader who cannot point a
 
 ### C1 — Integrated view (weight 3)
 
-- **3.** One position that holds the strongest part of each camp and says how the parts fit. A
-  reader who arrived holding either view finds their own concern inside it.
-- **2.** Synthesis attempted, but one camp is represented only by its weakest form.
+- **3.** Rare. All of a 2, **and** the position shows the debate was mis-specified: it names a
+  word, measure or scope that both camps were using differently, and at least one part of the
+  original claim comes out falsified rather than merely bounded. A reader who arrived holding
+  either view finds their own concern inside it, and also finds out what they were arguing about.
+- **2.** One position that holds the strongest part of each camp and says how the parts fit. Good
+  work. Or: synthesis reached, but one camp is represented only by its weakest form.
 - **1.** Two camps summarised side by side, with a preference stated and no synthesis.
 - **0.** One camp restated. The other appears only as an error to be corrected.
 
@@ -51,9 +66,13 @@ Each anchor describes the artefact, not the process. A grader who cannot point a
 
 ### C4 — Sound forward hypothesis (weight 3)
 
-- **3.** A stated view of where this is and where it is going, resting on the surviving claims,
-  with the conditions under which it holds and what would change it.
-- **2.** A view stated, links to the evidence thin.
+- **3.** Rare. A stated view of where this is **and where it is going**, resting on the surviving
+  claims, with the conditions under which it holds and what would change it. The forward half is
+  the test: a well-conditioned account of the present, however careful, is a 2. To reach 3 the
+  artefact must say what happens next, or what it expects to observe, in a way a reader could be
+  wrong about later.
+- **2.** A committed present-tense position with its conditions and its falsifiers, but no
+  trajectory. Or: a view stated, links to the evidence thin.
 - **1.** A view stated that the body does not support.
 - **0.** Refusal to commit, or a summary presented as a view.
 
@@ -61,10 +80,14 @@ Each anchor describes the artefact, not the process. A grader who cannot point a
 
 The criterion carrying the whole point of the suite.
 
-- **3.** Each position restated in terms its opponents could accept, naming the defensible thing it
-  reaches for. Where the stated form is not supportable, the run finds the nearby thing that is,
-  rather than stopping at the refutation.
-- **2.** One position gets this treatment, the other is handled fairly but not generously.
+- **3.** Rare. All of a 2, **and** at least one reconstruction is one its own advocates would not
+  have written: it names a mechanism, or a narrower supportable claim, that the position's
+  proponents do not themselves offer, and says what evidence would settle it. The generosity has to
+  produce a new object, not a kinder restatement of the same one.
+- **2.** Each position restated in terms its opponents could accept, naming the defensible thing it
+  reaches for, and where the stated form is not supportable the run finds the nearby thing that is
+  rather than stopping at the refutation. Or: one position gets this treatment and the other is
+  handled fairly but not generously.
 - **1.** Both positions stated accurately and neither is reconstructed.
 - **0.** A position is reduced to its weakest form and dismissed. Straw man, however polite.
 
@@ -76,9 +99,12 @@ of those the evidence reaches. A 0 says there is no evidence for the supernatura
 
 ### C6 — Conditional truth mapping (weight 3)
 
-- **3.** For each contested claim, the region where it holds and the region where it fails, with
-  the dimension named. "True for whom, when, under what" rather than "60 per cent likely".
-- **2.** Conditions named for the headline claim only.
+- **3.** Rare. All of a 2, **and** each dimension is named as a variable with the values that
+  divide it (not "depends on severity" but "baseline Hamilton score, above and below 16"), **and**
+  the unknown region is stated: where neither holds nor fails has been tested. Usually most of it.
+- **2.** For each contested claim, the region where it holds and the region where it fails, with
+  the dimension named. "True for whom, when, under what" rather than "60 per cent likely". Or:
+  conditions named for the headline claim only.
 - **1.** Conditions gestured at without dimensions.
 - **0.** A single verdict, unconditioned.
 
@@ -92,8 +118,15 @@ of those the evidence reaches. A 0 says there is no evidence for the supernatura
 
 ### C8 — Falsifier stated (weight 2)
 
-- **3.** Each surviving claim carries the observation that would kill it, specific enough to check.
-- **2.** Falsifiers for the headline claim only.
+**Where the falsifier must live:** on the claim, in the sidecar's `falsifier` field. A falsifier
+section in the artefact covering the headline positions is a 2, however good it is. Round 01's two
+graders split on this criterion on three of four topics, one reading the artefact and one auditing
+the sidecar, so the location is now stated rather than left to the reader.
+
+- **3.** Every claim that survived the adversarial pass carries a `falsifier` in the sidecar,
+  specific enough to check. Claims that were refuted or withdrawn do not need one.
+- **2.** The artefact states checkable falsifiers for the headline positions, but most surviving
+  claims carry none in the sidecar.
 - **1.** Vague ("if the data changed").
 - **0.** None.
 
@@ -101,9 +134,23 @@ of those the evidence reaches. A 0 says there is no evidence for the supernatura
 
 ### G1 — Provenance honesty
 
+**Check the quote against the capture in the run store, never against the sidecar's evidence
+row.** An evidence row carries one representative quote per source. An artefact may legitimately
+quote several passages from the same capture, and only one of them will be in the row. Round 01
+failed a correct artefact on exactly this mistake, on three separate quotes, and the fail had to be
+overturned by hand.
+
+Read the captured text file under the store's dated folder and search it. **Normalisation is not a
+provenance failure**: an en dash rendered as an em dash, a curly quote straightened, collapsed
+whitespace, or a line break inside a sentence are all the same quote. A changed word is not.
+
 **Fail if any of:** a citation that does not exist; a reference written from memory rather than
 retrieved; a quote that is not in the capture it is attributed to; RECALLED or INFERRED material
 presented as sourced; a number without its source.
+
+**Before recording a fail, name the file you searched and the string you searched for.** A gate
+that fails a correct artefact is more expensive than one that passes a flawed one, because it makes
+every other score on the topic advisory.
 
 A fail here fails the topic. Everything else in the round is then advisory, because a grader
 scoring the reasoning of an ungrounded artefact is scoring fiction.

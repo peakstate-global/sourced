@@ -1,132 +1,150 @@
 {
-  "$comment": "The frozen feature list. Coverage is measured against this, never against an agent's self-report. When the skill grows a feature it is added here, and the round that first sees it says so. Detection `not_instrumented` means we have no objective signal for it: it is listed and reported separately, never counted as used or unused, because a feature we cannot measure must not quietly depress the score.",
-  "featuresVersion": 2,
-  "features": [
-    {
-      "id": "sourced.py",
-      "group": "capture",
-      "detect": "store_rows",
-      "note": "Capture a source so a claim can still be checked after it moves"
-    },
-    {
-      "id": "claims.py",
-      "group": "capture",
-      "detect": "file:artefact.md.claims.jsonl",
-      "note": "Append each claim as it is made"
-    },
-    {
-      "id": "decisions.py",
-      "group": "capture",
-      "detect": "file:artefact.md.decisions.jsonl",
-      "note": "Log what was decided and rejected"
-    },
-    {
-      "id": "conflicts.py",
-      "group": "integration",
-      "detect": "sidecar_key:conflicts",
-      "note": "Open a conflict when two sources disagree"
-    },
-    {
-      "id": "boundary.py",
-      "group": "integration",
-      "detect": "sidecar_key:boundaries",
-      "note": "Where a claim holds and where it fails"
-    },
-    {
-      "id": "integrate.py",
-      "group": "integration",
-      "detect": "invocation",
-      "note": "Refuse a delivery that hides a disagreement"
-    },
-    {
-      "id": "dimensions.py",
-      "group": "integration",
-      "detect": "claim_field:conditions",
-      "note": "The dimensions a condition names"
-    },
-    {
-      "id": "sophistication.py",
-      "group": "integration",
-      "detect": "claim_field:level",
-      "note": "One claim at several depths"
-    },
-    {
-      "id": "kinds.py",
-      "group": "hygiene",
-      "detect": "claim_field:kind",
-      "note": "What species of sentence a claim is"
-    },
-    {
-      "id": "sourced_status.py",
-      "group": "hygiene",
-      "detect": "invocation",
-      "note": "Derive claim status rather than store it"
-    },
-    {
-      "id": "shared_claims.py",
-      "group": "hygiene",
-      "detect": "invocation",
-      "note": "Claims used in more than one artefact"
-    },
-    {
-      "id": "vocabulary.py",
-      "group": "hygiene",
-      "detect": "invocation",
-      "note": "One vocabulary across the record"
-    },
-    {
-      "id": "sourced.py --check",
-      "group": "verify",
-      "detect": "invocation",
-      "note": "Re-verify evidence before delivery"
-    },
-    {
-      "id": "ref:research-mode",
-      "group": "reference",
-      "detect": "not_instrumented",
-      "note": "reference/research-mode.md"
-    },
-    {
-      "id": "ref:adversarial-pass",
-      "group": "reference",
-      "detect": "not_instrumented",
-      "note": "reference/adversarial-pass.md"
-    },
-    {
-      "id": "ref:boundary-record",
-      "group": "reference",
-      "detect": "not_instrumented",
-      "note": "reference/boundary-record.md"
-    },
-    {
-      "id": "ref:retrieval-ladder",
-      "group": "reference",
-      "detect": "not_instrumented",
-      "note": "reference/retrieval-ladder.md"
-    },
-    {
-      "id": "ref:sidecar-schema",
-      "group": "reference",
-      "detect": "not_instrumented",
-      "note": "reference/sidecar-schema.md"
-    },
-    {
-      "id": "ref:provenance-block",
-      "group": "reference",
-      "detect": "not_instrumented",
-      "note": "reference/provenance-block.md"
-    },
-    {
-      "id": "ref:decision-ledger",
-      "group": "reference",
-      "detect": "not_instrumented",
-      "note": "reference/decision-ledger.md"
-    },
-    {
-      "id": "step0:corpus",
-      "group": "corpus",
-      "detect": "not_instrumented",
-      "note": "The declared-but-unbound step 0, whatever this host binds it to"
-    }
-  ]
+ "$comment": "The frozen feature list. Coverage is measured against this, never against an agent's self-report. When the skill grows a feature it is added here, and the round that first sees it says so. Detection `not_instrumented` means we have no objective signal for it: it is listed and reported separately, never counted as used or unused, because a feature we cannot measure must not quietly depress the score. v3 (2026-08-29, after round 01): boundary.py is detected by the per-claim fields it actually writes, not a top-level key it never wrote; and three features added for the shape of the delivered artefact. Those three are measured here, by mechanical detection against this frozen list, and deliberately NOT by any scored rubric criterion: the skill gained them before this file named them, so a criterion written for them now would be the rubric chasing the skill.",
+ "featuresVersion": 3,
+ "features": [
+  {
+   "id": "sourced.py",
+   "group": "capture",
+   "detect": "store_rows",
+   "note": "Capture a source so a claim can still be checked after it moves"
+  },
+  {
+   "id": "claims.py",
+   "group": "capture",
+   "detect": "file:artefact.md.claims.jsonl",
+   "note": "Append each claim as it is made"
+  },
+  {
+   "id": "decisions.py",
+   "group": "capture",
+   "detect": "file:artefact.md.decisions.jsonl",
+   "note": "Log what was decided and rejected"
+  },
+  {
+   "id": "conflicts.py",
+   "group": "integration",
+   "detect": "sidecar_key:conflicts",
+   "note": "Open a conflict when two sources disagree"
+  },
+  {
+   "id": "boundary.py",
+   "group": "integration",
+   "detect": "claim_any_field:holds_when|fails_when|replaced_by|unknown_region",
+   "note": "Where a claim holds and where it fails, written as fields on the claim. Round 01 looked for a top-level `boundaries` key that no version writes."
+  },
+  {
+   "id": "integrate.py",
+   "group": "integration",
+   "detect": "invocation",
+   "note": "Refuse a delivery that hides a disagreement"
+  },
+  {
+   "id": "dimensions.py",
+   "group": "integration",
+   "detect": "claim_field:conditions",
+   "note": "The dimensions a condition names"
+  },
+  {
+   "id": "sophistication.py",
+   "group": "integration",
+   "detect": "claim_field:level",
+   "note": "One claim at several depths"
+  },
+  {
+   "id": "kinds.py",
+   "group": "hygiene",
+   "detect": "claim_field:kind",
+   "note": "What species of sentence a claim is"
+  },
+  {
+   "id": "sourced_status.py",
+   "group": "hygiene",
+   "detect": "invocation",
+   "note": "Derive claim status rather than store it"
+  },
+  {
+   "id": "shared_claims.py",
+   "group": "hygiene",
+   "detect": "invocation",
+   "note": "Claims used in more than one artefact"
+  },
+  {
+   "id": "vocabulary.py",
+   "group": "hygiene",
+   "detect": "invocation",
+   "note": "One vocabulary across the record"
+  },
+  {
+   "id": "sourced.py --check",
+   "group": "verify",
+   "detect": "invocation",
+   "note": "Re-verify evidence before delivery"
+  },
+  {
+   "id": "ref:research-mode",
+   "group": "reference",
+   "detect": "not_instrumented",
+   "note": "reference/research-mode.md"
+  },
+  {
+   "id": "ref:adversarial-pass",
+   "group": "reference",
+   "detect": "not_instrumented",
+   "note": "reference/adversarial-pass.md"
+  },
+  {
+   "id": "ref:boundary-record",
+   "group": "reference",
+   "detect": "not_instrumented",
+   "note": "reference/boundary-record.md"
+  },
+  {
+   "id": "ref:retrieval-ladder",
+   "group": "reference",
+   "detect": "not_instrumented",
+   "note": "reference/retrieval-ladder.md"
+  },
+  {
+   "id": "ref:sidecar-schema",
+   "group": "reference",
+   "detect": "not_instrumented",
+   "note": "reference/sidecar-schema.md"
+  },
+  {
+   "id": "ref:provenance-block",
+   "group": "reference",
+   "detect": "not_instrumented",
+   "note": "reference/provenance-block.md"
+  },
+  {
+   "id": "ref:decision-ledger",
+   "group": "reference",
+   "detect": "not_instrumented",
+   "note": "reference/decision-ledger.md"
+  },
+  {
+   "id": "step0:corpus",
+   "group": "corpus",
+   "detect": "not_instrumented",
+   "note": "The declared-but-unbound step 0, whatever this host binds it to"
+  },
+  {
+   "id": "artefact:question-sharpened",
+   "group": "shape",
+   "detect": "artefact_re:^#{1,3}\\s+.*(what is actually being claimed|what is being claimed|the claim, decomposed|reading of the claim)",
+   "note": "The question was split into separately testable propositions and the split is in the artefact"
+  },
+  {
+   "id": "artefact:verdict-table",
+   "group": "shape",
+   "detect": "artefact_re:^\\|.*\\|.*\\|\\s*$\\n\\|[\\s:|-]+\\|\\s*$",
+   "note": "The decomposition is rendered as a table a reader can take in at a glance"
+  },
+  {
+   "id": "artefact:verdict-lexicon",
+   "group": "shape",
+   "detect": "artefact_re:^\\|[^|\\n]*\\|[^|\\n]*\\b(holds narrowly|holds|falsified|unevaluated|contested)\\b",
+   "note": "Verdicts come from the closed five-word list AND sit in the table, not scattered through prose"
+  }
+ ]
 }

@@ -172,6 +172,19 @@ def detect(feature, run, transcript):
         return bool(_sidecar(run).get(key))
     if how.startswith("claim_field:"):
         return how.split(":", 1)[1] in _claim_fields(_sidecar(run))
+    if how.startswith("claim_any_field:"):
+        # A feature whose output is fields ON claims, any one of which proves it ran.
+        # boundary.py writes holds_when/fails_when/replaced_by/unknown_region per claim
+        # and never a top-level key, which is what round 01 detected against and missed.
+        wanted = set(how.split(":", 1)[1].split("|"))
+        return bool(wanted & _claim_fields(_sidecar(run)))
+    if how.startswith("artefact_re:"):
+        # Evidence in the delivered artefact itself, not in the ledgers.
+        art = run / "artefact.md"
+        if not art.exists():
+            return False
+        return re.search(how.split(":", 1)[1], art.read_text(errors="replace"),
+                         re.M | re.I) is not None
     if how == "read":
         return feature["note"] in transcript
     if how.startswith("invocation"):
