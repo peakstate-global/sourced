@@ -21,13 +21,18 @@ a script; that is this table's job.
 | What followed `/sourced` | Mode | Go to |
 |---|---|---|
 | Nothing at all | interview | The three questions below |
-| A mode word: `audit`, `research`, `check`, `statement` | that mode | That mode's section |
+| A mode word: `audit`, `research`, `check`, `statement`, `tldr` | that mode | That mode's section |
 | A path to a file that exists | audit | "Audit", below |
-| A question, or a sentence describing work not done yet | research | `reference/research-mode.md` |
+| A question whose output is published or relied on | research | `reference/research-mode.md` |
+| A question, or a sentence describing work not done yet | short form | `reference/short-form.md` |
 | Anything else | ask one question | "An artefact to audit, or work you are about to do?" |
 
 **If the invocation already names a file or a mode word, run it and ask nothing.** The user has
 answered the interview by typing it, and a second question is friction.
+
+**A bare question gets the short form, and never nothing.** Research mode is what a question
+**escalates to**, not what it starts as. Take it when the user named an artefact, when the output
+goes to someone else, when the decision is hard to reverse, or when they typed `research`.
 
 ### The interview
 
@@ -105,6 +110,7 @@ Open one when its line is true; never preload them.
 | `reference/boundary-record.md` | A claim has failed, or holds only conditionally, and needs its boundary |
 | `reference/retrieval-ladder.md` | A source is paywalled, dead, moved, or reachable only second-hand |
 | `reference/research-mode.md` | The work is not done yet, and you are researching it now |
+| `reference/short-form.md` | A question arrived and nobody asked for a paper |
 | `reference/provenance-block.md` | You are writing the four-label block or its References list |
 | `reference/decision-ledger.md` | You are recording decisions as you work, or folding them in |
 | `reference/evals.md` | You have edited this skill and need to re-run its known-answer cases |
