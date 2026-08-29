@@ -280,7 +280,7 @@ def self_check():
     for line in ok:
         print("ok:", line)
     print(f"{len(ok)}/{len(ok)} pass")
-    return len(ok) == 7
+    return len(ok) == 8
 
 
 if __name__ == "__main__":
