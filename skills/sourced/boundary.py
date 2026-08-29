@@ -296,7 +296,7 @@ def axis_map(record, x, y, cells):
 
 
 def _self_check():
-    """Five cases with known answers. The threshold is all five: this renders the
+    """Six cases with known answers. The threshold is all six: this renders the
     record a reader trusts, so one wrong region is one wrong decision, and there is no
     partial credit."""
     # Case 1: the worked example. Four untested conditions and two observed ones must
@@ -430,13 +430,106 @@ def _self_check():
             continue
         raise AssertionError(f"{claims!r} must be refused")
 
-    print("boundary: self-check passed (5 of 5 cases; the threshold is 5 of 5)")
+    # Case 6: the verdict table reads the ledger and nothing else. `status` says where a
+    # claim came from, not whether it survived, so it must not move the verdict.
+    obs = [{"dimension": "latitude", "value": "below 60", "basis": "observed"}]
+    both = dict(night, id="c1", holds_when=obs, fails_when=obs, status="inferred")
+    assert verdict(both) == "Holds narrowly", verdict(both)
+    assert verdict(dict(both, holds_when=[])) == "Falsified", "fails plus a replacement"
+    assert verdict(dict(both, fails_when=[], replaced_by="")) == "Holds"
+    assert verdict({"id": "c2", "statement": "x"}) == "Unevaluated"
+    assert verdict(dict(both, challenged="refuted")) == "Falsified", "the pass outranks the regions"
+    assert verdict(dict(both, challenged="attempted-unresolved")) == "Contested"
+    assert verdict(dict(both), open_claims={"c1"}) == "Contested", "an open conflict outranks all"
+    assert verdict(dict(both, status="recalled")) == "Holds narrowly", "provenance is not a verdict"
+
+    # ... and the table names the reading when there is one, so a paragraph in a cell is
+    # a sign the question was never split, not a rendering fault.
+    md = table({"claims": [dict(both, reading="Reserve share")],
+                "conflicts": [{"claim": "c9", "state": "open"}]})
+    assert "| Reserve share | Holds narrowly |" in md, md
+    assert md.splitlines()[1] == "|---|---|---|", md
+    assert table({"claims": [{"id": "c3", "statement": "no boundary here"}]}) == "", \
+        "a claim with no boundary and no open conflict earns no row"
+
+    print("boundary: self-check passed (6 of 6 cases; the threshold is 6 of 6)")
 
 
-def main(paths):
+VERDICTS = ("Holds", "Holds narrowly", "Falsified", "Unevaluated", "Contested")
+
+
+def verdict(claim, open_claims=()):
+    """Which of the five words this claim's own fields have already earned.
+
+    A reading of the ledger, never a second opinion about it. Two fields decide it: what
+    the adversarial pass returned (`challenged`), and which regions the boundary record
+    carries. `status` is deliberately not consulted, because it says where the claim came
+    from, sourced or recalled or inferred, and not whether it survived.
+
+    Order matters. An unresolved disagreement outranks everything, because a conflict
+    nobody closed is not a verdict we get to state.
+    """
+    challenged = claim.get("challenged")
+    if claim.get("id") in open_claims or challenged == "attempted-unresolved":
+        return "Contested"
+    if challenged == "refuted":
+        return "Falsified"
+    holds = bool(conditions(claim, "holds_when"))
+    fails = bool(conditions(claim, "fails_when"))
+    if challenged == "holds-with-boundary" or (holds and fails):
+        return "Holds narrowly"
+    if fails and claim.get("replaced_by"):
+        return "Falsified"
+    if holds or challenged == "holds":
+        return "Holds"
+    return "Unevaluated"
+
+
+def _region(claim):
+    """Where it stands, in as few words as the record allows."""
+    for field, lead in (("fails_when", "fails when"), ("holds_when", "holds when")):
+        entries = conditions(claim, field)
+        if entries:
+            return f"{lead} {'; '.join(dimensions.label(e) for e in entries[:2])}"
+    return (claim.get("unknown_region") or "").strip() or "not tested"
+
+
+def table(data):
+    """The verdict table, as markdown, from the claims that carry a boundary.
+
+    This is the artefact's required table (`reference/research-mode.md`). It is
+    generated so it cannot drift from the ledger: a row you disagree with is a boundary
+    recorded wrongly, and the fix is the record, not the sentence.
+
+    The first column reads `reading` when the claim carries one, which is the short
+    proposition the sharpening step produced. Without it the whole statement goes in the
+    cell, and a paragraph in a table cell is the sign that the question was never split.
+    """
+    contested = {c.get("claim") for c in (data.get("conflicts") or [])
+                 if isinstance(c, dict) and c.get("state") == "open"}
+    rows = [c for c in data.get("claims") or []
+            if has_boundary(c) or c.get("id") in contested]
+    if not rows:
+        return ""
+    out = ["| Reading of the claim | Verdict | Where |", "|---|---|---|"]
+    for claim in rows:
+        label = (claim.get("reading") or claim.get("statement")
+                 or claim.get("assertion") or claim.get("id") or "")
+        out.append(f"| {label.strip().rstrip('.')} "
+                   f"| {verdict(claim, contested)} | {_region(claim)} |")
+    return "\n".join(out)
+
+
+def main(paths, as_table=False):
     shown = 0
     for p in paths:
         doc = json.loads(pathlib.Path(p).read_text())
+        if as_table:
+            md = table(doc)
+            if md:
+                print(md)
+                shown += 1
+            continue
         for claim in doc.get("claims", []):
             if has_boundary(claim):
                 print(card(claim))
@@ -447,7 +540,8 @@ def main(paths):
 
 
 if __name__ == "__main__":
-    if "--self-check" in sys.argv or len(sys.argv) == 1:
+    argv = [a for a in sys.argv[1:] if a != "table"]
+    if "--self-check" in sys.argv or not argv:
         _self_check()
     else:
-        sys.exit(main(sys.argv[1:]))
+        sys.exit(main(argv, as_table="table" in sys.argv[1:]))

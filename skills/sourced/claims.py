@@ -12,6 +12,7 @@ quote is read out of the capture rather than out of the live page.
     python3 claims.py append <artefact> --statement "…" --url <url> --quote "…" \
         [--locator "p. 12"] [--slide 3] [--origin mit-2026] [--id c4]
     python3 claims.py append <artefact> --statement "…" --status inferred
+    python3 claims.py append <artefact> --statement "…" --falsifier "what would kill it"
     python3 claims.py fold <artefact>        ledger lines -> claims[] and evidence[]
     python3 claims.py --self-check           four cases, known answers, no network
 
@@ -112,7 +113,7 @@ def quote_is_in_capture(quote, row):
 
 
 def record(artefact, statement, status="sourced", url="", quote="", locator="", origin="",
-           slide=None, claim_id="", at=None):
+           slide=None, claim_id="", at=None, falsifier=""):
     """Build one ledger line: the claim, and the evidence it rests on.
 
     The claim object is exactly the sidecar's `claims[]` member, so folding can put it in
@@ -127,6 +128,11 @@ def record(artefact, statement, status="sourced", url="", quote="", locator="", 
     existing = read_ledger(artefact)
     claim_id = claim_id or f"c{len(existing) + 1}"
     claim = {"id": claim_id, "statement": statement, "status": status}
+    if falsifier.strip():
+        # What would kill this claim, recorded while the evidence is still in front of
+        # you. Written here rather than gathered at the end, because a falsifier invented
+        # after the fact is written to fit the claim that survived.
+        claim["falsifier"] = falsifier.strip()
     if slide is not None:
         claim["locator"] = {"slide": slide}
     claim["evidence"] = []
@@ -226,10 +232,11 @@ def _cli(argv):
         raise SystemExit(__doc__.strip().splitlines()[0])
     mode, artefact, rest = argv[0], argv[1], argv[2:]
     kw = {"statement": "", "status": "sourced", "url": "", "quote": "", "locator": "",
-          "origin": "", "slide": None, "claim_id": ""}
+          "origin": "", "slide": None, "claim_id": "", "falsifier": ""}
     flags = {"--statement": "statement", "--status": "status", "--url": "url",
              "--quote": "quote", "--locator": "locator", "--origin": "origin",
-             "--slide": "slide", "--id": "claim_id", "--store": "store"}
+             "--slide": "slide", "--id": "claim_id", "--store": "store",
+             "--falsifier": "falsifier"}
     while rest:
         flag, rest = rest[0], rest[1:]
         val, rest = (rest[0], rest[1:]) if rest else ("", [])

@@ -14,8 +14,10 @@ WHAT IT REFUSES
 ---------------
 Four refusals. Three are one move, a disagreement that never reached the reader:
 
-  an open conflict          the sidecar records the disagreement and ships anyway
-                            without disclosing it
+  an undisclosed conflict   the sidecar records the disagreement and ships anyway
+                            without naming it in Limitations. A conflict that cannot be
+                            closed DOES ship open; what is refused is one the reader
+                            was never told about
   an unrecorded one         the evidence rows disagree, and nothing in the artefact
                             acknowledges it: no conflict record, no boundary
   a refutation with no      `fails_when` and no `replaced_by`, which leaves the reader
@@ -168,21 +170,41 @@ def _cited_claims(data, row):
     return out
 
 
+def _disclosed(data, rec):
+    """True when Limitations names the claim this open conflict sits on.
+
+    An open conflict ships through the disclosure and nowhere else, so this asks the one
+    question that matters to a reader: were they told. Matching on the claim id keeps the
+    check mechanical and keeps the wording the author's own.
+    """
+    limitations = ((data.get("disclosure") or {}).get("limitations") or "")
+    claim = (rec.get("claim") or "").strip()
+    return bool(claim) and re.search(rf"\b{re.escape(claim)}\b", limitations) is not None
+
+
 def findings(data):
     """Every finding in one sidecar, fails first, in document order."""
     out = []
     claims = _claims(data)
 
-    # 1. A conflict the author recorded and left open. It ships only through the
-    #    disclosure, so an open conflict at delivery is refused here.
+    # 1. A conflict the author recorded and left open. An open conflict is allowed to
+    #    ship, but only through the disclosure: what is refused is a disagreement the
+    #    reader never sees. So the test is whether Limitations names the claim, not
+    #    whether the conflict is closed. Closing it to satisfy a gate would be inventing
+    #    a resolution, which is the failure this whole standard exists to prevent.
     for rec in conflicts.open_conflicts(data):
+        if _disclosed(data, rec):
+            continue
         # A side is an evidence row or a competing claim, and the message names either.
         who = " and ".join(conflicts.side_label(data, s)
                            for s in rec.get("between") or [])
         dims = ", ".join(rec.get("dimensions") or [])
         out.append(Finding(FAIL, f"open conflict {rec.get('id')} on claim "
                                  f"{rec.get('claim')}: {who} disagree, and they differ "
-                                 f"on {dims}"))
+                                 f"on {dims}, and Limitations does not mention "
+                                 f"{rec.get('claim')}. Either close it into a boundary, or "
+                                 f"disclose it: python3 conflicts.py <file.sourced> "
+                                 f"prints the sentence to paste into Limitations"))
 
     # 2. A disagreement in the evidence that nothing in the artefact acknowledges.
     try:
@@ -410,6 +432,17 @@ def _self_check():
         for part in ("e1", "p. 1", "e2", "p. 2", "c1", "air quality", "x1"):
             assert part in bad[0].message, f"the message must name {part}: {bad[0].message}"
 
+    def case_open_conflict_disclosed():
+        """An open conflict the reader was told about ships. That is the documented path."""
+        rec = dict(conflicts.detect(plain)[0], unknown_region="nobody has looked at dusk.")
+        told = dict(plain, conflicts=[rec],
+                    disclosure={"limitations": "On c1, two readings disagree on air quality, "
+                                               "and dusk is unmapped."})
+        assert severities(told, FAIL) == [], severities(told, FAIL)
+        # ... and the same conflict with a disclosure that names some other claim does not.
+        wrong = dict(told, disclosure={"limitations": "On c9, something else entirely."})
+        assert len(severities(wrong, FAIL)) == 1, severities(wrong, FAIL)
+
     def case_unrecorded():
         bad = severities(plain, FAIL)
         assert len(bad) == 1, bad
@@ -612,6 +645,8 @@ def _self_check():
                          "evidence": []}) == []
 
     cases = [("an open conflict fails, and the message names both sources", case_open_conflict),
+             ("an open conflict named in Limitations ships, an undisclosed one does not",
+              case_open_conflict_disclosed),
              ("evidence that disagrees with nothing recorded fails", case_unrecorded),
              ("the same disagreement with a boundary recorded passes", case_boundary_recorded),
              ("fails_when with no replaced_by fails", case_no_replacement),

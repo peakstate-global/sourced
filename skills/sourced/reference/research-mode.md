@@ -115,6 +115,10 @@ quote.
    quote is not in that capture's text file. A refusal is not an obstacle to route around; it is
    the check working. Fix the quote or climb the ladder.
 
+   Add `--falsifier "…"` whenever you can already say what observation would kill the claim.
+   Record it here, not at the end: a falsifier written after the pass is written to fit the claim
+   that survived, and every claim that survives the pass needs one.
+
    A claim with no source is appended too, with `--status recalled` or `--status inferred` and no
    URL. What you could not ground has to be visible while the work happens, or it gets counted as
    sourced at the end by nobody's decision.
@@ -161,7 +165,11 @@ iii) Fold both ledgers:
 
     Folding twice is safe. A record replaces the entry with its id rather than adding a second one.
 iv) Run the adversarial pass over what the ledgers now say, and record the boundary of any claim
-    that fails or holds only conditionally (`reference/boundary-record.md`).
+    that fails or holds only conditionally (`reference/boundary-record.md`). **A conflict you
+    cannot close ships open**, with its unknown region named and a sentence in Limitations saying
+    who disagrees about what: `python3 conflicts.py <file.sourced>` writes that sentence for you.
+    Never close a conflict to get past the gate. An invented resolution is the failure this whole
+    standard exists to prevent, and `integrate.py` passes a disclosed open conflict.
 v) **State the integrated position.** The pass returns a map: conflicts, boundaries, claims that
    hold in one region and fail in another. That is the material, not the answer. Write the view
    that holds the surviving parts together, say which conditions it depends on, and say what
@@ -198,6 +206,18 @@ The order is the argument's own logic, not a template to fill in.
 Then the provenance block, unchanged.
 
 ### The verdict table
+
+**Generate it, do not write it:**
+
+    python3 boundary.py table <artefact>.sourced
+
+It reads every claim carrying a boundary, plus every claim under an open conflict, and prints the
+markdown. Paste it in. A row you disagree with is a boundary recorded wrongly, and the fix is
+`boundary.py`, not the sentence.
+
+Give each claim a short `reading` and that is what the first column shows. Without one the whole
+statement goes in the cell, and a paragraph in a table cell is the sign that the question was never
+split.
 
 Three columns at minimum: the proposition, the verdict, and the region it holds or fails in. A
 fourth column for the evidence in a few words earns its place on most subjects.
