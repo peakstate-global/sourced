@@ -12,6 +12,44 @@ page.** Everything below exists to make that the path of least effort.
 
 ---
 
+## First. Sharpen the question
+
+**Do this before Step 0, and before spending a single retrieval.** A contested question almost
+never contains one claim. It contains several, wearing one word, and which of them you meant
+decides whether the answer is yes, no, or nobody has measured it.
+
+Four moves, in order. They take one pass and no network.
+
+i) **Name the word doing hidden work.** Look for one word covering two mechanisms. "Decline",
+   "growth", "throughput", "works", "safe", "better". Where a word carries two meanings that the
+   evidence treats differently, the question has two answers and you have not yet chosen which one
+   you are answering.
+ii) **Split the question into separately testable propositions.** Each one has to be a thing
+   evidence could bear on by itself. Three or four is usual. One is possible and is worth saying
+   out loud, because a question that really does have one part is unusual.
+iii) **Say what kind of claim each proposition is.** Empirical, definitional, predictive or
+   normative. This matters more than it looks: **a normative proposition cannot be settled by
+   retrieval.** "Should growth be subordinated to ecological limits" contains a biophysical claim
+   that evidence settles, and a priority claim that it does not. Naming that early stops the run
+   answering the easy half and presenting it as the whole.
+iv) **State the split in one short block, then keep going.** Do not wait for approval. The user
+    asked a question, not for an interview.
+
+**Stop and ask only when the split changes what would be researched.** Two readings that need
+different sources, or a reading you suspect the user did not mean, are worth one question before
+fifteen retrievals go the wrong way. Anything else is friction, and the grilling rule applies: if
+you can settle it by reading, reading is the answer.
+
+**This block is not scaffolding. It is the artefact's first section**, "What is actually being
+claimed", and it is the row labels of the verdict table further down. Write it once, here, and it
+carries through to delivery.
+
+Why it sits before everything: on a run on 29 August 2026 the word "throughput" turned out to be
+covering several separate physical pressures with no single dial behind them. That was found by the
+adversarial pass, after every retrieval was already spent, and four synthesis claims had to be
+rewritten around it. The same run's sibling found its three readings at the start, and the split
+became the most useful thing in the paper.
+
 ## Step 0. Check what you already hold
 
 Before retrieving anything new, check what you already hold on this question.
@@ -112,7 +150,8 @@ quote.
 
 ## Step 3. Close the work
 
-i) Write the artefact. The claims are already in the ledger, so this is drafting, not recall.
+i) Write the artefact, to the shape in `## The shape of the paper` below. The claims are
+   already in the ledger, so this is drafting, not recall.
 ii) Create the sidecar manifest if one does not exist: `$schema`, `sourced`, `artefact`, empty
     `claims` and `evidence`, and `disclosure` (`reference/sidecar-schema.md`).
 iii) Fold both ledgers:
@@ -133,6 +172,61 @@ v) **State the integrated position.** The pass returns a map: conflicts, boundar
 vi) Re-verify before delivery: `python3 sourced.py --check`. A claim only hurts you at the moment it
    is used.
 vii) Generate the provenance block from the sidecar: `/sourced statement <artefact>`.
+
+## The shape of the paper
+
+Eight parts. **Four are required**, and a paper missing one of those is not finished. Four are
+recommended, and a paper may drop one by saying in a clause why the evidence did not produce it.
+The order is the argument's own logic, not a template to fill in.
+
+1. **The title is the question, not the answer.** Required. A reader who disagrees has to get past
+   the title before they can be persuaded by anything under it.
+2. **What is actually being claimed.** Required. The block you already wrote in `First. Sharpen the
+   question`, brought forward.
+3. **The verdict table.** Required, and it goes **before** the argument, not after. One row per
+   proposition, so the reader knows where they stand before being asked to follow anything.
+4. **One section per proposition**, in table order, each closing with the observation that would
+   falsify it. Required.
+5. **What the strongest opposition did to this.** Recommended. Not "counter-arguments considered":
+   what the adversarial pass changed, including the claims of yours that died.
+6. **The one place the evidence points the other way.** Recommended. The strongest fact against
+   your own conclusion, conceded in its own section rather than buried in a subordinate clause.
+7. **The integrated position, and what it changes.** Required. Step 3(v), written as a section.
+8. **What a person would actually have to decide.** Recommended. Routes different readers to
+   different actions, which is what makes a paper usable rather than admirable.
+
+Then the provenance block, unchanged.
+
+### The verdict table
+
+Three columns at minimum: the proposition, the verdict, and the region it holds or fails in. A
+fourth column for the evidence in a few words earns its place on most subjects.
+
+| Reading of the claim | Verdict | Where |
+|---|---|---|
+| Share of official reserve stocks | Holds | Fell slowly over 14 years, and continues |
+| Share of transaction flows | Falsified | Rose over the same period |
+| Exchange value | Holds narrowly | Direction supported, the rate is not |
+
+**The verdict word comes from this list and nowhere else.** One word, one meaning, so that two
+papers can be read side by side and a verdict means the same thing in both.
+
+| Verdict | Means | Carried in the sidecar by |
+|---|---|---|
+| `Holds` | Supported by retrieved evidence, within a stated region | `holds_when` |
+| `Holds narrowly` | Survives only in a named region, and fails outside it | `holds_when` and `fails_when` |
+| `Falsified` | The evidence contradicts it | `fails_when` and `replaced_by` |
+| `Unevaluated` | Nobody has measured it, which is not the same as false | `unknown_region` |
+| `Contested` | Sources disagree and the conflict is open | an open `conflicts` record |
+
+Do not invent a sixth. "Promising but thin", "not established, not refuted" and "attempted
+unresolved" all say something real, and all of them belong in the `Where` column, which is free
+text and exists for exactly that.
+
+**Every verdict is derivable from fields the sidecar already holds**, which is the point: the table
+is a reading of the ledger, not a second opinion about it. A row whose verdict you cannot trace to
+one of those fields means the boundary was never recorded, and the fix is `boundary.py`, not a
+better adjective.
 
 ## What this mode does not do
 
