@@ -1,0 +1,31 @@
+__pycache__/
+*.pyc
+
+# Working notes, not part of the artefact
+.scratch/
+
+# Local working storage, never published
+WIP-LOCAL/
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+.fseventsd
+.AppleDouble
+.LSOverride
+.DocumentRevisions-V100
+.TemporaryItems
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+Icon?
+
+# Private domain list for the leak guard, never published
+.leakrc
+
+# Working briefs. These are the conversation that produced the decisions, not the
+# decisions themselves, and the decisions are in docs/philosophy.md where a reader
+# can use them. Kept on disk, never published.
+docs/plans/

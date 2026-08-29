@@ -1,0 +1,31 @@
+{
+  "$comment": "The frozen claim set. A topic is NEVER reworded and NEVER retired. A changed question is a new id. The comparability of the whole ledger rests on this file not moving.",
+  "topicsVersion": 2,
+  "frozen": "2026-08-29",
+  "topics": [
+    {
+      "id": "T-somatic",
+      "shape": "contested efficacy",
+      "claim": "Core energetics and somatic practices can help many people let go of past emotional baggage and victimhood and regain energy and agency in their lives.",
+      "why_this_one": "The polarisation is between an evidence-first frame that sees an unfalsifiable modality and a practitioner frame that sees results it cannot measure. The gold is likely neither the energetic model nor the dismissal, so it tests whether the run can find the supported mechanism underneath an unsupported explanation."
+    },
+    {
+      "id": "T-usd",
+      "shape": "contested forecast",
+      "claim": "The USD will continue to decline slowly over the next 10-15 years.",
+      "why_this_one": "A probabilistic claim over a long horizon where both camps cite real mechanisms. Tests whether the run gives transmission channels and conditions rather than a number. Also the one topic likely to have real depth in an operator's own corpus, which makes it the corpus-bias test."
+    },
+    {
+      "id": "T-ssri",
+      "shape": "contested empirical, low agreement among experts",
+      "claim": "Antidepressants offer little benefit over placebo for mild to moderate depression.",
+      "why_this_one": "A live disagreement in the research literature where both camps read largely the same trials. The gold is heterogeneity: a small average effect and a real effect in a subgroup are the same finding described from two ends, so a run that reports one number has flattened the thing that matters. It is also the topic most likely to meet a rule that tells a run to stop, which makes it the hard case."
+    },
+    {
+      "id": "T-degrowth",
+      "shape": "contested value",
+      "claim": "Economic growth should be subordinated to ecological limits.",
+      "why_this_one": "The only topic where more evidence cannot settle the argument, because the disagreement is about what matters. Integration has to happen at the level of what each side is protecting. Without this shape, charitable reconstruction is only ever tested where a fact could end the fight."
+    }
+  ]
+}

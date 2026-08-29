@@ -1,0 +1,113 @@
+{
+  "$schema": "https://peakstate.global/sourced/v1.schema.json",
+  "sourced": "1.0",
+  "artefact": {
+    "path": "README.md",
+    "sha256": "e58507a468a4455b38f9880d7381f1f7b4794991142e69723c1013c37a9dec9d",
+    "producedAt": "2026-08-26"
+  },
+  "claims": [
+    {
+      "id": "c1",
+      "statement": "The NIST Generative AI Profile names twelve risks.",
+      "status": "sourced",
+      "locator": {
+        "section": "Scope, stated rather than implied"
+      },
+      "evidence": [
+        "e1"
+      ]
+    },
+    {
+      "id": "c2",
+      "statement": "SOURCED answers four of those twelve fully and one in part.",
+      "status": "inferred",
+      "locator": {
+        "section": "Scope, stated rather than implied"
+      },
+      "evidence": [
+        "e1"
+      ],
+      "note": "The count is ours. NIST publishes no mapping to any framework, and the reading was revised once already: 2.3 and 2.11 were first scored as gaps before it was pointed out that C is exactly what they are for."
+    },
+    {
+      "id": "c3",
+      "statement": "Four of the seven checks have no manual version at volume: S, R, C and E.",
+      "status": "inferred",
+      "locator": {
+        "section": "The seven"
+      },
+      "evidence": [],
+      "note": "Reasoned from what a person can do by reading outputs. Never measured."
+    },
+    {
+      "id": "c4",
+      "statement": "Six of the seven checks are data-governance disciplines under different names.",
+      "status": "inferred",
+      "locator": {
+        "section": "Where to start"
+      },
+      "evidence": [],
+      "note": "A crosswalk we wrote. No data-management standard publishes this correspondence and none was retrieved. Marked as a reading in docs/data-governance.md."
+    },
+    {
+      "id": "c5",
+      "statement": "The seven human failure modes are named biases: fluency bias, confirmation bias, sycophancy, diffusion of responsibility, narrative fallacy, normalisation of deviance, frozen baseline, automation bias.",
+      "status": "recalled",
+      "locator": {
+        "section": "The seven"
+      },
+      "evidence": [],
+      "note": "Established terms in the literature, but no source was retrieved for this repository. Recalled, not grounded."
+    },
+    {
+      "id": "c6",
+      "statement": "Governing what work says is not new; AI removed the friction that forums, review boards and a second pair of eyes relied on.",
+      "status": "inferred",
+      "locator": {
+        "section": "opening"
+      },
+      "evidence": [],
+      "note": "A position, not a finding. Offered as the framing rather than as evidence."
+    },
+    {
+      "id": "c7",
+      "statement": "There is no evidence that the seven checks improve outcomes.",
+      "status": "inferred",
+      "locator": {
+        "section": "Contributing"
+      },
+      "evidence": [],
+      "note": "An absence, and the honest limit of the whole project. No study was sought or found."
+    },
+    {
+      "id": "c8",
+      "statement": "The capture tool depends on the standard library and curl only.",
+      "status": "sourced",
+      "locator": {
+        "section": "Using the tool"
+      },
+      "evidence": [],
+      "note": "Checkable in this repository: skills/sourced/sourced.py imports argparse, hashlib, html, json, os, pathlib, re, subprocess, sys and datetime, and shells out to curl."
+    }
+  ],
+  "evidence": [
+    {
+      "id": "e1",
+      "url": "https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf",
+      "quote": "2.1 CBRN Information or Capabilities \u00b7 2.2 Confabulation \u00b7 2.3 Dangerous, Violent, or Hateful Content \u00b7 2.4 Data Privacy \u00b7 2.5 Environmental Impacts \u00b7 2.6 Harmful Bias and Homogenization \u00b7 2.7 Human-AI Configuration \u00b7 2.8 Information Integrity \u00b7 2.9 Information Security \u00b7 2.10 Intellectual Property \u00b7 2.11 Obscene, Degrading, and/or Abusive Content \u00b7 2.12 Value Chain and Component Integration",
+      "locator": "Section 2, Overview of Risks Unique to or Exacerbated by GAI",
+      "retrievedAt": "2026-08-25",
+      "sha256": "6e73620ab6b64e90",
+      "originGroup": "nist-genai-profile",
+      "custodian": "self",
+      "note": "Captured in a separate private repository, not here. Section heads extracted from the PDF text."
+    }
+  ],
+  "disclosure": {
+    "attribution": "Authored by the maintainer. AI tools assisted research and drafting; all outputs verified.",
+    "accountable": "The maintainer of this repository.",
+    "limitations": "One claim on this page is externally checkable and it is the NIST risk count. Everything else is our own reasoning, a crosswalk we wrote, or terms recalled from the literature without retrieval. The mapping of SOURCED onto the twelve risks is ours and was revised once already. No evidence is offered that the seven checks improve outcomes.",
+    "references": "NIST AI 600-1, retrieved and hashed 25 August 2026, sha256 6e73620ab6b64e90, captured in a separate private repository rather than here."
+  }
+}

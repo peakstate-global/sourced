@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Public-repo leak guard, then the skill's own checks. Enable both with:
+#   git config core.hooksPath .githooks
+set -euo pipefail
+ROOT="$(git rev-parse --show-toplevel)"
+
+python3 "$ROOT/scripts/check-no-leaks.py"
+
+# Every checker's known-answer cases, on every commit. skill_check.py sat red on
+# main for a whole run before anyone noticed, which is the argument for this.
+cd "$ROOT/skills/sourced"
+fail=0
+for m in sourced claims decisions boundary shared_claims \
+         sophistication kinds dimensions conflicts integrate vocabulary skill_check; do
+  if ! out=$(python3 "$m.py" --self-check 2>&1); then
+    echo "$out" >&2
+    fail=1
+  fi
+done
+python3 sourced_status.py >/dev/null || fail=1
+python3 evals.py >/dev/null || fail=1
+if [ "$fail" -ne 0 ]; then
+  echo "self-checks FAILED. Commit refused." >&2
+  exit 1
+fi
+echo "self-checks clean — 12 suites"

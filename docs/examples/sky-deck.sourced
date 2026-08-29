@@ -1,0 +1,291 @@
+{
+  "sourced": "1.7",
+  "artefact": {
+    "path": "sky-deck.html",
+    "sha256": "0000",
+    "producedAt": "2026-08-29"
+  },
+  "claims": [
+    {
+      "id": "c1",
+      "statement": "The sky is blue.",
+      "status": "sourced",
+      "kind": "empirical",
+      "level": 1,
+      "finer": "c2",
+      "evidence": [
+        "e1",
+        "e2",
+        "e3"
+      ],
+      "challenged": "holds-with-boundary",
+      "owner": {
+        "name": "A. Ramsden",
+        "checked": "Read the 1899 paper in full and confirmed the exponent, and read the haze study through its abstract only.",
+        "since": "2026-08-29"
+      },
+      "holds_when": [
+        {
+          "id": "k1",
+          "dimension": "air quality",
+          "value": "clean",
+          "basis": "tested",
+          "level": 1,
+          "finer": "k2"
+        },
+        {
+          "id": "k2",
+          "dimension": "particulate",
+          "value": "below 6 ppm",
+          "basis": "tested",
+          "level": 3,
+          "coarser": "k1"
+        },
+        {
+          "id": "k3",
+          "dimension": "period",
+          "value": "2015-2026",
+          "basis": "observed"
+        }
+      ],
+      "fails_when": [
+        {
+          "id": "k4",
+          "dimension": "sun angle",
+          "value": "near the horizon",
+          "basis": "stated-in-source",
+          "status": "confirmed"
+        }
+      ],
+      "replaced_by": {
+        "claim": "c5"
+      },
+      "unknown_region": "Nobody in this evidence looked at dusk under haze."
+    },
+    {
+      "id": "c2",
+      "statement": "Rayleigh scattering goes as the inverse fourth power of wavelength.",
+      "status": "sourced",
+      "kind": "empirical",
+      "level": 3,
+      "coarser": "c1",
+      "evidence": [
+        "e1"
+      ],
+      "assertion": "statistical"
+    },
+    {
+      "id": "c3",
+      "statement": "Recording a boundary is more useful than recording a verdict.",
+      "status": "inferred",
+      "kind": "position",
+      "falsifier": "A team that records verdicts finds the same errors as one that records boundaries.",
+      "assertion": "normative"
+    },
+    {
+      "id": "c4",
+      "statement": "I have watched a pass frame three boundaries as defeats.",
+      "status": "inferred",
+      "kind": "story",
+      "witness": "the author",
+      "falsifier": "The transcript shows the pass named conditions rather than a winner.",
+      "assertion": "narrative"
+    },
+    {
+      "id": "c5",
+      "statement": "Near the horizon the sky is red, because the light travels through more air.",
+      "status": "sourced",
+      "kind": "empirical",
+      "level": 1,
+      "evidence": [
+        "e4"
+      ],
+      "challenged": "holds",
+      "holds_when": [
+        {
+          "dimension": "sun angle",
+          "value": "near the horizon",
+          "basis": "stated-in-source",
+          "status": "confirmed"
+        }
+      ],
+      "unknown_region": "Nobody in this evidence looked at the horizon under haze."
+    },
+    {
+      "id": "c6",
+      "statement": "The overhead sky reads blue on more than 300 days at this site in 2027.",
+      "status": "inferred",
+      "kind": "empirical",
+      "assertion": "predictive",
+      "level": 1,
+      "resolves": {
+        "by": "2028-01-31",
+        "criterion": "The site's own daily sky-colour log for 2027 records more than 300 blue days.",
+        "outcome": "unresolved"
+      }
+    }
+  ],
+  "evidence": [
+    {
+      "id": "e1",
+      "url": "https://example.org/rayleigh",
+      "quote": "Scattering varies as the inverse fourth power of wavelength.",
+      "locator": "p. 178",
+      "retrievedAt": "2026-08-29",
+      "sha256": "aaa",
+      "textSha256": "bbb",
+      "originGroup": "textbook:rayleigh",
+      "supports": {
+        "claim": "c1",
+        "direction": "for"
+      },
+      "conditions": [
+        {
+          "dimension": "air quality",
+          "value": "clean",
+          "basis": "tested"
+        },
+        {
+          "dimension": "period",
+          "value": "1899",
+          "basis": "observed"
+        }
+      ]
+    },
+    {
+      "id": "e2",
+      "url": "https://example.org/haze-study",
+      "quote": "Under haze the overhead sky reads grey rather than blue.",
+      "locator": "p. 12",
+      "retrievedAt": "2026-08-29",
+      "sha256": "ccc",
+      "textSha256": "ddd",
+      "originGroup": "journal:haze",
+      "supports": {
+        "claim": "c1",
+        "direction": "against",
+        "by": "model",
+        "model": "claude-opus-5"
+      },
+      "conditions": [
+        {
+          "dimension": "air quality",
+          "value": "hazy",
+          "basis": "observed"
+        },
+        {
+          "dimension": "period",
+          "value": "2019-2021",
+          "basis": "observed"
+        }
+      ]
+    },
+    {
+      "id": "e3",
+      "url": "https://example.org/dusk-survey",
+      "quote": "Overhead the sky stayed blue through the afternoon, and at dusk it did not.",
+      "locator": "p. 4",
+      "retrievedAt": "2026-08-29",
+      "sha256": "eee",
+      "textSha256": "fff",
+      "originGroup": "journal:dusk",
+      "supports": {
+        "claim": "c1",
+        "direction": "mixed"
+      },
+      "conditions": [
+        {
+          "dimension": "sun angle",
+          "value": "high",
+          "basis": "stated-in-source",
+          "status": "monitoring"
+        },
+        {
+          "dimension": "period",
+          "value": "2024",
+          "basis": "observed"
+        }
+      ]
+    },
+    {
+      "id": "e4",
+      "url": "https://example.org/horizon-reddening",
+      "quote": "At low sun angles the path length through the atmosphere removes the short wavelengths first.",
+      "locator": "p. 61",
+      "retrievedAt": "2026-08-29",
+      "sha256": "ggg",
+      "textSha256": "hhh",
+      "originGroup": "textbook:atmospheric-optics",
+      "selfInterested": false,
+      "supports": {
+        "claim": "c5",
+        "direction": "for"
+      },
+      "conditions": [
+        {
+          "dimension": "sun angle",
+          "value": "near the horizon",
+          "basis": "tested"
+        },
+        {
+          "dimension": "period",
+          "value": "2018",
+          "basis": "observed"
+        }
+      ]
+    }
+  ],
+  "dimensions": [],
+  "conflicts": [
+    {
+      "id": "x1",
+      "claim": "c1",
+      "between": [
+        {
+          "evidence": "e1",
+          "outcome": "for"
+        },
+        {
+          "evidence": "e2",
+          "outcome": "against"
+        }
+      ],
+      "dimensions": [
+        "air quality"
+      ],
+      "state": "resolved",
+      "resolved_into": "c1"
+    },
+    {
+      "id": "x2",
+      "claim": "c1",
+      "between": [
+        {
+          "evidence": "e1",
+          "outcome": "for"
+        },
+        {
+          "claim": "c5"
+        }
+      ],
+      "dimensions": [
+        "sun angle"
+      ],
+      "state": "resolved",
+      "resolved_into": "c1"
+    }
+  ],
+  "disclosure": {
+    "attribution": "Written with Claude Opus 5.",
+    "accountable": "Andrew Ramsden.",
+    "limitations": "The haze study was read through a secondary write-up, not the original.",
+    "references": "Strutt, J. W. (1899). On the transmission of light through an atmosphere."
+  },
+  "opposed": {
+    "grade": "cross-model-fresh-thread",
+    "at": "2026-08-29T06:00:00Z",
+    "raised": 3,
+    "model": "gpt-5.6-sol",
+    "modelVersion": "codex"
+  }
+}
