@@ -184,6 +184,25 @@ def text_hash(raw):
     return hashlib.sha256(to_text(raw).encode()).hexdigest()
 
 
+def pdf_text(path):
+    """The text of a captured PDF, via `pdftotext` when the host has it.
+
+    A PDF with no text file cannot have a quote checked against it, so `claims.py`
+    refuses every claim resting on one and the source is lost. One round-01 run lost a
+    source outright this way and shipped that boundary uncited.
+
+    No dependency is added: where `pdftotext` is absent the capture is marked thin, which
+    sends the run down the retrieval ladder immediately instead of after it has written a
+    quote it cannot support. An image-only PDF lands in the same place, correctly.
+    """
+    try:
+        out = subprocess.run(["pdftotext", "-q", str(path), "-"],
+                             capture_output=True, timeout=60)
+    except (FileNotFoundError, subprocess.SubprocessError):
+        return ""
+    return out.stdout.decode("utf-8", "replace") if out.returncode == 0 else ""
+
+
 def watched(raw, pattern):
     """The value you actually care about, on a page that changes constantly."""
     if not pattern:
@@ -301,6 +320,20 @@ def capture(url, tier, note, watch=None, archive_it=False, conditions=()):
         if ext == ".html":
             base.with_suffix(".txt").write_text(to_text(raw))
             row["text"] = _rel(base.with_suffix(".txt"))
+        else:
+            text = pdf_text(base.with_suffix(ext))
+            if text.strip():
+                base.with_suffix(".txt").write_text(text)
+                row["text"] = _rel(base.with_suffix(".txt"))
+                row["proseWords"] = prose = prose_words(text)
+                if prose < THIN_PROSE_WORDS:
+                    row["thin"] = True
+            else:
+                # No text means no quote can ever be checked against this capture.
+                # Say so now, at the rung where it can still be climbed.
+                row["thin"] = True
+                row["note"] = (row.get("note") or "") + \
+                    " no extractable text: image-only PDF, or pdftotext is not installed"
 
     rows = [r for r in load_index() if r["url"] != url] + [row]
     save_index(rows)

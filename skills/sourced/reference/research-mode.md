@@ -177,9 +177,17 @@ v) **State the integrated position.** The pass returns a map: conflicts, boundar
    faithfully and will happily ship a stack of conditioned fragments with no position in them.
    The test is whether the position changes what a reader would do, expect or watch for. If the
    answer is the same whichever side was right, nothing has been integrated.
-vi) Re-verify before delivery: `python3 sourced.py --check`. A claim only hurts you at the moment it
+vi) Write the dimension definitions the boundaries use into the sidecar:
+
+        python3 dimensions.py --sidecar <artefact>.sourced
+
+    It lists any dimension nobody has defined. A dimension named but undefined means a
+    boundary a reader cannot apply, because "holds when severity is high" only travels if
+    `severity` says what it is measured with. This runs after the boundaries exist, which is
+    why it is here and not at capture.
+vii) Re-verify before delivery: `python3 sourced.py --check`. A claim only hurts you at the moment it
    is used.
-vii) Generate the provenance block from the sidecar: `/sourced statement <artefact>`.
+viii) Generate the provenance block from the sidecar: `/sourced statement <artefact>`.
 
 ## The shape of the paper
 

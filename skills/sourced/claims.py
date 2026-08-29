@@ -192,14 +192,26 @@ def append(artefact, rec):
 
 
 def _merge(current, incoming):
-    """Replace by id, append what is new, keep the order. Folding twice is then safe."""
+    """Update by id, append what is new, keep the order. Folding twice is then safe.
+
+    The ledger owns the fields it writes and nothing else. Everything the adversarial
+    pass later puts on a claim in the sidecar, the boundary regions, `challenged`,
+    `kind`, `level`, `replaced_by`, `unknown_region`, survives a re-fold, because this
+    updates the entry rather than replacing it.
+
+    That is not a nicety. A fold that replaced the whole entry destroyed the O layer
+    every time it ran, and two separate runs on 29 August 2026 each wrote their own
+    idempotent re-apply script to put it all back. Two runs inventing the same tool is
+    the toolchain naming its own gap.
+    """
     out = list(current)
     # Skip the entries that carry no id. A hand-written sidecar can hold two of them,
     # and keying both on None would make the second overwrite the first.
     by_id = {item["id"]: i for i, item in enumerate(out) if item.get("id")}
     for item in incoming:
         if item["id"] in by_id:
-            out[by_id[item["id"]]] = item
+            at = by_id[item["id"]]
+            out[at] = {**out[at], **item}
         else:
             by_id[item["id"]] = len(out)
             out.append(item)
@@ -347,7 +359,20 @@ def _self_check():
         assert r3["evidence"]["id"] == r1["evidence"]["id"], "one source, one evidence id"
         assert fold(art) == (3, 1), "a second claim on one source adds no second source"
 
-    print("claims: self-check passed (4 of 4 cases; the threshold is 4 of 4; "
+    # Case 5: a re-fold must not destroy what the adversarial pass wrote. The ledger owns
+    # the fields it writes; every other field on the claim survives.
+    passed_o = {"id": "c1", "statement": "old", "status": "sourced",
+                "challenged": "holds-with-boundary", "kind": "empirical",
+                "holds_when": [{"dimension": "d", "value": "v", "basis": "observed"}],
+                "unknown_region": "dusk"}
+    refolded = _merge([passed_o], [{"id": "c1", "statement": "new", "status": "sourced",
+                                    "evidence": ["e1"]}])[0]
+    assert refolded["statement"] == "new" and refolded["evidence"] == ["e1"], refolded
+    for field in ("challenged", "kind", "holds_when", "unknown_region"):
+        assert field in refolded, f"a re-fold destroyed {field}"
+    assert _merge([], [{"id": "c2"}]) == [{"id": "c2"}], "a new claim still appends"
+
+    print("claims: self-check passed (5 of 5 cases; the threshold is 5 of 5; "
           "a quote absent from the capture is refused)")
 
 
