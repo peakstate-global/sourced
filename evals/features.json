@@ -1,6 +1,6 @@
 {
   "$comment": "The frozen feature list. Coverage is measured against this, never against an agent's self-report. When the skill grows a feature it is added here, and the round that first sees it says so. Detection `not_instrumented` means we have no objective signal for it: it is listed and reported separately, never counted as used or unused, because a feature we cannot measure must not quietly depress the score. v3 (2026-08-29, after round 01): boundary.py is detected by the per-claim fields it actually writes, not a top-level key it never wrote; and three features added for the shape of the delivered artefact. Those three are measured here, by mechanical detection against this frozen list, and deliberately NOT by any scored rubric criterion: the skill gained them before this file named them, so a criterion written for them now would be the rubric chasing the skill.",
-  "featuresVersion": 4,
+  "featuresVersion": 5,
   "features": [
     {
       "id": "sourced.py",
@@ -41,8 +41,8 @@
     {
       "id": "dimensions.py",
       "group": "integration",
-      "detect": "claim_field:conditions",
-      "note": "The dimensions a condition names"
+      "detect": "sidecar_key:dimensions",
+      "note": "The dimensions the boundaries use are defined in the sidecar, so a boundary travels"
     },
     {
       "id": "sophistication.py",
@@ -149,13 +149,13 @@
     {
       "id": "artefact:definitions",
       "group": "shape",
-      "detect": "artefact_re:^\\s*\\*\\*[^*\\n]{2,60}\\*\\*.{0,400}?\\*\\*Is not:\\*\\*",
+      "detect": "artefact_re:^\\*\\*Is not:\\*\\*",
       "note": "Terms the two camps use differently are defined in the is / is not / instead form"
     },
     {
       "id": "artefact:propositions-labelled",
       "group": "shape",
-      "detect": "artefact_re:^\\s*(?:[-*]\\s*)?\\*\\*P[1-9][0-9]?\\.?\\*\\*",
+      "detect": "artefact_re:^(?:\\s*[-*]\\s*\\*\\*P\\d+\\b|#{1,3}\\s*P\\d+[.\\s])",
       "note": "The propositions are enumerated and labelled P1..Pn, not merely counted"
     },
     {
