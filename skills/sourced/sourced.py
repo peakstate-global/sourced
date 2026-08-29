@@ -272,6 +272,35 @@ def parse_define(text):
     return dimension, definition
 
 
+def _immutable(path, raw):
+    """A path that does not overwrite an existing capture.
+
+    A capture is evidence: once written, every claim quoting it depends on those exact
+    bytes. Re-fetching the same URL on the same day used to land on the same path and
+    overwrite it, so a run that re-fetched a page which had since gone behind a wall
+    destroyed the good copy it already held and had to climb to an archive rung. That
+    happened in round 02 and it is a data-loss bug, not an inconvenience.
+
+    Identical bytes reuse the path, because that is genuinely the same capture. Different
+    bytes get a sibling, so both readings survive and the later one can be compared with
+    the earlier.
+    """
+    if not path.exists():
+        return path
+    if path.read_bytes() == raw:
+        return path
+    stem, ext = path.stem, path.suffix
+    for n in range(2, 100):
+        alt = path.with_name(f"{stem}--{n}{ext}")
+        if not alt.exists():
+            print(f"sourced: {path.name} already holds different bytes; this fetch is "
+                  f"{alt.name}. The first capture is untouched.", file=sys.stderr)
+            return alt
+        if alt.read_bytes() == raw:
+            return alt
+    raise RuntimeError(f"{path.name}: 99 differing captures on one day, which is a loop")
+
+
 def capture(url, tier, note, watch=None, archive_it=False, conditions=()):
     """Capture a source, and the conditions it held under while they are still in front
     of you. Conditions are optional and skipping them is the default: the reading is what
@@ -315,16 +344,17 @@ def capture(url, tier, note, watch=None, archive_it=False, conditions=()):
         day.mkdir(parents=True, exist_ok=True)
         ext = ".pdf" if is_pdf else ".html"
         base = day / slug(url)
-        base.with_suffix(ext).write_bytes(raw)
-        row["snapshot"] = _rel(base.with_suffix(ext))
+        snap = _immutable(base.with_suffix(ext), raw)
+        snap.write_bytes(raw)
+        row["snapshot"] = _rel(snap)
         if ext == ".html":
-            base.with_suffix(".txt").write_text(to_text(raw))
-            row["text"] = _rel(base.with_suffix(".txt"))
+            snap.with_suffix(".txt").write_text(to_text(raw))
+            row["text"] = _rel(snap.with_suffix(".txt"))
         else:
-            text = pdf_text(base.with_suffix(ext))
+            text = pdf_text(snap)
             if text.strip():
-                base.with_suffix(".txt").write_text(text)
-                row["text"] = _rel(base.with_suffix(".txt"))
+                snap.with_suffix(".txt").write_text(text)
+                row["text"] = _rel(snap.with_suffix(".txt"))
                 row["proseWords"] = prose = prose_words(text)
                 if prose < THIN_PROSE_WORDS:
                     row["thin"] = True
@@ -536,7 +566,20 @@ def demo():
     finally:
         set_store(keep_store)
         assert INDEX == keep_index
-    print(f"sourced: self-check passed (5 of 5 cases; the threshold is 5 of 5, "
+
+    # A capture is never overwritten by a later, different fetch of the same URL.
+    with tempfile.TemporaryDirectory() as d:
+        f = pathlib.Path(d) / "page.html"
+        f.write_bytes(b"first")
+        assert _immutable(f, b"first") == f, "identical bytes reuse the path"
+        with contextlib.redirect_stderr(io.StringIO()):
+            alt = _immutable(f, b"second")
+        assert alt != f and alt.name == "page--2.html", alt
+        alt.write_bytes(b"second")
+        assert f.read_bytes() == b"first", "the first capture survives a later fetch"
+        assert _immutable(f, b"second") == alt, "the same later bytes find their own file"
+
+    print(f"sourced: self-check passed (6 of 6 cases; the threshold is 6 of 6, "
           f"thin below {THIN_PROSE_WORDS} prose words)")
 
 

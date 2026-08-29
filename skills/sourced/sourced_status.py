@@ -70,15 +70,37 @@ def check_file(path):
     doc = json.load(open(path))
     by_id = {e["id"]: e for e in doc.get("evidence", [])}
     problems = []
-    for claim in doc["claims"]:
+    for claim in doc.get("claims", []):
         backing = retrieved(by_id.get(eid) for eid in claim.get("evidence", []))
-        want = derive_status(backing, claim["fidelity"])
+        fidelity = claim.get("fidelity")
+        # A sidecar written before fidelity existed has no value here. Report it and keep
+        # auditing: crashing on claim one told the caller nothing about claims two onward,
+        # which is exactly what a v1.7 sidecar did to a round-02 run.
+        if fidelity is None:
+            problems.append(f"{path} {claim.get('id')}: no fidelity field, so the status "
+                            f"cannot be derived (stored {claim.get('status')!r})")
+            continue
+        if fidelity not in FIDELITIES:
+            problems.append(f"{path} {claim.get('id')}: fidelity {fidelity!r} is not one of {FIDELITIES}")
+            continue
+        want = derive_status(backing, fidelity)
         if claim.get("status") != want:
-            problems.append(f"{path} {claim['id']}: stored {claim.get('status')!r}, derived {want!r}")
+            problems.append(f"{path} {claim.get('id')}: stored {claim.get('status')!r}, derived {want!r}")
     return problems
 
 
 def demo():
+    # A sidecar predating the fidelity field is reported, never crashed on.
+    import json as _json, os, tempfile
+    fd, tmp = tempfile.mkstemp(suffix=".sourced"); os.close(fd)
+    open(tmp, "w").write(_json.dumps(
+        {"claims": [{"id": "c1", "status": "sourced"}, {"id": "c2", "status": "inferred"}],
+         "evidence": []}))
+    found = check_file(tmp)
+    os.unlink(tmp)
+    assert len(found) == 2, f"every claim without a fidelity is reported, got {found}"
+    assert "no fidelity field" in found[0], found[0]
+
     assert derive_status(["e1"], "paraphrase") == "sourced"
     assert derive_status([], "paraphrase") == "recalled"
     assert derive_status([], "quotation") == "recalled", "no evidence is recalled however exact the words"
@@ -102,7 +124,9 @@ def demo():
 
 
 if __name__ == "__main__":
-    if len(sys.argv) == 1:
+    # --self-check is how the pre-flight loop reaches every module. This file had no such
+    # flag, so it sat outside the net and shipped a crash that a round found instead.
+    if len(sys.argv) == 1 or "--self-check" in sys.argv[1:]:
         demo()
     else:
         found = [p for f in sys.argv[1:] for p in check_file(f)]

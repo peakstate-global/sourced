@@ -50,9 +50,14 @@ from a real miss on 2026-08-27:
 - **A source you could not fetch is "unavailable at the time of retrieval".** Nothing about
   navigation shells, 403s or curl. Then, in the delivery message, **list every URL that was
   blocked** so the user can try to source it by hand.
-- **Link the sidecar.** Where the artefact is published, the References line links the
-  sidecar where it is served: `[SOURCED sidecar](/sourced/<slug>.sourced.json)`. For a
-  Kilipress tenant that means the sidecar lives in `public/sourced/`, not beside the post.
+- **Link the sidecar. Always, published or not.** The References line ends with a link to
+  the sidecar, because a paper a reader cannot get from to its own evidence has given up the
+  thing that makes it different from an opinion. Published: link where it is served,
+  `[SOURCED sidecar](/sourced/<slug>.sourced.json)`. For a Kilipress tenant that means the
+  sidecar lives in `public/sourced/`, not beside the post. **Unpublished, on disk: link the
+  relative path**, `[SOURCED sidecar](artefact.md.sourced)`.
+  The old rule made this conditional on publication, so of four round-02 papers that lived
+  on disk, three named the sidecar as bare text and one did not mention it at all.
   A piece with no external sources says exactly that: `No external sources.` is a complete
   Limitations line, and so is `None material.`
 

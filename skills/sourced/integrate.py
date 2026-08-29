@@ -246,8 +246,95 @@ def findings(data):
     out.extend(_forecasts(claims))
     out.extend(_stale(data, claims))
     out.extend(_unconfirmed(data))
+    out.extend(_rival_parity(data, claims))
+    out.extend(_dimensions_defined(data, claims))
     out.extend(_boundary_prompts(data, claims))
     return out
+
+
+def _survivors(claims):
+    """Claims that came through the adversarial pass and still carry weight.
+
+    Refuted and withdrawn claims are out: a claim the pass killed does not need a
+    falsifier, and demanding one produces a fake. Purely definitional claims are out for
+    the same reason, since no observation can contradict a statement about what a word
+    will mean here.
+    """
+    out = []
+    for cid, claim in claims.items():
+        if claim.get("challenged") in ("refuted", "withdrawn"):
+            continue
+        if (claim.get("kind") or "").strip().lower() in ("definitional", "definition"):
+            continue
+        out.append((cid, claim))
+    return out
+
+
+def _rival_parity(data, claims):
+    """Refuse a claim the adversarial pass wrote that carries less than the ones it replaced.
+
+    Round 02 found this twice, in two topics, through two different graders. One run's ten
+    rival claims carried no falsifier at all. Another's three replacement claims, the ones
+    holding the integrated position, carried no boundary and were left marked
+    `not-attempted`.
+
+    A claim promoted to carry the position is the most load-bearing thing in the sidecar and
+    the least externally checkable, so it is the last claim that should be exempt from the
+    work. The asymmetry was never a decision; it is what happens when the pass writes claims
+    and nothing asks the pass to finish them.
+    """
+    out = []
+    replacements = {str(c.get("replaced_by")) for c in claims.values()
+                    if c.get("replaced_by")}
+    for cid, claim in _survivors(claims):
+        by_pass = claim.get("origin") == "adversarial" or cid in replacements
+        if not by_pass:
+            continue
+        missing = []
+        if not (claim.get("falsifier") or "").strip():
+            missing.append("`falsifier`")
+        if not boundary.has_boundary(claim) and not (claim.get("unknown_region") or "").strip():
+            missing.append("boundary (`holds_when` / `fails_when` / `unknown_region`)")
+        if missing:
+            out.append(Finding(
+                FAIL, f"claim {cid} was written by the adversarial pass and survived it, but "
+                      f"carries no {' and no '.join(missing)}. A claim the pass promoted "
+                      f"carries the position and is the least checkable thing in the sidecar, "
+                      f"so it does the same work as the claim it replaced. Record it with "
+                      f"`claims.py --falsifier` and `boundary.py`, or mark it refuted."))
+    return out
+
+
+def _dimensions_defined(data, claims):
+    """Refuse a delivery whose boundaries name a dimension nobody defined.
+
+    `dimensions.py` was added to research-mode as a named step after round 01 and then ran
+    in none of the four round-02 runs either. Eight of eight misses says a step named in a
+    reference document is not a step: something has to refuse.
+
+    A dimension named but undefined is a boundary a reader cannot apply, because "holds when
+    severity is high" only travels if `severity` says what it is measured with.
+    """
+    defined = {str(k).strip().lower()
+               for k in (data.get("dimensions") or {})} if isinstance(
+                   data.get("dimensions"), dict) else {
+               str(d.get("name", "")).strip().lower()
+               for d in (data.get("dimensions") or []) if isinstance(d, dict)}
+    named = {}
+    for cid, claim in claims.items():
+        for field in ("holds_when", "fails_when"):
+            for entry in boundary.conditions(claim, field):
+                dim = str(entry.get("dimension") or "").strip()
+                if dim and dim.lower() not in defined:
+                    named.setdefault(dim.lower(), (dim, cid))
+    if not named:
+        return []
+    shown = ", ".join(sorted(d for d, _ in named.values()))
+    return [Finding(
+        FAIL, f"{len(named)} dimension(s) are used in a boundary and defined nowhere: "
+              f"{shown}. A dimension named but undefined is a boundary a reader cannot "
+              f"apply. Run `python3 dimensions.py --sidecar <artefact>.sourced` and write "
+              f"what each one is measured with.")]
 
 
 def _boundary_prompts(data, claims):
@@ -406,7 +493,7 @@ def check_sidecar(path):
 
 
 def _self_check():
-    """Thirteen cases with known answers, no network. The threshold is all thirteen: this
+    """Sixteen cases with known answers, no network. The threshold is all sixteen: this
     file is the last thing between a hidden disagreement and a reader."""
 
     def cond(dimension, value, basis="observed"):
@@ -422,8 +509,20 @@ def _self_check():
     plain = {"claims": [{"id": "c1", "statement": "The sky is blue."}],
              "evidence": [clean, dirty]}
 
+    # Every fixture defines the dimensions its conditions use. The dimensions gate is a
+    # refusal, so a fixture that skipped it would fail for a reason the case is not about.
+    # `case_dimensions_undefined` is the one that deliberately does not.
+    DIMS = {"air quality": "visible haze, clear or hazy",
+            "sun angle": "degrees above the horizon",
+            "night": "sun below the horizon",
+            "severity": "baseline score on the trial's own scale",
+            "period": "calendar years the observation covers"}
+
+    def defined(data):
+        return dict(data, dimensions=DIMS) if "dimensions" not in data else data
+
     def severities(data, severity):
-        return [f for f in findings(data) if f.severity == severity]
+        return [f for f in findings(defined(data)) if f.severity == severity]
 
     def case_open_conflict():
         rec = dict(conflicts.detect(plain)[0], unknown_region="nobody has looked at dusk.")
@@ -455,7 +554,12 @@ def _self_check():
                 "fails_when": [cond("air quality", "hazy", "tested")],
                 "replaced_by": "c2",
                 "unknown_region": "dusk, and every latitude above 60 degrees."}
-        data = {"claims": [held, {"id": "c2", "statement": "The sky is white in haze."}],
+        # c2 is a replacement claim, so the rival-parity gate asks it for the same work
+        # as the claim it replaced: a falsifier and a region.
+        replacement = {"id": "c2", "statement": "The sky is white in haze.",
+                       "holds_when": [cond("air quality", "hazy", "tested")],
+                       "falsifier": "a hazy sky photographed as blue at midday"}
+        data = {"claims": [held, replacement],
                 "evidence": plain["evidence"]}
         assert severities(data, FAIL) == [], severities(data, FAIL)
         # The same disagreement written up as a resolved conflict passes as well.
@@ -538,7 +642,7 @@ def _self_check():
             import tempfile
             with tempfile.TemporaryDirectory() as d:
                 f = pathlib.Path(d) / "x.sourced"
-                f.write_text(json.dumps(both), encoding="utf-8")
+                f.write_text(json.dumps(defined(both)), encoding="utf-8")
                 assert check_sidecar(f) is True, "the flag must not change the exit code"
         # One author-set side is enough: a person has looked at the disagreement.
         one = dict(both, evidence=[clean, proposed(dirty)])
@@ -546,6 +650,46 @@ def _self_check():
         # A model-proposed support on a row in no conflict raises nothing.
         loose = {"claims": [held], "evidence": [proposed(clean)]}
         assert severities(loose, FLAG) == [], severities(loose, FLAG)
+
+    def case_rival_claim_carries_its_own_work():
+        # A claim the pass wrote and promoted, with nothing on it. Round 02 shipped ten of
+        # these in one topic and three in another, and the three were holding the position.
+        bare = {"id": "r1", "statement": "The sky reads grey under haze.",
+                "origin": "adversarial", "challenged": "holds"}
+        data = {"claims": [{"id": "c1", "statement": "The sky is blue."}, bare],
+                "evidence": []}
+        bad = severities(data, FAIL)
+        assert len(bad) == 1 and "r1" in bad[0].message, bad
+        assert "falsifier" in bad[0].message and "boundary" in bad[0].message, bad[0].message
+
+        # Finish it and the refusal goes.
+        done = dict(bare, falsifier="a hazy sky measured as blue at midday",
+                    holds_when=[cond("air quality", "hazy", "tested")])
+        assert severities(dict(data, claims=[data["claims"][0], done]), FAIL) == []
+
+        # A claim the pass refuted needs neither: it is not carrying anything.
+        dead = dict(bare, challenged="refuted")
+        assert severities(dict(data, claims=[data["claims"][0], dead]), FAIL) == []
+
+        # Nor does a definitional claim, which no observation can contradict.
+        word = dict(bare, kind="definitional")
+        assert severities(dict(data, claims=[data["claims"][0], word]), FAIL) == []
+
+    def case_dimensions_must_be_defined():
+        # dimensions.py was named as a step after round 01 and ran in none of the eight
+        # runs across two rounds. A step nothing refuses on is not a step.
+        claim = {"id": "c1", "statement": "The sky is blue.",
+                 "holds_when": [cond("air quality", "clean", "tested")]}
+        undefined = {"claims": [claim], "evidence": []}
+        bad = [f for f in findings(undefined) if f.severity == FAIL]
+        assert len(bad) == 1 and "air quality" in bad[0].message, bad
+        assert "dimensions.py" in bad[0].message, bad[0].message
+
+        # Defined as a map, and as a list of records: both are accepted.
+        as_map = dict(undefined, dimensions={"air quality": "visible haze"})
+        assert [f for f in findings(as_map) if f.severity == FAIL] == []
+        as_list = dict(undefined, dimensions=[{"name": "Air Quality", "definition": "visible haze"}])
+        assert [f for f in findings(as_list) if f.severity == FAIL] == [], "matching is case-insensitive"
 
     def case_mixed_asks_for_the_boundary():
         both = ev("e9", "c1", "mixed", cond("air quality", "hazy"))
@@ -560,7 +704,7 @@ def _self_check():
             import tempfile
             with tempfile.TemporaryDirectory() as d:
                 f = pathlib.Path(d) / "x.sourced"
-                f.write_text(json.dumps(naked), encoding="utf-8")
+                f.write_text(json.dumps(defined(naked)), encoding="utf-8")
                 assert check_sidecar(f) is True, "the flag must not change the exit code"
         # The same row on a claim that already carries a boundary asks nothing, because
         # the question has been answered.
@@ -657,6 +801,10 @@ def _self_check():
               case_precise_claim_needs_a_precise_citation),
              ("a conflict proposed by a model on both sides flags and does not fail",
               case_model_proposed_conflict),
+             ("a rival claim the pass wrote carries a falsifier and a region",
+              case_rival_claim_carries_its_own_work),
+             ("a boundary naming an undefined dimension fails the delivery",
+              case_dimensions_must_be_defined),
              ("a mixed row asks for the boundary, and stops once it is recorded",
               case_mixed_asks_for_the_boundary),
              ("an unreadable file fails without a traceback", case_unreadable),

@@ -165,7 +165,11 @@ iii) Fold both ledgers:
 
     Folding twice is safe. A record replaces the entry with its id rather than adding a second one.
 iv) Run the adversarial pass over what the ledgers now say, and record the boundary of any claim
-    that fails or holds only conditionally (`reference/boundary-record.md`). **A conflict you
+    that fails or holds only conditionally (`reference/boundary-record.md`). **A claim the pass
+    itself writes carries the same work as the claim it replaces**: a `falsifier` and a region.
+    Mark it `"origin": "adversarial"`. `integrate.py` refuses a promoted rival claim that carries
+    neither, because a claim holding the position is the least externally checkable thing in the
+    sidecar and the last one that should be exempt. **A conflict you
     cannot close ships open**, with its unknown region named and a sentence in Limitations saying
     who disagrees about what: `python3 conflicts.py <file.sourced>` writes that sentence for you.
     Never close a conflict to get past the gate. An invented resolution is the failure this whole
@@ -181,6 +185,9 @@ vi) Write the dimension definitions the boundaries use into the sidecar:
 
         python3 dimensions.py --sidecar <artefact>.sourced
 
+    **`integrate.py` now refuses a delivery whose boundaries name a dimension nobody
+    defined**, so this is a gate and not a suggestion. It was a named step through rounds
+    01 and 02 and ran in none of the eight runs: a step nothing refuses on is not a step.
     It lists any dimension nobody has defined. A dimension named but undefined means a
     boundary a reader cannot apply, because "holds when severity is high" only travels if
     `severity` says what it is measured with. This runs after the boundaries exist, which is
@@ -191,27 +198,104 @@ viii) Generate the provenance block from the sidecar: `/sourced statement <artef
 
 ## The shape of the paper
 
-Eight parts. **Four are required**, and a paper missing one of those is not finished. Four are
-recommended, and a paper may drop one by saying in a clause why the evidence did not produce it.
-The order is the argument's own logic, not a template to fill in.
+**The spine is fixed. The argument inside it is not.** The parts below appear in this order under
+these names, because a reader who has read one of these papers should be able to navigate the next
+one without learning a new layout. What varies is how many proposition sections there are, and what
+they say.
 
-1. **The title is the question, not the answer.** Required. A reader who disagrees has to get past
-   the title before they can be persuaded by anything under it.
-2. **What is actually being claimed.** Required. The block you already wrote in `First. Sharpen the
-   question`, brought forward.
-3. **The verdict table.** Required, and it goes **before** the argument, not after. One row per
-   proposition, so the reader knows where they stand before being asked to follow anything.
-4. **One section per proposition**, in table order, each closing with the observation that would
-   falsify it. Required.
-5. **What the strongest opposition did to this.** Recommended. Not "counter-arguments considered":
-   what the adversarial pass changed, including the claims of yours that died.
-6. **The one place the evidence points the other way.** Recommended. The strongest fact against
-   your own conclusion, conceded in its own section rather than buried in a subordinate clause.
-7. **The integrated position, and what it changes.** Required. Step 3(v), written as a section.
-8. **What a person would actually have to decide.** Recommended. Routes different readers to
-   different actions, which is what makes a paper usable rather than admirable.
+An earlier version of this file said the order was "the argument's own logic, not a template to
+fill in". That instinct was right about the argument and wrong about the furniture: four round-02
+papers on four subjects produced the same spine in four different orders under four different
+names, which helped nobody.
 
-Then the provenance block, unchanged.
+| # | Heading | |
+|---|---|---|
+| - | The question, as the title | **Required** |
+| 1 | What is actually being claimed | **Required** |
+| 2 | The verdict table | **Required** |
+| 3...n | One section per proposition, in table order, labelled `P1`...`Pn` | **Required** |
+| n+1 | What the strongest opposition did to this | Recommended |
+| n+2 | The one place the evidence points the other way | Recommended |
+| n+3 | The integrated position, and what it changes | **Required** |
+| n+4 | Where this is going | **Required** |
+| n+5 | What a person would actually have to decide | Recommended |
+| n+6 | Provenance | **Required** |
+
+A recommended part may be dropped by saying in a clause why the evidence did not produce it. A
+required part may not. **Opposition always precedes the concession**: what the pass did to you is
+the context for the fact you are about to concede.
+
+**1. The title is the question, not the answer.** A reader who disagrees has to get past the title
+before they can be persuaded by anything under it.
+
+**2. What is actually being claimed.** Brought forward from `First. Sharpen the question`. Two
+sub-parts, in this order, both required.
+
+**`### Definitions`** - the terms the two camps use differently. Not the technical terms: the
+*contested* ones. Round 02 found one in every subject it touched, and in every case the
+disagreement turned out to be partly about the word: "decline" covering a price and an
+institutional position, "growth" covering GDP and physical throughput, "benefit" covering a trial
+average and an individual outcome. Three or four blocks, not ten. A definitions section that
+defines everything defines nothing.
+
+Each block is four lines:
+
+    **Growth.**
+    **Is:** monetary output, measured as GDP.
+    **Is not:** physical throughput, the energy, materials and emissions an economy moves.
+    **Instead:** say *throughput* for the physical quantity.
+    **Splits:** P2, P4.
+
+Write it in the parties' own terms, never adjudicated. The block exists so both camps can recognise
+themselves in it, not to award the word to one of them. `Splits` names the propositions the
+distinction divides, so a definition that splits nothing gets cut.
+
+**`### The propositions`** - the claim broken into statements evidence can bear on separately,
+**enumerated and labelled `P1`...`Pn`**, each carrying its kind: empirical, definitional,
+predictive or normative. A normative proposition cannot be settled by retrieval, and saying so here
+is what stops a run answering the easy half and presenting it as the whole.
+
+**Counting them is not listing them.** A round-02 paper wrote "that gives eight separately testable
+propositions" and never enumerated them, which left its own verdict table unmappable.
+
+Use uppercase `P`, one style throughout. The label is used again in the table and in the body
+section headings, and it is what the reader follows through the paper.
+
+**3. The verdict table.** Before the argument, never after. See below.
+
+**4. One section per proposition**, in table order, each headed with its label and closing with the
+observation that would falsify it: `## P3. Core Energetics itself has no controlled evidence`.
+
+**5. What the strongest opposition did to this.** Not "counter-arguments considered": what the
+adversarial pass changed, including the claims of yours that died.
+
+**6. The one place the evidence points the other way.** The strongest fact against your own
+conclusion, conceded in its own section rather than buried in a subordinate clause.
+
+**7. The integrated position, and what it changes.** Step 3(v), written as a section.
+
+**8. Where this is going.** Required. Three elements, all of them:
+
+- **The expectation.** What you expect to be true, or to be observed, that is not true or observed
+  now.
+- **The horizon or the trigger.** By when, or after which event. "In the next decade" counts.
+  "Eventually" does not.
+- **The check.** The specific observation that would show the expectation was wrong, and where a
+  reader would go to look.
+
+**An action recommendation does not satisfy this section.** "Prescribe with a stopping rule" is
+advice, not a forecast, and round 02 shipped exactly that in place of a forward view on two of four
+topics, where both graders caught it independently. Advice belongs in *What a person would actually
+have to decide*, which already exists for it.
+
+**A paper may say no forward view is supportable**, and some honestly cannot have one: a purely
+definitional claim has nowhere to go, and forcing a prediction out of it produces a fake. Say that
+in the section, with the reason. Omitting the section is not the same thing.
+
+**9. What a person would actually have to decide.** Routes different readers to different actions,
+which is what makes a paper usable rather than admirable.
+
+Then the provenance block, under its own `## Provenance` heading, unchanged otherwise.
 
 ### The verdict table
 
@@ -219,22 +303,40 @@ Then the provenance block, unchanged.
 
     python3 boundary.py table <artefact>.sourced
 
-It reads every claim carrying a boundary, plus every claim under an open conflict, and prints the
-markdown. Paste it in. A row you disagree with is a boundary recorded wrongly, and the fix is
-`boundary.py`, not the sentence.
+It reads the ledger, so the table cannot drift from it. A row you disagree with is a boundary
+recorded wrongly, and the fix is `boundary.py`, not the sentence.
 
-Give each claim a short `reading` and that is what the first column shows. Without one the whole
-statement goes in the cell, and a paragraph in a table cell is the sign that the question was never
-split.
+**The table is keyed to the propositions.** One row per proposition, in `P` order, carrying the
+label and the proposition's own wording, because those are the best-written sentences in the paper
+and they belong where the reader arrives. A claim that needs its own verdict is grouped **under**
+its proposition as `P2.1`, `P2.2`, not mixed in flat. Set `proposition: "P2"` on a claim to place
+it.
 
-Three columns at minimum: the proposition, the verdict, and the region it holds or fails in. A
-fourth column for the evidence in a few words earns its place on most subjects.
+A flat list of every claim carrying a boundary is what this replaced. One round-02 paper rendered
+32 undifferentiated rows against 6 propositions, every verdict the same two words, and a reader had
+no way in.
 
-| Reading of the claim | Verdict | Where |
+| Proposition | Verdict | Conditions |
 |---|---|---|
-| Share of official reserve stocks | Holds | Fell slowly over 14 years, and continues |
-| Share of transaction flows | Falsified | Rose over the same period |
-| Exchange value | Holds narrowly | Direction supported, the rate is not |
+| P1 - the dollar's real exchange rate will be lower | Holds narrowly | Holds on the real trade-weighted rate, which sits near a series high with a large external deficit behind it. Fails as a statement about the dollar's institutional position, which is not moving the same way. |
+| P1.1 - the decline is already running | Falsified | The rate rose over the four years to 2026. A forecast of a lower rate is not a continuation of a fall. |
+
+**Three columns, and the third is `Conditions`.** Not `Where`. The column carries the whole
+interpretive load, because it is where "promising but thin" and "not established, not refuted"
+live, so it gets a name that says what it is for. A fourth column naming the evidence in a few
+words earns its place on most subjects.
+
+**`Conditions` is a written sentence, not a field dump.** Give each boundary a `reads_as`: one or
+two sentences, in your own words, saying where the claim holds and where it breaks. The generator
+prints `reads_as` when it is there and falls back to concatenating `holds_when`, `fails_when` and
+`unknown_region` when it is not, which is what round 02 shipped and it read like this:
+
+    fails when inferential step: body psychotherapy had no benefit whatsoever;
+    control group activity: body psychotherapy versus no intervention
+
+That is machine-readable and reader-hostile. The conditions themselves stay as they are, because
+`dimensions.py` and the boundary records need them. `reads_as` is what a person reads, and
+`boundary.py table` warns for every row it had to fall back on.
 
 **The verdict word comes from this list and nowhere else.** One word, one meaning, so that two
 papers can be read side by side and a verdict means the same thing in both.
@@ -248,8 +350,8 @@ papers can be read side by side and a verdict means the same thing in both.
 | `Contested` | Sources disagree and the conflict is open | an open `conflicts` record |
 
 Do not invent a sixth. "Promising but thin", "not established, not refuted" and "attempted
-unresolved" all say something real, and all of them belong in the `Where` column, which is free
-text and exists for exactly that.
+unresolved" all say something real, and all of them belong in `Conditions`, which is free text and
+exists for exactly that. **The verdict cell holds the word alone and nothing else.**
 
 **Every verdict is derivable from fields the sidecar already holds**, which is the point: the table
 is a reading of the ledger, not a second opinion about it. A row whose verdict you cannot trace to

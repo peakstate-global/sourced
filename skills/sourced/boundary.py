@@ -28,6 +28,7 @@ ponytail: stdlib, string templates, no template engine. The card is six rows.
 import html
 import json
 import pathlib
+import re
 import sys
 
 # One parser for every condition shape, and one place the vocabularies are listed.
@@ -64,6 +65,8 @@ WEIGHT = {"replicated": 20.0, "tested": 12.0, "observed": 10.0, "untested": 2.0,
           "inferred": 2.0}
 
 BOUNDARY_FIELDS = ("holds_when", "fails_when", "replaced_by", "unknown_region")
+# reads_as is the reader-facing sentence for the Conditions column. It is not a
+# boundary field: a claim carrying only reads_as has documented nothing.
 
 # `replaced_by` may name a claim instead of describing one. That is what makes a competing
 # claim first class: the thing that is true instead is a claim in the corpus with its own
@@ -452,7 +455,26 @@ def _self_check():
     assert table({"claims": [{"id": "c3", "statement": "no boundary here"}]}) == "", \
         "a claim with no boundary and no open conflict earns no row"
 
-    print("boundary: self-check passed (6 of 6 cases; the threshold is 6 of 6)")
+    # The Conditions column: a written sentence wins, the field dump is the fallback.
+    written = dict(night, id="c9", reads_as="  Holds indoors.\n  Fails outdoors.  ")
+    assert _region(written) == "Holds indoors. Fails outdoors.", "reads_as is used, whitespace collapsed"
+    assert _region(dict(night, id="c9")).startswith(("holds when", "fails when", "not tested")), \
+        "no reads_as falls back to the fields"
+
+    # The table is keyed to the propositions, and repeats become P2.1, P2.2.
+    keyed = {"claims": [
+        dict(night, id="a", proposition="P2", reading="second", reads_as="x"),
+        dict(night, id="b", proposition="P1", reading="first", reads_as="y"),
+        dict(night, id="c", proposition="P1", reading="first detail", reads_as="z"),
+    ]}
+    md = table(keyed)
+    assert md.splitlines()[0] == "| Proposition | Verdict | Conditions |", "third column is Conditions"
+    body = md.splitlines()[2:]
+    assert body[0].startswith("| P1 - first |"), "propositions sort by number, not ledger order"
+    assert body[1].startswith("| P1.1 - first detail |"), "a second claim on P1 becomes P1.1"
+    assert body[2].startswith("| P2 - second |"), "P2 follows P1"
+
+    print("boundary: self-check passed (10 of 10 cases; the threshold is 10 of 10)")
 
 
 VERDICTS = ("Holds", "Holds narrowly", "Falsified", "Unevaluated", "Contested")
@@ -486,7 +508,16 @@ def verdict(claim, open_claims=()):
 
 
 def _region(claim):
-    """Where it stands, in as few words as the record allows."""
+    """The Conditions cell: what the author wrote, or the fields if they wrote nothing.
+
+    `reads_as` is a sentence a person can read. The fallback concatenates the machine
+    conditions, which is what round 02 shipped, and it reads like a field dump because
+    that is what it is. The fallback stays because a table with an ugly cell beats a
+    table with a missing row, and `table()` warns about every row that took it.
+    """
+    written = (claim.get("reads_as") or "").strip()
+    if written:
+        return " ".join(written.split())
     for field, lead in (("fails_when", "fails when"), ("holds_when", "holds when")):
         entries = conditions(claim, field)
         if entries:
@@ -494,12 +525,30 @@ def _region(claim):
     return (claim.get("unknown_region") or "").strip() or "not tested"
 
 
+def _sort_key(claim, order):
+    """Proposition order, then claim order within a proposition.
+
+    A claim with no proposition sorts after every labelled one, so an unkeyed ledger
+    still produces a table rather than an error.
+    """
+    label = (claim.get("proposition") or "").strip().upper()
+    m = re.match(r"P(\d+)", label)
+    if not m:
+        return (1, 0, order)
+    return (0, int(m.group(1)), order)
+
+
 def table(data):
-    """The verdict table, as markdown, from the claims that carry a boundary.
+    """The verdict table, as markdown, keyed to the propositions.
 
     This is the artefact's required table (`reference/research-mode.md`). It is
     generated so it cannot drift from the ledger: a row you disagree with is a boundary
     recorded wrongly, and the fix is the record, not the sentence.
+
+    Rows carry the proposition they belong to. A claim naming a proposition renders as
+    `P2.1` beneath it; a claim that IS the proposition renders as `P2` when its
+    `proposition` matches its own label. Round 02 rendered every boundary-carrying claim
+    flat, 32 rows against 6 propositions, and a reader had no way in.
 
     The first column reads `reading` when the claim carries one, which is the short
     proposition the sharpening step produced. Without it the whole statement goes in the
@@ -511,12 +560,33 @@ def table(data):
             if has_boundary(c) or c.get("id") in contested]
     if not rows:
         return ""
-    out = ["| Reading of the claim | Verdict | Where |", "|---|---|---|"]
+    rows = sorted(rows, key=lambda c: _sort_key(c, (data.get("claims") or []).index(c)))
+
+    seen, dumped = {}, []
+    out = ["| Proposition | Verdict | Conditions |", "|---|---|---|"]
     for claim in rows:
         label = (claim.get("reading") or claim.get("statement")
                  or claim.get("assertion") or claim.get("id") or "")
-        out.append(f"| {label.strip().rstrip('.')} "
-                   f"| {verdict(claim, contested)} | {_region(claim)} |")
+        prop = (claim.get("proposition") or "").strip().upper()
+        if prop:
+            n = seen.get(prop, 0)
+            seen[prop] = n + 1
+            tag = prop if n == 0 else f"{prop}.{n}"
+            label = f"{tag} - {label.strip().rstrip('.')}"
+        else:
+            label = label.strip().rstrip(".")
+        if not (claim.get("reads_as") or "").strip():
+            dumped.append(claim.get("id") or label[:30])
+        out.append(f"| {label} | {verdict(claim, contested)} | {_region(claim)} |")
+
+    if dumped:
+        print(f"boundary: {len(dumped)} row(s) fell back to the raw conditions because no "
+              f"reads_as was written: {', '.join(str(d) for d in dumped[:6])}"
+              f"{' ...' if len(dumped) > 6 else ''}", file=sys.stderr)
+    if not seen:
+        print("boundary: no claim names a proposition, so the table is flat. Set "
+              "proposition on each claim to key it (reference/research-mode.md).",
+              file=sys.stderr)
     return "\n".join(out)
 
 
