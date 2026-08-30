@@ -1,6 +1,6 @@
 {
   "$comment": "The frozen feature list. Coverage is measured against this, never against an agent's self-report. When the skill grows a feature it is added here, and the round that first sees it says so. Detection `not_instrumented` means we have no objective signal for it: it is listed and reported separately, never counted as used or unused, because a feature we cannot measure must not quietly depress the score. v3 (2026-08-29, after round 01): boundary.py is detected by the per-claim fields it actually writes, not a top-level key it never wrote; and three features added for the shape of the delivered artefact. Those three are measured here, by mechanical detection against this frozen list, and deliberately NOT by any scored rubric criterion: the skill gained them before this file named them, so a criterion written for them now would be the rubric chasing the skill.",
-  "featuresVersion": 7,
+  "featuresVersion": 8,
   "features": [
     {
       "id": "sourced.py",
@@ -229,6 +229,12 @@
       "group": "integration",
       "detect": "claim_any_field:underwriting",
       "note": "Each claim records what was actually done to it, rather than who signed for it"
+    },
+    {
+      "id": "claims:would-settle",
+      "group": "integration",
+      "detect": "claim_any_field:would_settle",
+      "note": "An untested claim names the study or measurement that would settle it, so an absence is a route forward rather than a dead end"
     }
   ]
 }

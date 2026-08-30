@@ -1,5 +1,5 @@
 ---
-rubricVersion: 5
+rubricVersion: 6
 frozen: 2026-08-30
 reanchored: 2026-08-29
 ---
@@ -66,7 +66,20 @@ C3 separates a process-provenance sentence from a limit on the evidence. "The ha
 re-checked" is not something a reader decides differently for, and counting it as padding cost two
 papers a mark.
 
-**v5 scores are not comparable to v4, v3, v2 or v1.** The ledger records the ruler version per round for
+**v6, after a human read of round 04's four papers.** Two changes, both from defects the rubric
+could not see and a reader could.
+
+C6 separates an **untested** region from a **contested** one. Across round 04's papers, 18 claims
+were flagged `attempted-unresolved` by the adversarial pass and 15 had no conflict record at all:
+nothing contested them, nobody had measured them. Every one read `Contested` in the verdict table
+and **both graders passed all fifteen**. A criterion about conditional truth that cannot tell "two
+sources disagree" from "no source exists" is not measuring conditional truth.
+
+C9 checks that a proposition statement contains no verdict word. One round-04 paper wrote a
+proposition asserting that the premises *are challenged*, which then took the verdict `Contested`,
+and no reader could work out what was being claimed.
+
+**v6 scores are not comparable to v5, v4, v3, v2 or v1.** The ledger records the ruler version per round for
 exactly this reason. This is the fourth consecutive round under a moved ruler, which is a deliberate
 choice: the target is still being discovered, so learning per round is the output and the trend is
 not yet the point.
@@ -167,6 +180,19 @@ of those the evidence reaches. A 0 says there is no evidence for the supernatura
 - **1.** Conditions gestured at without dimensions.
 - **0.** A single verdict, unconditioned.
 
+**Untested is not contested, and calling it so is a defect at any rung.** Three states get confused
+and they are different findings for a reader:
+
+| State | Means | Reads |
+|---|---|---|
+| **Contested** | Two sources were retrieved and they disagree | Somebody has to weigh them |
+| **Untested** | Nobody has measured it. There is no second source | Somebody has to go and look |
+| **Falsified** | Evidence was retrieved and it contradicts the claim | The claim is wrong |
+
+**A region a claim "fails in" that contains no evidence is untested, not failed.** "Fails as a claim
+about active-control trials, because none exist" is not a failure of the claim; it is an absence of
+trials. Where you find this, cap the criterion at 2 however good the rest is, and say which rows.
+
 ### C7 — Mechanism over verdict (weight 2)
 
 - **3.** The causal or transmission channel is named, so a reader can watch the mechanism rather
@@ -233,7 +259,10 @@ i) **Definitions, in two subsections.** *Terms not used here*, each with what th
    paper keeps — it never mixes a retired term and its replacement in one entry.
 ii) **A family named on each defined term**, from the closed set: `umbrella`, `compound`,
     `overloaded`, `unmeasured`, `imprecise`, `judgement`.
-iii) **Propositions enumerated and labelled `P1`…`Pn`**, each with its kind, and carried in the
+iii) **Propositions stated positively, with no verdict word inside them.** A proposition asserts
+     what might be true; the verdict column says how it fared. A proposition containing `holds`,
+     `falsified`, `unevaluated` or `contested` produces a double negative the reader cannot unpick.
+     Also: **propositions enumerated and labelled `P1`…`Pn`**, each with its kind, and carried in the
      sidecar as claims with `role: proposition` rather than living only in prose.
 iv) **A verdict table that restates the proposition** in column one alongside its label, with
     supporting claims grouped beneath as `P2.1`, `P2.2`; a `Conditions` column that says
