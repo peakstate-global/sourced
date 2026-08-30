@@ -63,6 +63,9 @@ tooling, because the scope line is what stops this becoming ceremony on a one-li
   verbatim sentence and its locator. From memory is **RECALLED**; your own conclusion is
   **INFERRED**; both are legitimate and both must be labelled. Ten write-ups of one press release
   are one source: collapse origin before counting. Say plainly what could not be grounded.
+  **What comes next is grounded in a rate and a mechanism, not a state:** retrieve the trend, name
+  what drives it, mark it `predictive`, give it a resolution. Grounding a rate is still grounding,
+  so a projection is load-bearing; demoted to `position` it leaves the argument.
 - **O**pposed & Integrated — argue the strongest case against a conclusion before presenting it,
   then build the surviving position, not just the objections. Name the move that
   resolved each: **Conditional** (each holds in a stated region), **Reframe** (both share a hidden
@@ -72,6 +75,8 @@ tooling, because the scope line is what stops this becoming ceremony on a one-li
   instance not holding the draft has no commitment to defend it. A different model is an upgrade,
   not the mechanism: it catches shared priors. Record which grade ran and never report a lower
   grade as a higher one. For every claim that stands, state what would make it false.
+  **Burden is symmetric across time:** "it will keep working as it does now" is a forecast in the
+  present tense, owing the same rate, mechanism and resolution as the change it denies.
 - **U**nderwritten — never imply a human review makes output correct. A signature buys
   accountability, not accuracy. Where a decision needs a person, say which decision and what they
   would have to verify.
@@ -125,9 +130,8 @@ Open one when its line is true; never preload them.
 | statement | `/sourced statement <file>` | Generate the four-label block from the sidecar | Seconds. It reads the sidecar |
 
 **Research mode is the behavioural change; the rest is presentation.** Read
-`reference/research-mode.md` before the first retrieval. Claims and decisions accrue as they are
-made, then fold into the sidecar. `claims.py` refuses a quote absent from the capture, so the
-quote and the hash are one retrieval.
+`reference/research-mode.md` before the first retrieval. `claims.py` refuses a quote absent from
+the capture, so the quote and the hash are one retrieval.
 
 ## Audit
 
@@ -136,8 +140,7 @@ artefact's argument changes if it is wrong: numbers, findings, causal statements
 assertions, anything a reader would repeat. Mark each SOURCED, RECALLED or INFERRED.
 
 Then run `sourced.py <url> --tier 2` on anything SOURCED, starting at the top of
-`reference/retrieval-ladder.md` and recording the rung you land on. Add `--archive` for anything
-contested: a snapshot you hold proves only what you say you saw.
+`reference/retrieval-ladder.md` and recording the rung. Add `--archive` for anything contested.
 
 **A thin capture is not evidence.** `sourced.py` exits 2 on `THIN`; climb the ladder rather than
 cite the page.
@@ -180,29 +183,25 @@ a position somebody can use.
 
 ## The adversarial pass
 
-**O always runs in some grade, and the disclosure says which one.** Take the best grade this host
-offers: `cross-model-fresh-thread`, `same-model-fresh-thread`, or `same-thread-self-challenge`.
-Where no fresh thread can be spawned, emit the handoff block from `reference/adversarial-pass.md`
-so the user can run it by hand. **Never report a lower grade as a higher one**, and where nothing
-ran, record `not-performed` and disclose it. The grade lands in the optional `opposed` object on
-the sidecar (sourced 1.2), and `decisions.py validate()` refuses an unknown grade.
+**O always runs in some grade, and the disclosure says which one.** Take the best this host offers:
+`cross-model-fresh-thread`, `same-model-fresh-thread`, `same-thread-self-challenge`. Never report a
+lower grade as a higher one; where nothing ran, record `not-performed` and disclose it. The grade
+lands in the sidecar's `opposed` object and `decisions.py validate()` refuses an unknown one.
 
-**Ask the pass for a map, never for a verdict.** Whichever grade runs, in a sub-agent or by hand,
-the instruction is the same: for every disagreement, name the conditions each side held under and
-say where each is right. Never ask which claim survived, which is stronger, or which to keep. What
-comes back is conflict and boundary records, in the shapes `reference/adversarial-pass.md` sets
-out, so the sidecar absorbs them directly.
+**Ask the pass for a map, never for a verdict.** For every disagreement, name the conditions each
+side held under and say where each is right. Never ask which claim survived or which is stronger.
+`reference/adversarial-pass.md` carries the shapes it returns and the by-hand handoff block.
 
 ## The gate before a statement ships
 
     python3 integrate.py <file.sourced>    refuse a delivery that hides a disagreement
 
-`integrate.py` holds O: a conflict recorded in the sidecar and absent from the delivery is a
-disagreement the reader never gets to see. What it refuses, and why, is in
-`reference/provenance-block.md`.
+`integrate.py` holds O twice: a conflict recorded and absent from the delivery is a disagreement
+the reader never sees, and an argument turning on a direction while no claim is `predictive` is
+movement nobody can hold you to. Detail in `reference/provenance-block.md`.
 
-D needs no gate. A claim's `kind` decides where it is disclosed: `position` and `story` are
-evidence-exempt, disclosed as INFERRED in the sidecar, so they never reach Limitations.
+D needs no gate. `position` and `story` are evidence-exempt, disclosed as INFERRED in the sidecar,
+so they never reach Limitations.
 
 ## What this skill will not do
 
@@ -210,7 +209,6 @@ evidence-exempt, disclosed as INFERRED in the sidecar, so they never reach Limit
   a limitation, never a silence.
 - **It will not judge whether the work is any good.** Provenance and quality are different
   questions, and conflating them makes governance a matter of taste.
-- **It will not retro-audit a back catalogue unasked.** That needs its own scoping.
 
 ## Evaluating the skill
 

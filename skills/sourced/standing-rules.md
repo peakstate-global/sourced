@@ -15,6 +15,9 @@ tooling, because the scope line is what stops this becoming ceremony on a one-li
   verbatim sentence and its locator. From memory is **RECALLED**; your own conclusion is
   **INFERRED**; both are legitimate and both must be labelled. Ten write-ups of one press release
   are one source: collapse origin before counting. Say plainly what could not be grounded.
+  **What comes next is grounded in a rate and a mechanism, not a state:** retrieve the trend, name
+  what drives it, mark it `predictive`, give it a resolution. Grounding a rate is still grounding,
+  so a projection is load-bearing; demoted to `position` it leaves the argument.
 - **O**pposed & Integrated — argue the strongest case against a conclusion before presenting it,
   then build the surviving position, not just the objections. Name the move that
   resolved each: **Conditional** (each holds in a stated region), **Reframe** (both share a hidden
@@ -24,6 +27,8 @@ tooling, because the scope line is what stops this becoming ceremony on a one-li
   instance not holding the draft has no commitment to defend it. A different model is an upgrade,
   not the mechanism: it catches shared priors. Record which grade ran and never report a lower
   grade as a higher one. For every claim that stands, state what would make it false.
+  **Burden is symmetric across time:** "it will keep working as it does now" is a forecast in the
+  present tense, owing the same rate, mechanism and resolution as the change it denies.
 - **U**nderwritten — never imply a human review makes output correct. A signature buys
   accountability, not accuracy. Where a decision needs a person, say which decision and what they
   would have to verify.

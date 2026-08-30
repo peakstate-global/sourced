@@ -367,3 +367,24 @@ better adjective.
   supports the statement is your reading, and the statement is what a reviewer argues with.
 - **It does not bind step 0 to anything.** A first-time user with no prior corpus runs this mode
   exactly as written, minus one line of output.
+
+## Retrieve and project in separate passes
+
+**Close the sources before asking what follows.** Retrieval and projection compete for the same
+attention, and retrieval always wins, because it produces visible artefacts and the other does not.
+A session that grounds and extrapolates in one pass reliably ships all grounding and no
+extrapolation, and the gap is invisible in the output: the piece reads as thorough rather than as
+timid.
+
+So run two passes with a hard break between them.
+
+- **Pass one, retrieve.** Capture, quote, hash, record. Nothing is concluded here beyond what a
+  source says.
+- **Pass two, project.** Working from the *summarised* findings rather than the captures, ask what
+  the retrieved rates imply, where the mechanism carries and where it breaks, and what the argument
+  is now committed to. Anything load-bearing that comes out of this pass is marked `predictive` and
+  carries its resolution.
+
+The measured failure this prevents: an artefact whose central argument is that something is
+changing, carrying twenty claims and no forecast, because every unit of session attention was spent
+proving what had already happened.

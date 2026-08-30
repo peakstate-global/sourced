@@ -130,6 +130,35 @@ discharged by the entity, not by a line on a document. The block exists because 
 line tells the reader what *is* backed, and without Limitations a reader reasonably assumes
 everything has the same evidential status as the parts carrying references.
 
+## 6b. A standard for the past becomes a ceiling on the future unless it says otherwise
+
+SOURCED grades how well a claim is grounded, and every grounding move it knows retrieves
+something that has already happened. Left alone, that shapes what gets written: a session
+spends its attention on capture and record, the artefact reflects what the session spent
+its attention on, and the piece ships as a well-evidenced description of a settled world.
+Nothing forbids the forward claim. It simply never gets made, and its absence is invisible,
+because a document full of citations reads as thorough rather than as timid.
+
+Measured on the first long-form artefact built under the standard: twenty claims, not one
+of them predictive, in a piece whose central argument was that a signal is losing its
+information content over time.
+
+Two rules answer it, and neither adds a kind. `predictive` already exists as an assertion
+and already owes a `resolves` date and criterion, so the machinery was there and unused.
+
+- **Grounding a rate is still grounding** (rule S). A projection is evidenced by a retrieved
+  trend plus a named mechanism, which makes it load-bearing rather than decorative. Demoting
+  it to `position` to escape the work is what removes it from the argument.
+- **Burden is symmetric across time** (rule O). "It will keep working the way it does now"
+  is a forecast in the present tense and owes the same rate, mechanism and resolution as the
+  change it denies. Charging the burden only to the claim of change is status-quo bias in
+  the costume of rigour.
+
+`integrate.py` refuses on the second one: a sidecar whose load-bearing claims argue movement
+while no claim in the file is predictive is an argument resting on a direction it never
+stakes. `reference/research-mode.md` carries the process half, which is to retrieve and
+project in separate passes, because the two compete for attention and retrieval always wins.
+
 ## 7. Claim strength is a separate axis
 
 Do not build strength grading into SOURCED. It already exists, in Publish's claim-tier

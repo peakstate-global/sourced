@@ -244,6 +244,7 @@ def findings(data):
                                  f"state the claim at level 2."))
 
     out.extend(_forecasts(claims))
+    out.extend(_unstaked(claims))
     out.extend(_stale(data, claims))
     out.extend(_unconfirmed(data))
     out.extend(_rival_parity(data, claims))
@@ -433,6 +434,45 @@ def _forecasts(claims, today=None):
     return out
 
 
+# Words that only appear in a claim because the argument has a direction in it. A claim
+# using one is asserting movement, and movement is a forecast whether or not it is
+# written as one.
+# ponytail: a word list, not a classifier. It catches the article that argues a trend
+# and stakes nothing on it, which is the case this gate was added for; a parser that
+# understood tense would catch more, and can replace this the day it earns its keep.
+DIRECTION = ("decay", "decays", "decaying", "declin", "shrink", "erod", "rising",
+             "falling", "heading toward", "heading towards", "trajectory",
+             "will stop", "stops predicting", "is becoming", "increasingly",
+             "every year", "year on year", "over time")
+
+
+def _unstaked(claims):
+    """Flags an argument that turns on a direction while staking nothing on it.
+
+    A claim about movement is a forecast in the present tense. If the sidecar carries one
+    and no claim anywhere is `predictive`, the direction is being asserted rather than
+    made: nothing carries a date, nothing carries a criterion, and no reader can ever
+    hold it to anything. The burden is symmetric, so this catches the claim that things
+    will continue as readily as the claim that they will change.
+    """
+    if any(c.get("assertion") == "predictive" for c in claims.values()):
+        return []
+    out = []
+    for cid, claim in claims.items():
+        # A stance or a lived experience may describe movement without owing a date.
+        if claim.get("kind") in ("position", "story"):
+            continue
+        statement = (claim.get("statement") or "").lower()
+        hit = next((w for w in DIRECTION if w in statement), None)
+        if hit:
+            out.append(Finding(FLAG, f"claim {cid} turns on a direction ({hit!r}) and no "
+                                     f"claim in this file is predictive, so the argument "
+                                     f"rests on movement it never stakes: give one claim "
+                                     f"an assertion of \"predictive\" with a resolves "
+                                     f"date and criterion, or reword it as a state"))
+    return out[:1]  # One finding names the fault; a list of them is the same fault.
+
+
 def _stale(data, claims):
     """Flags for evidence whose period ends before the period of the claim it is cited for."""
     out = []
@@ -493,7 +533,7 @@ def check_sidecar(path):
 
 
 def _self_check():
-    """Sixteen cases with known answers, no network. The threshold is all sixteen: this
+    """Seventeen cases with known answers, no network. The threshold is all sixteen: this
     file is the last thing between a hidden disagreement and a reader."""
 
     def cond(dimension, value, basis="observed"):
@@ -788,7 +828,27 @@ def _self_check():
         assert findings({"claims": [{"id": "c1", "kind": "empirical"}],
                          "evidence": []}) == []
 
-    cases = [("an open conflict fails, and the message names both sources", case_open_conflict),
+    def case_unstaked_direction():
+        # A claim that argues movement while the file stakes nothing on it flags once...
+        moving = {"claims": [{"id": "c1", "kind": "empirical",
+                              "statement": "The signal decays as the systems improve."}]}
+        flagged = severities(moving, FLAG)
+        assert len(flagged) == 1, flagged
+        assert "predictive" in flagged[0].message, flagged[0].message
+        # ... and goes quiet as soon as one claim carries a date and a criterion.
+        staked = {"claims": moving["claims"] + [
+            {"id": "c2", "kind": "empirical", "assertion": "predictive",
+             "statement": "It reaches zero on bounded work.",
+             "resolves": {"by": "2028-01-01", "criterion": "the published rate reads 0"}}]}
+        assert severities(staked, FLAG) == [], severities(staked, FLAG)
+        # A stance may describe movement without owing a resolution.
+        stance = {"claims": [{"id": "c1", "kind": "position", "falsifier": "a flat year",
+                              "statement": "Everything is decaying."}]}
+        assert severities(stance, FLAG) == [], severities(stance, FLAG)
+
+    cases = [("an argument that turns on a direction stakes a forecast",
+              case_unstaked_direction),
+             ("an open conflict fails, and the message names both sources", case_open_conflict),
              ("an open conflict named in Limitations ships, an undisclosed one does not",
               case_open_conflict_disclosed),
              ("evidence that disagrees with nothing recorded fails", case_unrecorded),
