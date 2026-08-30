@@ -86,9 +86,21 @@ not instrumented, never counted as unused.
 One scorer per topic per grader, fresh threads, in parallel.
 
 - **Claude**, via `Agent` on Opus.
-- **Codex**, via the `codex` subagent. Probe `codex-available` first; non-zero goes to
-  `adversarial-reviewer` and the report names which grader ran. A fallback is never written up as
-  a cross-model pass.
+- **Codex**, via `./grade-codex.sh <run-dir> <rubric> <out-dir>` — **called directly, never through
+  the `codex` subagent.** That subagent's wrapper is itself a Claude model instructed to forward to
+  the Codex CLI, so a sheet came back whether or not Codex ran and the only evidence of which model
+  reasoned was the sheet's own claim about itself. Round 05 returned one sheet self-identifying as
+  `haiku` and the transcript could not say what had happened.
+
+  **The model string is recorded from the CLI, not from the model.** The script writes
+  `<topic>.codex.meta.json` carrying the command, the CLI version, the exit code and the times, and
+  the grading prompt forbids a `grader` field so nothing can assert its own identity. This is the
+  standard's own rule — an agent's account of its own process is an introspective claim and is not
+  taken on trust — applied to the instrument.
+
+  Probe `codex-available` first; non-zero goes to `adversarial-reviewer` and the report names which
+  grader ran. **A fallback is never written up as a cross-model pass, and neither is a sheet whose
+  `meta.json` shows a non-zero exit.**
 
 Each grader receives: the artefact, its sidecar, and `rubric.md`. Each grader receives **nothing
 else** — no prior round, no recommendation from last time, no coverage table. A grader who has
