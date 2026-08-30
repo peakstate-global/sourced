@@ -130,6 +130,37 @@ to the round: a paper is delivered with its evidence or it is not delivered.
 
 Paths are relative to the round folder, so the block survives being pasted anywhere under it.
 
+## Step 8. Say how this round compares to the ones before it
+
+**Close with a performance summary against every previous round, and mark plainly which
+comparisons are real.** A ledger nobody reads across is a stack of isolated measurements. The
+summary is short, and it is the last thing in the response:
+
+| Round | Ruler | Coverage | Mean | Claude | Codex | Comparable? |
+|---|---|---|---|---|---|---|
+| 01 | p2/r1 | 40/64 | 2.946 | | | baseline |
+| 02 | p2/r2 | 47/64 | 2.798 | 2.881 | 2.714 | **no** - rubric v1 to v2 |
+| 03 | p2/r3 | 65/80 | 2.804 | 2.935 | 2.674 | **no** - rubric v2 to v3, C9 added |
+
+Four rules, and they are what stop the table lying:
+
+- **A round whose `promptVersion` or `rubricVersion` moved is not comparable to the one before
+  it. Say so in the row, every time**, and never draw an arrow between two means across that
+  boundary. A rising mean under a new ruler is not an improvement and a falling one is not a
+  regression.
+- **Report the per-grader means, not only the round mean.** The graders differ systematically,
+  so a round mean can move because the split moved rather than because the work did.
+- **Re-measure coverage for every round under the newest features version and report that
+  separately**, naming the version. Detectors get fixed, and coverage under one instrument is
+  usually the only number that legitimately spans a ruler change. Never overwrite a round's
+  stored `coverage.json` to do it: a round's record does not change after the fact.
+- **Carry the per-criterion story where one exists.** "C4 was 2 on two topics in round 02 and 3
+  on 8 of 8 sheets in round 03" says more than any mean, and it survives a ruler change when the
+  criterion itself did not move.
+
+**If no comparison is legitimate, say that in one sentence and give the table anyway.** Three
+incomparable rounds is itself the finding, and it is the argument for holding the ruler still.
+
 ## What this skill will not do
 
 - **It will not change a frozen file to make a round work.** Topics, prompt, rubric and features
