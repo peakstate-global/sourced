@@ -13,6 +13,8 @@ quote is read out of the capture rather than out of the live page.
         [--locator "p. 12"] [--slide 3] [--origin mit-2026] [--id c4]
     python3 claims.py append <artefact> --statement "…" --status inferred
     python3 claims.py append <artefact> --statement "…" --falsifier "what would kill it"
+    python3 claims.py set <artefact> --id c2 --role proposition
+    python3 claims.py set <artefact> --from fields.json      bulk, idempotent
                                         [--quote-gloss "what a non-prose quote means"]
     python3 claims.py fold <artefact>        ledger lines -> claims[] and evidence[]
     python3 claims.py --self-check           four cases, known answers, no network
@@ -173,12 +175,18 @@ def record(artefact, statement, status="sourced", url="", quote="", locator="", 
             raise ValueError(why)
         # One evidence row per source. A source cited by three claims is one source, and
         # counting it three times is the exact miscount `originGroup` exists to prevent.
-        for prior in existing:
-            if prior.get("evidence") and prior["evidence"]["url"] == url:
-                eid = prior["evidence"]["id"]
+        # An id identifies a QUOTE, not a source. The 1.8 rule is one evidence row per
+        # quote, several rows sharing a url, because a source cited for three claims said
+        # three different things and a reader needs all three. Keying the id on the url
+        # alone gave two quotes one id and `fold` then dropped the second silently: one
+        # round-04 run folded 10 rows for 20 quotes and had to rebuild by hand.
+        prior_rows = [r["evidence"] for r in existing if r.get("evidence")]
+        for prior in prior_rows:
+            if prior["url"] == url and prior.get("quote") == quote:
+                eid = prior["id"]     # genuinely the same evidence, recorded twice
                 break
         else:
-            eid = f"e{len({r['evidence']['url'] for r in existing if r.get('evidence')}) + 1}"
+            eid = f"e{len({r['id'] for r in prior_rows}) + 1}"
         evidence = {"id": eid, "url": url, "quote": quote,
                     "retrievedAt": row["capturedAt"][:10],
                     "sha256": row["sha256"], "textSha256": row.get("textSha256", ""),
@@ -261,7 +269,63 @@ def fold(artefact):
     return len(data["claims"]), len(data["evidence"])
 
 
+def set_fields(artefact, updates):
+    """Write fields onto claims already in the sidecar, in bulk, idempotently.
+
+    The gap this closes has been visible for three rounds. Round 01 saw two runs write
+    their own re-apply scripts, round 03 two more, round 04 eight across three runs, and
+    every one of them existed because a field the skill had just gained had no way in.
+    A run that writes tooling is telling you the toolchain is missing a verb.
+
+    `updates` maps a claim id to a dict of fields. Only the named fields change; nothing
+    is removed, and re-running with the same input is a no-op. This is deliberately NOT a
+    general JSON patch: it edits `claims[]` by id and refuses an id it cannot find, because
+    the failure mode worth preventing is a typo silently creating a claim nobody wrote.
+    """
+    path = pathlib.Path(str(artefact) + ".sourced")
+    doc = json.loads(path.read_text(encoding="utf-8"))
+    by_id = {c.get("id"): c for c in doc.get("claims") or [] if isinstance(c, dict)}
+    missing = [cid for cid in updates if cid not in by_id]
+    if missing:
+        raise ValueError(f"no such claim: {', '.join(sorted(missing))}. "
+                         f"Known ids: {', '.join(sorted(by_id)[:12])}"
+                         f"{' ...' if len(by_id) > 12 else ''}")
+    touched = 0
+    for cid, fields in updates.items():
+        claim = by_id[cid]
+        for k, v in fields.items():
+            if claim.get(k) != v:
+                claim[k] = v
+                touched += 1
+    path.write_text(json.dumps(doc, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    return len(updates), touched
+
+
 def _cli(argv):
+    if argv and argv[0] == "set":
+        # python3 claims.py set <artefact> --from fields.json
+        #   {"c1": {"role": "proposition"}, "c2": {"answers": "c1", "impact": "major"}}
+        # or one claim inline:
+        # python3 claims.py set <artefact> --id c2 --answers c1 --impact major
+        artefact, rest = argv[1], argv[2:]
+        if "--from" in rest:
+            updates = json.loads(pathlib.Path(rest[rest.index("--from") + 1]).read_text())
+        else:
+            cid, fields = None, {}
+            while rest:
+                flag, rest = rest[0], rest[1:]
+                val, rest = (rest[0], rest[1:]) if rest else ("", [])
+                key = flag.lstrip("-").replace("-", "_")
+                if key == "id":
+                    cid = val
+                else:
+                    fields[key] = val
+            if not cid:
+                raise SystemExit("claims.py set: --id is required without --from")
+            updates = {cid: fields}
+        claims_touched, fields_touched = set_fields(artefact, updates)
+        print(f"claims.py: {fields_touched} field(s) set on {claims_touched} claim(s)")
+        return
     if not argv or argv[0] not in ("append", "fold") or len(argv) < 2:
         raise SystemExit(__doc__.strip().splitlines()[0])
     mode, artefact, rest = argv[0], argv[1], argv[2:]
@@ -302,6 +366,19 @@ def _cli(argv):
 
 
 def _self_check():
+    # Two quotes from one source get two ids; the same quote twice gets one.
+    import tempfile as _tf, os as _os
+    with _tf.TemporaryDirectory() as _d:
+        art = pathlib.Path(_d) / "a.md"
+        art.write_text("x")
+        rows = [{"evidence": {"id": "e1", "url": "https://x", "quote": "first"}},
+                {"evidence": {"id": "e2", "url": "https://y", "quote": "other"}}]
+        seen = {r["evidence"]["id"] for r in rows}
+        assert f"e{len(seen) + 1}" == "e3", "ids count evidence rows, not distinct urls"
+        same_url = [r["evidence"] for r in rows if r["evidence"]["url"] == "https://x"]
+        assert same_url and same_url[0]["quote"] != "second", \
+            "a second quote from the same url must not match the first row"
+
     # A quote that is stripped markup needs a sentence saying what it means.
     assert is_prose("Mixed model regression showed significant intervention effects.")
     assert not is_prose("8 8 0"), "a run of numbers is not a quotation"
@@ -379,13 +456,25 @@ def _self_check():
         # punctuation mark, and refusing that match teaches people to switch the check off.
         assert flatten("don\u2019t \u201cstop\u201d \u2014 here") == flatten('don\'t "stop" - here')
 
-        # Case 4: one source cited twice is one evidence row, because ten citations of one
-        # retrieval are still one source.
+        # Case 4: one source, two different quotes, two evidence rows. This reverses the
+        # rule that stood until 1.8, where an id was keyed on the url and a second quote
+        # from a source silently inherited the first row's id, so `fold` dropped it. A
+        # source cited for three claims said three things and a reader needs all three.
+        # Origin collapse still happens, at originGroup, which is where it belongs.
         r3 = record(art, "The cohort was large.", url="https://example.com/a",
                     quote="across the cohort", at="2026-08-28T03:00:00Z")
         append(art, r3)
-        assert r3["evidence"]["id"] == r1["evidence"]["id"], "one source, one evidence id"
-        assert fold(art) == (3, 1), "a second claim on one source adds no second source"
+        assert r3["evidence"]["id"] != r1["evidence"]["id"], \
+            "a different quote from one source is a different evidence row"
+        assert r3["evidence"]["url"] == r1["evidence"]["url"], "and it keeps the url"
+        assert fold(art) == (3, 2), "two quotes fold to two rows"
+
+        # The same quote recorded twice is genuinely one row, and reuses the id.
+        r4 = record(art, "Restated for a second claim.", url="https://example.com/a",
+                    quote="across the cohort", at="2026-08-28T04:00:00Z")
+        append(art, r4)
+        assert r4["evidence"]["id"] == r3["evidence"]["id"], "same url and quote is one row"
+        assert fold(art) == (4, 2), "and it adds no third source"
 
     # Case 5: a re-fold must not destroy what the adversarial pass wrote. The ledger owns
     # the fields it writes; every other field on the claim survives.

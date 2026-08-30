@@ -293,6 +293,13 @@ tag is a diagnosis an author can check rather than an instruction they have to d
 | `unmeasured` | naming something nobody has measured | says what is missing **first**, then what was measured instead, and why they are not the same | **Gap** |
 | `imprecise` | vague where an exact term already exists | uses the exact one | **Exactly** |
 | `judgement` | saying what *ought* to be, not what is | answers the factual half and does not dress the rest as a finding | **Not settled by evidence** |
+| `specific` | one named thing that the debate discusses in general | says so, and never lets evidence about the general stand in for the specific | **Is one of** |
+
+**`specific` is the mirror of `umbrella`**, and round 04 found it by minting a label for it: a paper
+needed to say "Core Energetics is one named method, not the family", because evidence gathered on
+the family was being read as evidence about the method. An umbrella term is too broad for the claim;
+a specific term is narrower than the evidence offered for it. Both are a mismatch of scope and they
+fail in opposite directions.
 
 **Umbrella against compound, in one question:** *can you take one part and still have the thing?*
 Calming work on its own is still somatic practice — umbrella. A likelihood on its own is not a risk

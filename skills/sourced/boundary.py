@@ -474,11 +474,27 @@ def _self_check():
     assert body[1].startswith("| P1.1 - It is blue at noon |"), body
     assert body[2].startswith("| P2 - The sky is grey |"), body
 
-    # A claim with no boundary at all says Unconditional rather than leaving it blank.
+    # A claim with no boundary at all says Unconditional, and the word beats prose.
     bare = {"id": "c1", "statement": "s", "challenged": "holds"}
     assert _region(bare) == "Unconditional", _region(bare)
+    assert _region(dict(bare, reads_as="holds everywhere, unconditionally")) == "Unconditional", \
+        "no boundary means the word, not a sentence about the word"
+    assert _region({"id": "c2", "reads_as": "holds indoors",
+                    "holds_when": [cond("place", "indoors")]}) == "holds indoors", \
+        "with a real boundary, the written sentence is used"
 
-    print("boundary: self-check passed (11 of 11 cases; the threshold is 11 of 11)")
+    # A body label that names a different claim from the table's row is caught.
+    import tempfile as _tf
+    with _tf.TemporaryDirectory() as _d:
+        a = pathlib.Path(_d) / "a.md"
+        a.write_text("## P5. Head\n\n**P5.2 also holds.** Unconditional priority of the limit\n")
+        tbl = "| P5.2 - a planning claim about capital allocation | Falsified | x | y |"
+        warn = check_labels(tbl, a)
+        assert warn and "P5.2" in warn[0], warn
+        ok = "| P5.2 - unconditional priority of the limit over provision | Holds | x | y |"
+        assert check_labels(ok, a) == [], check_labels(ok, a)
+
+    print("boundary: self-check passed (14 of 14 cases; the threshold is 14 of 14)")
 
 
 VERDICTS = ("Holds", "Holds narrowly", "Falsified", "Unevaluated", "Contested")
@@ -519,6 +535,12 @@ def _region(claim):
     that is what it is. The fallback stays because a table with an ugly cell beats a
     table with a missing row, and `table()` warns about every row that took it.
     """
+    # No boundary at all is a fact about the claim, not a matter of phrasing, so the word
+    # wins over whatever prose was written. Round 04 wrote reads_as on unconditional
+    # claims too and the word appeared in none of four papers: "holds in the indexed
+    # literature, unconditionally" is a sentence where `Unconditional` is a signal.
+    if not (has_boundary(claim) or (claim.get("unknown_region") or "").strip()):
+        return "Unconditional"
     written = (claim.get("reads_as") or "").strip()
     if written:
         return " ".join(written.split())
@@ -627,6 +649,36 @@ def table(data):
     return "\n".join(out)
 
 
+def check_labels(md, artefact_path):
+    """Warn where a P-label in the paper names a different claim from the table's.
+
+    Two round-04 graders split on exactly this and the split was settled by looking: one
+    paper's body said "P5.2 also holds" of unconditional priority while the table's P5.2
+    was a falsified planning claim. A label that exists everywhere and points at different
+    things in two places is invisible to anyone checking that labels exist.
+    """
+    art = pathlib.Path(artefact_path)
+    if not art.exists():
+        return []
+    text = art.read_text(errors="replace")
+    in_table = {}
+    for line in md.splitlines():
+        m = re.match(r"\|\s*(P\d+(?:\.\d+)?)\s*-\s*(.+?)\s*\|", line)
+        if m:
+            in_table[m.group(1)] = m.group(2).lower()
+    out = []
+    for m in re.finditer(r"(?:^#{2,4}\s*|\*\*)(P\d+\.\d+)\b[.:]?\s*(.{0,60})", text, re.M):
+        label, following = m.group(1), m.group(2).strip().lower()
+        row = in_table.get(label)
+        if not row or not following:
+            continue
+        head = [w for w in re.findall(r"[a-z]{4,}", following)[:4]]
+        if head and not any(w in row for w in head):
+            out.append(f"boundary: the paper's {label} ({following[:40]}...) does not look like "
+                       f"the table's {label} ({row[:40]}...). One of them is mislabelled.")
+    return out
+
+
 def main(paths, as_table=False):
     shown = 0
     for p in paths:
@@ -636,6 +688,9 @@ def main(paths, as_table=False):
             if md:
                 print(md)
                 shown += 1
+                # The artefact sits beside its sidecar: a.md.sourced -> a.md
+                for w in check_labels(md, str(p)[:-len(".sourced")] if str(p).endswith(".sourced") else ""):
+                    print(w, file=sys.stderr)
             continue
         for claim in doc.get("claims", []):
             if has_boundary(claim):

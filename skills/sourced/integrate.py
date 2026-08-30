@@ -353,14 +353,27 @@ def _templated_falsifiers(data, claims):
     resemble each other on one subject, so the bar is a long identical opening, not a
     similar one.
     """
-    STEM, MIN = 45, 3
+    # Round 04 shipped nine falsifiers reading "An observation showing the opposite of:
+    # <the claim's own statement>". The stem is 38 characters, this compared 45, so the
+    # varying statement entered the window and only two collided. The gate fired on that
+    # paper and nine templates shipped anyway. Two changes: a shorter stem, and a check
+    # for the shape itself, since a falsifier that merely negates the claim names no
+    # observation at all and is a template of one.
+    STEM, MIN = 25, 3
     seen = {}
+    out = []
     for cid, claim in claims.items():
         f = " ".join((claim.get("falsifier") or "").split())
         if len(f) < STEM:
             continue
         seen.setdefault(f[:STEM].lower(), []).append(cid)
-    out = []
+        statement = " ".join((claim.get("statement") or "").split())
+        if statement and len(statement) > 30 and statement.lower()[:40] in f.lower():
+            out.append(Finding(
+                FAIL, f"claim {cid}'s falsifier restates the claim rather than naming an "
+                      f"observation: it contains the claim's own words. 'An observation showing "
+                      f"the opposite of X' is X negated, not something anybody could go and "
+                      f"measure. Name the measurement, the trial result or the count."))
     for stem, ids in seen.items():
         if len(ids) < MIN:
             continue

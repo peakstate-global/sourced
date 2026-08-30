@@ -179,7 +179,7 @@
     {
       "id": "artefact:definition-families",
       "group": "shape",
-      "detect": "artefact_re:\\b(umbrella|compound|overloaded|unmeasured|imprecise|judgement)\\b",
+      "detect": "artefact_re:\\b(umbrella|compound|overloaded|unmeasured|imprecise|judgement|specific)\\b",
       "note": "Each defined term names its family, so the reader learns one diagnosis rather than six shapes"
     },
     {
