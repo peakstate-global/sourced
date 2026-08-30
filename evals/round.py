@@ -3,6 +3,7 @@
 
     python3 round.py new <round-dir>                 stamp the manifest, scaffold the runs
     python3 round.py coverage <run-dir>              which features ran, generated not asserted
+    python3 round.py verify <rounds-dir>             refuse a round whose files moved after scoring
     python3 round.py compare <rounds-dir>            the trend across rounds
     python3 round.py --self-check                    seven cases, known answers, no network
 
@@ -178,6 +179,19 @@ def detect(feature, run, transcript):
         # and never a top-level key, which is what round 01 detected against and missed.
         wanted = set(how.split(":", 1)[1].split("|"))
         return bool(wanted & _claim_fields(_sidecar(run)))
+    if how.startswith("evidence_any_field:"):
+        # Same idea as claim_any_field, one level down: a field written on an
+        # evidence row rather than on a claim.
+        wanted = set(how.split(":", 1)[1].split("|"))
+        rows = _sidecar(run).get("evidence") or []
+        return any(wanted & set(r) for r in rows if isinstance(r, dict))
+    if how == "sidecar_fn:multi_quote":
+        # A source cited more than once, which is the practice change round 04 asks
+        # for: one evidence row per quote, sharing the URL. Twelve runs across three
+        # rounds produced exactly zero, so this starts at the floor.
+        rows = [r for r in (_sidecar(run).get("evidence") or []) if isinstance(r, dict)]
+        urls = [r.get("url") for r in rows if r.get("url")]
+        return len(urls) > len(set(urls))
     if how.startswith("artefact_re:"):
         # Evidence in the delivered artefact itself, not in the ledgers.
         art = run / "artefact.md"
@@ -191,6 +205,42 @@ def detect(feature, run, transcript):
         needle = how.split(":", 1)[1] if ":" in how else feature["id"].split()[0]
         return needle in transcript
     return False
+
+
+def _dir_hash(run):
+    """sha256 over the run's artefacts and ledgers, sorted, excluding what we write.
+
+    The store is included: a capture is evidence and a changed capture changes what a
+    quote was checked against.
+    """
+    h = hashlib.sha256()
+    skip = {"coverage.json", "runlog.txt"}
+    for f in sorted(p for p in run.rglob("*") if p.is_file()):
+        if f.name in skip or "/bin/" in str(f):
+            continue
+        h.update(str(f.relative_to(run)).encode())
+        h.update(f.read_bytes())
+    return h.hexdigest()[:16]
+
+
+def cmd_verify(rounds_dir):
+    """Refuse a round whose files moved after coverage was taken."""
+    bad = 0
+    for cov in sorted(pathlib.Path(rounds_dir).glob("*/runs/*/coverage.json")):
+        rec = json.loads(cov.read_text())
+        want = rec.get("runHash")
+        if not want:
+            print(f"  no runHash  {cov.parent}  (measured before hashing existed)")
+            continue
+        got = _dir_hash(cov.parent)
+        if got != want:
+            print(f"  CHANGED     {cov.parent}\n    scored at {want}, now {got}")
+            bad += 1
+        else:
+            print(f"  ok          {cov.parent}")
+    print(("all runs match what was scored" if not bad
+           else f"{bad} run(s) changed after scoring — the round is no longer what it measured"))
+    return 1 if bad else 0
 
 
 def cmd_coverage(run_dir):
@@ -217,6 +267,11 @@ def cmd_coverage(run_dir):
         "byGroup": {k: f"{v[0]}/{v[1]}" for k, v in sorted(groups.items())},
         "features": rows,
     }
+    # A hash of the run's own files, taken at the moment coverage is measured. Round 03
+    # had a stalled subagent write into a run directory 26 minutes after the round was
+    # scored and committed; it was harmless, and nothing would have caught it if it had
+    # not been. `verify` re-reads this and refuses a round whose files moved after scoring.
+    out["runHash"] = _dir_hash(run)
     (run / "coverage.json").write_text(json.dumps(out, indent=2) + "\n")
     if not transcript:
         print("NOTE: no runlog.txt. Invocation detections read false, which may mean the shim "
@@ -307,5 +362,7 @@ if __name__ == "__main__":
         cmd_coverage(rest[0])
     elif cmd == "compare":
         cmd_compare(rest[0])
+    elif cmd == "verify":
+        sys.exit(cmd_verify(rest[0]))
     else:
         sys.exit(__doc__)

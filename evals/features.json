@@ -1,6 +1,6 @@
 {
   "$comment": "The frozen feature list. Coverage is measured against this, never against an agent's self-report. When the skill grows a feature it is added here, and the round that first sees it says so. Detection `not_instrumented` means we have no objective signal for it: it is listed and reported separately, never counted as used or unused, because a feature we cannot measure must not quietly depress the score. v3 (2026-08-29, after round 01): boundary.py is detected by the per-claim fields it actually writes, not a top-level key it never wrote; and three features added for the shape of the delivered artefact. Those three are measured here, by mechanical detection against this frozen list, and deliberately NOT by any scored rubric criterion: the skill gained them before this file named them, so a criterion written for them now would be the rubric chasing the skill.",
-  "featuresVersion": 5,
+  "featuresVersion": 6,
   "features": [
     {
       "id": "sourced.py",
@@ -65,14 +65,14 @@
     {
       "id": "shared_claims.py",
       "group": "hygiene",
-      "detect": "invocation",
-      "note": "Claims used in more than one artefact"
+      "detect": "not_instrumented",
+      "note": "Retired from scoring after 12 runs across 3 rounds with zero fires. A single-artefact research run has no second corpus to share claims with and no house vocabulary to enforce, so a miss here says nothing about the skill. Reported as not instrumented rather than deleted, so the count stays honest."
     },
     {
       "id": "vocabulary.py",
       "group": "hygiene",
-      "detect": "invocation",
-      "note": "One vocabulary across the record"
+      "detect": "not_instrumented",
+      "note": "Retired from scoring after 12 runs across 3 rounds with zero fires. A single-artefact research run has no second corpus to share claims with and no house vocabulary to enforce, so a miss here says nothing about the skill. Reported as not instrumented rather than deleted, so the count stays honest."
     },
     {
       "id": "sourced.py --check",
@@ -169,6 +169,66 @@
       "group": "shape",
       "detect": "artefact_re:^#{1,3}\\s+.*(where this is going|where it is going|the forward view)",
       "note": "A forward-view section exists and is named, even if it says no forward view is supportable"
+    },
+    {
+      "id": "artefact:definitions-two-parts",
+      "group": "shape",
+      "detect": "artefact_re:^#{2,4}\\s+.*terms not used here",
+      "note": "Definitions are split into terms not used and terms used, so a block never mixes the two"
+    },
+    {
+      "id": "artefact:definition-families",
+      "group": "shape",
+      "detect": "artefact_re:\\b(umbrella|compound|overloaded|unmeasured|imprecise|judgement)\\b",
+      "note": "Each defined term names its family, so the reader learns one diagnosis rather than six shapes"
+    },
+    {
+      "id": "artefact:table-restates",
+      "group": "shape",
+      "detect": "artefact_re:^\\|\\s*P\\d+(\\.\\d+)?\\s*[-\\u2014]\\s*\\S",
+      "note": "The verdict table restates the proposition beside its label, so a reader need not scroll back"
+    },
+    {
+      "id": "artefact:unconditional",
+      "group": "shape",
+      "detect": "artefact_re:\\|\\s*Unconditional",
+      "note": "A claim with no boundary says so in the Conditions column instead of repeating the reasoning"
+    },
+    {
+      "id": "claims:propositions",
+      "group": "integration",
+      "detect": "claim_any_field:role",
+      "note": "Propositions are carried in the sidecar as claims, not only as prose in the artefact"
+    },
+    {
+      "id": "evidence:multi-quote",
+      "group": "capture",
+      "detect": "sidecar_fn:multi_quote",
+      "note": "At least one source contributes more than one quote, so a paper is not limited to one sentence per source"
+    },
+    {
+      "id": "evidence:gloss",
+      "group": "capture",
+      "detect": "evidence_any_field:quoteGloss",
+      "note": "A quote that is not prose carries a plain-English gloss saying what the fragment means"
+    },
+    {
+      "id": "evidence:archived",
+      "group": "hygiene",
+      "detect": "evidence_any_field:archiveUrl",
+      "note": "A cited capture has an independent third-party copy, so custody is not entirely self-attested"
+    },
+    {
+      "id": "claims:locator",
+      "group": "hygiene",
+      "detect": "claim_any_field:locator",
+      "note": "A claim points at where it appears in the artefact, so the sidecar audits the paper and not only the ledger"
+    },
+    {
+      "id": "underwriting:acts",
+      "group": "integration",
+      "detect": "claim_any_field:underwriting",
+      "note": "Each claim records what was actually done to it, rather than who signed for it"
     }
   ]
 }

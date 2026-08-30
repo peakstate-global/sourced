@@ -193,33 +193,41 @@ template, which is the failure this criterion now exists to catch.
 
 ### C9 — Paper shape (weight 2)
 
-**New in v3, and read it as conformance only** (see the v3 note at the top). The skill now
-specifies a fixed spine, and this criterion asks whether the paper has it. It scores structure, not
-quality: whether the forward view is any *good* is C4's job, and a paper can score 3 here and 1
-there.
+**Conformance only** (see the v3 and v4 notes at the top). This criterion asks whether the paper has
+the shape the skill specifies. It scores structure, never quality: whether the forward view is any
+*good* is C4's job, and a paper can score 3 here and 1 there.
 
-Four parts carry this criterion. All are required by `reference/research-mode.md`.
+Five parts carry it. All are required by `reference/research-mode.md`.
 
-i) **Definitions.** A block naming each term the two camps use differently, in the
-   is / is not / instead form, saying which proposition the distinction splits.
-ii) **Propositions.** The claim split into separately testable propositions, enumerated and
-    labelled `P1`…`Pn`, each with its kind (empirical, definitional, predictive, normative).
-iii) **The verdict table, keyed to the propositions.** One row per proposition in column one,
-     carrying its label and its wording, with supporting claim rows grouped beneath as `P2.1`,
-     `P2.2`. Third column headed `Conditions`.
-iv) **A forward-view section**, present and named. A paper may instead say plainly that no forward
-    view is supportable and why; the section still has to exist to say it.
+i) **Definitions, in two subsections.** *Terms not used here*, each with what the paper uses
+   instead and one line on why; then *Terms used here*, as full blocks. A block describes a term the
+   paper keeps — it never mixes a retired term and its replacement in one entry.
+ii) **A family named on each defined term**, from the closed set: `umbrella`, `compound`,
+    `overloaded`, `unmeasured`, `imprecise`, `judgement`.
+iii) **Propositions enumerated and labelled `P1`…`Pn`**, each with its kind, and carried in the
+     sidecar as claims with `role: proposition` rather than living only in prose.
+iv) **A verdict table that restates the proposition** in column one alongside its label, with
+    supporting claims grouped beneath as `P2.1`, `P2.2`; a `Conditions` column that says
+    `Unconditional` rather than repeating the reasoning; and a fourth column for the evidence and
+    reasoning.
+v) **A forward-view section**, present and named, or an explicit statement that no forward view is
+   supportable and why.
 
-- **3.** All four present, and the labels agree across the propositions, the table and the body
+- **3.** All five present, and the labels agree across the propositions, the table and the body
   sections, so a reader can follow `P3` from the split to the verdict to the argument.
-- **2.** All four present, labels drift somewhere — the table and the body disagree, or the
-  propositions are enumerated but unlabelled.
-- **1.** Two or three present.
-- **0.** One or none.
+- **2.** All five present, labels drift somewhere — the table restates a different claim from the
+  proposition it is keyed to, or the propositions are enumerated but not carried in the sidecar.
+- **1.** Three or four present.
+- **0.** Two or fewer.
 
-**Do not credit a part for being gestured at.** A paragraph that discusses what a word means is not
-a definitions block. A sentence saying the claim contains several propositions is not an
-enumeration — round 02 produced exactly that and the propositions were never listed.
+**Do not credit a part for being gestured at.** A paragraph discussing what a word means is not a
+definitions block. A sentence saying the claim contains several propositions is not an enumeration.
+A `Conditions` cell restating why the verdict was reached is not a condition.
+
+**One instruction that is not scored here but is worth knowing while you read:** the definitions say
+what the words mean *in this paper*, and never tell the reader their own usage is wrong. If a block
+reads as an instruction to the reader, note it — it is a real defect with no criterion, and that is
+information about the rubric.
 
 ## The two gates
 
