@@ -250,6 +250,8 @@ def findings(data):
     out.extend(_rival_parity(data, claims))
     out.extend(_templated_falsifiers(data, claims))
     out.extend(_custody(data))
+    out.extend(_proposition_wording(data, claims))
+    out.extend(_untested_says_what_would_settle(data, claims))
     out.extend(_proposition_decomposition(data, claims))
     out.extend(_dimensions_defined(data, claims))
     out.extend(_boundary_prompts(data, claims))
@@ -404,14 +406,19 @@ def _proposition_decomposition(data, claims):
             continue
         narrow = (boundary.conditions(claim, "holds_when")
                   and boundary.conditions(claim, "fails_when"))
-        contested = claim.get("challenged") == "attempted-unresolved"
+        open_ids = {c.get("claim") for c in (data.get("conflicts") or [])
+                    if isinstance(c, dict) and c.get("state") == "open"}
+        contested = cid in open_ids
         if not (narrow or contested):
             continue
         if cid in answered:
             continue
+        # A genuinely contested proposition ships unresolved unless it is split: one
+        # sub-proposition per side, each with its own boundary. That is the integration
+        # step, and round 04's one real contested verdict had none.
         out.append(Finding(
-            FLAG, f"proposition {cid} is "
-                  f"{'contested' if contested else 'true in one region and false in another'} "
+            FAIL if contested else FLAG, f"proposition {cid} is "
+                  f"{'contested, with sources on both sides,' if contested else 'true in one region and false in another'} "
                   f"and nothing answers it. Split it until each part is close to unconditional, "
                   f"with each child carrying answers={cid!r}, so the reader sees the "
                   f"disagreement resolve into parts that are each straightforwardly true. If it "
@@ -457,6 +464,60 @@ def _custody(data):
                   f"{' ...' if len(missing) > 6 else ''}. Their quotes rest on our capture "
                   f"alone, which is a limit on the evidence and belongs in Limitations.")]
     return []
+
+
+VERDICT_WORDS = ("holds", "falsified", "unevaluated", "contested")
+
+
+def _proposition_wording(data, claims):
+    """Refuse a proposition that states a verdict instead of a claim.
+
+    Round 04 shipped a proposition asserting that the premises *are challenged*, which then
+    took the verdict `Contested`. A reader could not tell whether the substance was true:
+    a negative proposition under a negative verdict is a double negative, and the reader
+    has to unpick two layers to find out nothing was established.
+
+    A proposition says what might be true. The verdict column says how it fared.
+    """
+    out = []
+    for cid, claim in claims.items():
+        if claim.get("role") != "proposition":
+            continue
+        text = " ".join((claim.get("statement") or "").split())
+        hit = [w for w in VERDICT_WORDS if w in text.lower()]
+        if hit:
+            out.append(Finding(
+                FAIL, f"proposition {cid} contains the verdict word{'s' if len(hit) > 1 else ''} "
+                      f"{', '.join(sorted(hit))}: {text[:70]!r}. State what might be true and let "
+                      f"the verdict column say how it fared. A proposition that already carries a "
+                      f"verdict reads as a double negative under one."))
+    return out
+
+
+def _untested_says_what_would_settle(data, claims):
+    """Ask an untested claim to name the study or measurement that would settle it.
+
+    Once `attempted-unresolved` stopped meaning `Contested`, a great deal more of each
+    paper reads as untested — 35 of 43 claims on one round-04 paper. A wall of "nobody
+    looked" is a dead end; a wall of "here is the trial that would answer it" is a
+    research agenda, and it is the thing about these papers a field could act on.
+
+    A flag rather than a refusal: sometimes nobody knows what would settle a question, and
+    saying so is honest. But it should be said, not left blank.
+    """
+    out = []
+    for cid, claim in claims.items():
+        untested = (claim.get("challenged") == "attempted-unresolved"
+                    or (claim.get("unknown_region") or "").strip())
+        if not untested:
+            continue
+        if (claim.get("would_settle") or "").strip():
+            continue
+        out.append(Finding(
+            FLAG, f"claim {cid} is untested and does not say what would settle it. Write "
+                  f"`would_settle`: the study, dataset or measurement that would answer it. "
+                  f"An absence a reader can act on is worth more than one they cannot."))
+    return out
 
 
 def _boundary_prompts(data, claims):
@@ -797,7 +858,8 @@ def _self_check():
         rec = dict(conflicts.detect(plain)[0], state="resolved", resolved_into="c1")
         held = {"id": "c1", "statement": "The sky is blue.",
                 "holds_when": [cond("air quality", "clean", "tested")],
-                "unknown_region": "dusk."}
+                "unknown_region": "dusk.",
+                "would_settle": "a dusk photometry series"}
         both = {"claims": [held], "evidence": [proposed(clean), proposed(dirty)],
                 "conflicts": [rec]}
         soft = severities(both, FLAG)
@@ -893,6 +955,39 @@ def _self_check():
         answered = dict(lone, claims=[prop, dict(lone["claims"][1], answers="p1")])
         assert not any("Split it" in f.message for f in severities(answered, FLAG))
 
+    def case_proposition_carries_no_verdict_word():
+        bad = {"claims": [{"id": "p1", "role": "proposition",
+                           "statement": "The premises of the claim are contested."}],
+               "evidence": []}
+        f = severities(bad, FAIL)
+        assert len(f) == 1 and "contested" in f[0].message, f
+        ok = dict(bad, claims=[dict(bad["claims"][0],
+                                    statement="The premises of the claim are sound.")])
+        assert severities(ok, FAIL) == [], severities(ok, FAIL)
+
+    def case_untested_names_what_would_settle():
+        c = {"id": "c1", "statement": "s", "unknown_region": "outside the tested band"}
+        data = {"claims": [c], "evidence": []}
+        soft = [x for x in severities(data, FLAG) if "would_settle" in x.message]
+        assert len(soft) == 1, soft
+        assert severities(data, FAIL) == [], "asking never fails the gate"
+        answered = dict(data, claims=[dict(c, would_settle="a trial enrolling below the band")])
+        assert not [x for x in severities(answered, FLAG) if "would_settle" in x.message]
+
+    def case_contested_proposition_must_be_split():
+        prop = {"id": "p1", "role": "proposition", "statement": "The sky is blue.",
+                "would_settle": "a photometry series"}
+        data = {"claims": [prop], "evidence": [],
+                "conflicts": [{"id": "x9", "claim": "p1", "state": "open",
+                               "between": [{"evidence": "e1"}, {"evidence": "e2"}]}]}
+        bad = [x for x in severities(data, FAIL) if "Split it" in x.message]
+        assert len(bad) == 1, severities(data, FAIL)
+        # One sub-proposition per side answers it.
+        split = dict(data, claims=[prop,
+                                   {"id": "p1a", "answers": "p1", "statement": "Blue in fine weather."},
+                                   {"id": "p1b", "answers": "p1", "statement": "Grey in storms."}])
+        assert not [x for x in severities(split, FAIL) if "Split it" in x.message]
+
     def case_mixed_asks_for_the_boundary():
         both = ev("e9", "c1", "mixed", cond("air quality", "hazy"))
         naked = {"claims": [{"id": "c1", "statement": "The sky is blue."}],
@@ -914,7 +1009,8 @@ def _self_check():
                 "holds_when": [cond("air quality", "clean", "tested")],
                 "fails_when": [cond("air quality", "hazy", "tested")],
                 "replaced_by": "The sky reads grey under haze.",
-                "unknown_region": "dusk, and every latitude above 60 degrees."}
+                "unknown_region": "dusk, and every latitude above 60 degrees.",
+                "would_settle": "a photometry series across dusk and high latitudes"}
         answered = {"claims": [held], "evidence": [both]}
         assert severities(answered, FLAG) == [], severities(answered, FLAG)
         # And a mixed row raises no conflict beside a row pointing the other way.
@@ -1036,6 +1132,12 @@ def _self_check():
               case_falsifier_template_refused),
              ("a narrow proposition is asked to split, and it is a flag not a refusal",
               case_narrow_proposition_asks_to_be_split),
+             ("a proposition may not carry a verdict word",
+              case_proposition_carries_no_verdict_word),
+             ("an untested claim is asked what would settle it",
+              case_untested_names_what_would_settle),
+             ("a genuinely contested proposition must be split, one side each",
+              case_contested_proposition_must_be_split),
              ("a mixed row asks for the boundary, and stops once it is recorded",
               case_mixed_asks_for_the_boundary),
              ("an unreadable file fails without a traceback", case_unreadable),

@@ -282,8 +282,20 @@ Two subsections, in this order:
   Bullets, indented, one property per line. `Propositions it divides` names the propositions the
   distinction separates from each other, so a definition that divides nothing gets cut.
 
-**Every defined term names its family.** Six, and each names the condition the word is in, so the
-tag is a diagnosis an author can check rather than an instruction they have to derive.
+**Every defined term names its family, and the family decides which subsection it lives in.**
+Three describe why a word was **set aside**, so those terms belong in *Terms not used here*; four
+describe a word the paper **keeps**, so those get a full block in *Terms used here*. If the paper is
+offering a replacement, the original is by definition not preferred, and putting it in the kept
+section with a family explaining its flaw is the contradiction round 04 shipped three times.
+
+**Write the family as a labelled line inside the block, never as a bracketed tag.** Square brackets
+belong to the adversarial pass's four moves — Conditional, Reframe, Redirect, Hold — and a family in
+the same notation makes two controlled vocabularies look like one. A reader who knows the moves will
+read `[imprecise]` as a move that does not exist.
+
+    **Reserve asset.**
+    - **Family** — imprecise
+    - **In this paper** — ...
 
 | Family | The word is… | So the paper… | The line it uses |
 |---|---|---|---|
@@ -294,6 +306,10 @@ tag is a diagnosis an author can check rather than an instruction they have to d
 | `imprecise` | vague where an exact term already exists | uses the exact one | **Exactly** |
 | `judgement` | saying what *ought* to be, not what is | answers the factual half and does not dress the rest as a finding | **Not settled by evidence** |
 | `specific` | one named thing that the debate discusses in general | says so, and never lets evidence about the general stand in for the specific | **Is one of** |
+
+**Where each family lives.** `imprecise`, `overloaded` and `unmeasured` describe a term the paper
+sets aside, and go in *Terms not used here* as one line. `umbrella`, `compound`, `specific` and
+`judgement` describe a term the paper keeps, and get a full block in *Terms used here*.
 
 **`specific` is the mirror of `umbrella`**, and round 04 found it by minting a label for it: a paper
 needed to say "Core Energetics is one named method, not the family", because evidence gathered on
@@ -315,6 +331,12 @@ neighbour — the bare *ought*, as in "growth **should** be subordinated to ecol
 **enumerated and labelled `P1`…`Pn`**, each carrying its kind: empirical, definitional, predictive
 or normative. A normative proposition cannot be settled by retrieval, and saying so here is what
 stops a run answering the easy half and presenting it as the whole.
+
+**State a proposition positively, and never put a verdict word in it.** A proposition says what
+might be true; the verdict column says how it fared. Round 04 shipped a proposition asserting that
+the premises *are challenged*, which then took the verdict `Contested`, and no reader could unpick
+whether the substance was true. `holds`, `falsified`, `unevaluated` and `contested` are refused
+inside a proposition statement.
 
 **Counting them is not listing them.** A round-02 paper wrote "that gives eight separately testable
 propositions" and never enumerated them, which left its own verdict table unmappable.
@@ -421,6 +443,28 @@ fallback.
 | `Falsified` | The evidence contradicts it | `fails_when` and `replaced_by` |
 | `Unevaluated` | Nobody has measured it, which is not the same as false | `unknown_region` |
 | `Contested` | Sources disagree and the conflict is open | an open `conflicts` record |
+
+**Untested is not contested.** Three states get confused and they are different findings:
+`Contested` means two retrieved sources disagree and somebody has to weigh them. `Unevaluated` means
+nobody has measured it and somebody has to go and look. `Falsified` means evidence was retrieved and
+it contradicts the claim.
+
+**The adversarial pass returning `attempted-unresolved` is usually `Unevaluated`, not `Contested`.**
+The pass could not settle the question because there is nothing to settle it with. Round 04 shipped
+18 claims with that flag, 15 of them with no conflict record at all, every one rendering as
+`Contested`, and both graders passed all fifteen. `Contested` now requires an open conflict record
+naming two sides.
+
+**A region a claim fails in that contains no evidence is untested, not failed.** "Fails as a claim
+about active-control trials, because none exist" is an absence of trials, not a failure of the
+claim. Record such a region with a `basis` of `untested` and it will not drag the verdict down.
+
+**An untested claim says what would settle it.** Write `would_settle`: the study, dataset or
+measurement that would answer the question. Once `attempted-unresolved` stopped meaning `Contested`,
+a great deal more of a paper reads as untested — 35 of 43 claims on one round-04 paper — and a wall
+of "nobody looked" is a dead end where a wall of "here is the trial that would answer it" is a
+research agenda. **A proposition that comes out entirely untested still gets its own section**, and
+a short one: the absence is a finding and burying it hides the most useful thing some papers have.
 
 **How this lines up with the adversarial pass's four moves.** The moves resolve a *finding* during
 the pass; the verdicts describe a *claim* in the paper. They are different objects and neither

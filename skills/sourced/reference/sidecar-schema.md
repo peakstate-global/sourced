@@ -14,12 +14,12 @@ self-explaining to anyone who opens it, and a real JSON Schema (draft 2020-12) t
 ```json
 {
   "$schema": "https://peakstate.global/sourced/v1.schema.json",
-  "sourced": "1.8",
+  "sourced": "1.9",
   "artefact": { "path": "deck.pptx", "sha256": "…", "producedAt": "2026-08-26" },
   "claims": [
     { "id": "c1", "statement": "…", "status": "sourced",
       "role": "proposition", "answers": "c1", "reads_as": "…", "basis": "…",
-      "impact": "moderate", "domain": "medical",
+      "impact": "moderate", "domain": "medical", "would_settle": "…",
       "underwriting": [ { "act": "quote-checked", "by": "sourced.py", "at": "…" } ],
       "locator": { "slide": 3 }, "evidence": ["e1"],
       "level": 1, "finer": "c3", "challenged": "holds-with-boundary",
@@ -295,3 +295,29 @@ checked, the arithmetic recomputed, a challenge survived — with the actor and 
 assurance level is derived from the acts by `underwrite.py` and is never stored, because a stored
 level is an assertion and a derived one can be argued with. `impact` and `domain` feed the risk
 rating; both are optional and both default conservatively.
+
+
+## 1.9 — untested is not contested
+
+**`Contested` now requires an open `conflicts` record naming two sides.** It previously also fired
+on `challenged: "attempted-unresolved"`, which means the adversarial pass could not settle the
+question — usually because nothing settles it. Round 04 shipped 18 claims carrying that flag, 15 of
+them with no conflict record at all, and every one rendered `Contested` in the verdict table. Both
+graders passed all fifteen; a reader caught it and asked how a verdict could be contested when
+nothing contests it. `attempted-unresolved` with no open conflict now reads `Unevaluated`.
+
+**A `fails_when` entry with `basis` of `untested`, `absent` or `no-evidence` does not make a claim
+fail.** A region nobody has measured is untested, not failed, and "fails as a claim about
+active-control trials, because none exist" is an absence of trials.
+
+**`would_settle` says what would answer an untested claim** — the study, dataset or measurement.
+`integrate.py` asks for it on any claim carrying an `unknown_region` or the unresolved flag. It is a
+flag and not a refusal, because sometimes nobody knows what would settle a question, but that should
+be said rather than left blank.
+
+**A proposition may not contain a verdict word**, and `integrate.py` refuses one that does. A
+proposition states what might be true; the verdict says how it fared, and a proposition already
+carrying a verdict reads as a double negative underneath one.
+
+**A genuinely contested proposition must be split**, one sub-proposition per side, each with its own
+boundary. That is the integration step, and it is now a refusal rather than a prompt.

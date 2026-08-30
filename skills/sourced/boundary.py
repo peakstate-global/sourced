@@ -442,7 +442,10 @@ def _self_check():
     assert verdict(dict(both, fails_when=[], replaced_by="")) == "Holds"
     assert verdict({"id": "c2", "statement": "x"}) == "Unevaluated"
     assert verdict(dict(both, challenged="refuted")) == "Falsified", "the pass outranks the regions"
-    assert verdict(dict(both, challenged="attempted-unresolved")) == "Contested"
+    # Until v1.9 this asserted Contested. attempted-unresolved means the pass could not
+    # settle it, which is usually because nothing settles it: untested, not disputed.
+    assert verdict(dict(both, challenged="attempted-unresolved")) == "Unevaluated", \
+        "the pass failing to settle something is not two sources disagreeing"
     assert verdict(dict(both), open_claims={"c1"}) == "Contested", "an open conflict outranks all"
     assert verdict(dict(both, status="recalled")) == "Holds narrowly", "provenance is not a verdict"
 
@@ -474,6 +477,21 @@ def _self_check():
     assert body[1].startswith("| P1.1 - It is blue at noon |"), body
     assert body[2].startswith("| P2 - The sky is grey |"), body
 
+    # attempted-unresolved with nothing contesting it is untested, not contested.
+    lonely = {"id": "c7", "statement": "s", "challenged": "attempted-unresolved"}
+    assert verdict(lonely) == "Unevaluated", verdict(lonely)
+    assert verdict(lonely, open_claims={"c7"}) == "Contested", "a real open conflict still contests"
+
+    # A fails_when region nobody measured does not make the claim fail.
+    untested = {"id": "c8", "statement": "s",
+                "holds_when": [{"dimension": "arm", "value": "waitlist", "basis": "observed"}],
+                "fails_when": [{"dimension": "arm", "value": "active control",
+                                "basis": "untested"}]}
+    assert verdict(untested) == "Holds", verdict(untested)
+    real = dict(untested, fails_when=[{"dimension": "arm", "value": "active control",
+                                       "basis": "observed"}])
+    assert verdict(real) == "Holds narrowly", verdict(real)
+
     # A claim with no boundary at all says Unconditional, and the word beats prose.
     bare = {"id": "c1", "statement": "s", "challenged": "holds"}
     assert _region(bare) == "Unconditional", _region(bare)
@@ -494,7 +512,7 @@ def _self_check():
         ok = "| P5.2 - unconditional priority of the limit over provision | Holds | x | y |"
         assert check_labels(ok, a) == [], check_labels(ok, a)
 
-    print("boundary: self-check passed (14 of 14 cases; the threshold is 14 of 14)")
+    print("boundary: self-check passed (18 of 18 cases; the threshold is 18 of 18)")
 
 
 VERDICTS = ("Holds", "Holds narrowly", "Falsified", "Unevaluated", "Contested")
@@ -512,12 +530,27 @@ def verdict(claim, open_claims=()):
     nobody closed is not a verdict we get to state.
     """
     challenged = claim.get("challenged")
-    if claim.get("id") in open_claims or challenged == "attempted-unresolved":
+    # Contested means two retrieved sources disagree. It does NOT mean the adversarial
+    # pass could not settle something, which is usually the opposite: the pass could not
+    # settle it because there is nothing to settle it WITH.
+    #
+    # Round 04 shipped 18 claims flagged attempted-unresolved, 15 of them with no conflict
+    # record at all, and every one read Contested. Both graders passed all fifteen; a
+    # reader caught it in five minutes and asked how a verdict could be contested when
+    # nothing contests it.
+    if claim.get("id") in open_claims:
         return "Contested"
+    if challenged == "attempted-unresolved":
+        # No open conflict. The pass tried and found nothing to weigh, which is untested.
+        return "Unevaluated"
     if challenged == "refuted":
         return "Falsified"
     holds = bool(conditions(claim, "holds_when"))
-    fails = bool(conditions(claim, "fails_when"))
+    # A region a claim "fails in" that nobody has measured is untested, not failed.
+    # "Fails as a claim about active-control trials, because none exist" is an absence of
+    # trials, and a boundary basis of `untested` or `absent` says so.
+    fails = any(str(c.get("basis", "")).strip().lower() not in ("untested", "absent", "no-evidence")
+                for c in conditions(claim, "fails_when"))
     if challenged == "holds-with-boundary" or (holds and fails):
         return "Holds narrowly"
     if fails and claim.get("replaced_by"):
