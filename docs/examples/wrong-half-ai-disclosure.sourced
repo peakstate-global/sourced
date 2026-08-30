@@ -1,0 +1,662 @@
+{
+  "$schema": "https://peakstate.global/sourced/v1.schema.json",
+  "sourced": "1.7",
+  "artefact": {
+    "path": "docs/articles/a-the-label-is-two-things.md",
+    "sha256": "9754dd461a622c4785c36de73b15b1eec0f8e316312a72fb862eac1fe5ef0f7c",
+    "producedAt": "2026-08-30"
+  },
+  "claims": [
+    {
+      "id": "c1",
+      "statement": "Elsevier requires the name of the model or tool, the version used, and the developer or manufacturer for AI-generated images.",
+      "status": "sourced",
+      "locator": {
+        "section": "opening"
+      },
+      "kind": "empirical",
+      "evidence": [
+        "e1"
+      ]
+    },
+    {
+      "id": "c2",
+      "statement": "The medical journal editors require authors to disclose whether AI-assisted technologies were used and describe how, and refuse to list a chatbot as an author because it cannot be responsible for accuracy, integrity and originality.",
+      "status": "sourced",
+      "locator": {
+        "section": "opening"
+      },
+      "kind": "empirical",
+      "evidence": [
+        "e2"
+      ]
+    },
+    {
+      "id": "c3",
+      "statement": "EU AI Act Article 50 requires synthetic content to be marked as artificially generated or manipulated, and people to be told when they are interacting with an AI system.",
+      "status": "sourced",
+      "locator": {
+        "section": "opening"
+      },
+      "kind": "empirical",
+      "evidence": [
+        "e3"
+      ]
+    },
+    {
+      "id": "c4",
+      "statement": "The deepfake and public-interest-text duties apply from 2 August 2026, and the machine-readable marking duty runs to 2 December 2026 for systems already on the market.",
+      "status": "recalled",
+      "locator": {
+        "section": "opening"
+      },
+      "kind": "empirical",
+      "evidence": [
+        "e3"
+      ],
+      "challenged": "holds-with-boundary"
+    },
+    {
+      "id": "c5",
+      "statement": "Sixteen preregistered experiments with 27,491 participants found identical creative writing rated lower when attributed to AI.",
+      "status": "sourced",
+      "locator": {
+        "section": "The tick box is doing damage while it sits there"
+      },
+      "kind": "empirical",
+      "evidence": [
+        "e4"
+      ]
+    },
+    {
+      "id": "c6",
+      "statement": "A separate experiment with 800 participants found an AI-content label had no significant effect on perceived accuracy, message credibility or sharing intention for misinformation.",
+      "status": "sourced",
+      "locator": {
+        "section": "The tick box is doing damage while it sits there"
+      },
+      "kind": "empirical",
+      "evidence": [
+        "e5"
+      ]
+    },
+    {
+      "id": "c7",
+      "statement": "Attaching warnings to a subset of false headlines raised willingness to share the untagged false headlines from 29.8 per cent to 36.2 per cent.",
+      "status": "sourced",
+      "locator": {
+        "section": "The tick box is doing damage while it sits there"
+      },
+      "kind": "empirical",
+      "evidence": [
+        "e6"
+      ]
+    },
+    {
+      "id": "c8",
+      "statement": "Across 26 models, hallucination rates range from 22 per cent to 94 per cent; SWE-bench Verified performance rose from roughly 60 per cent in 2024 to close to 100 per cent in 2025.",
+      "status": "sourced",
+      "locator": {
+        "section": "Is the badge at least a rough guide to quality?"
+      },
+      "kind": "empirical",
+      "evidence": [
+        "e7"
+      ]
+    },
+    {
+      "id": "c9",
+      "statement": "Alsup called training on lawfully acquired books exceedingly transformative fair use, and held that the separately pirated library displaced demand for the authors' books.",
+      "status": "sourced",
+      "locator": {
+        "section": "Ask for the ingredients list"
+      },
+      "kind": "empirical",
+      "evidence": [
+        "e8"
+      ]
+    },
+    {
+      "id": "c10",
+      "statement": "Final approval of the Bartz settlement was granted on 20 July 2026 and the case is on appeal to the Ninth Circuit.",
+      "status": "sourced",
+      "locator": {
+        "section": "Ask for the ingredients list"
+      },
+      "kind": "empirical",
+      "evidence": [
+        "e9"
+      ]
+    },
+    {
+      "id": "c11",
+      "statement": "The Third Circuit heard argument in Thomson Reuters v. Ross Intelligence on 11 June 2026 and had not issued a decision as at 30 August 2026.",
+      "status": "sourced",
+      "locator": {
+        "section": "Ask for the ingredients list"
+      },
+      "kind": "empirical",
+      "evidence": [
+        "e10"
+      ]
+    },
+    {
+      "id": "c12",
+      "statement": "Chhabria ruled for Meta and wrote that the ruling does not stand for the proposition that Meta's use of copyrighted materials to train its language models is lawful.",
+      "status": "sourced",
+      "locator": {
+        "section": "Ask for the ingredients list"
+      },
+      "kind": "empirical",
+      "evidence": [
+        "e11"
+      ]
+    },
+    {
+      "id": "c13",
+      "statement": "Getty abandoned its primary copyright claims during the UK trial, so the training question was not decided there.",
+      "status": "sourced",
+      "locator": {
+        "section": "Ask for the ingredients list"
+      },
+      "kind": "empirical",
+      "evidence": [
+        "e12"
+      ]
+    },
+    {
+      "id": "c14",
+      "statement": "On GPQA Diamond, selecting among generated candidates with weak verifiers closed a 37.3-percentage-point gap over majority voting.",
+      "status": "sourced",
+      "locator": {
+        "section": "Is the badge at least a rough guide to quality?"
+      },
+      "kind": "empirical",
+      "evidence": [
+        "e13"
+      ]
+    },
+    {
+      "id": "c15",
+      "statement": "The United States cleared an autonomous diagnostic system in 2018 that makes an assessment without a clinician interpreting each case.",
+      "status": "sourced",
+      "locator": {
+        "section": "Is the badge at least a rough guide to quality?"
+      },
+      "kind": "empirical",
+      "evidence": [
+        "e14"
+      ]
+    },
+    {
+      "id": "c16",
+      "statement": "In the MASAI trial the AI-supported arm had an interval cancer rate of 1.55 per 1,000 against 1.76 for standard double reading.",
+      "status": "sourced",
+      "locator": {
+        "section": "Is the badge at least a rough guide to quality?"
+      },
+      "kind": "empirical",
+      "evidence": [
+        "e15"
+      ],
+      "challenged": "holds-with-boundary"
+    },
+    {
+      "id": "c17",
+      "statement": "Disclosure carries two separable signals: a capability signal that decays as systems improve, and a provenance signal that does not.",
+      "status": "inferred",
+      "locator": {
+        "section": "opening"
+      },
+      "kind": "position"
+    },
+    {
+      "id": "c18",
+      "statement": "The acquisition question is answerable only by whoever built and trained the model, so the burden sits upstream of the writer.",
+      "status": "inferred",
+      "locator": {
+        "section": "Ask for the ingredients list"
+      },
+      "kind": "position"
+    },
+    {
+      "id": "c19",
+      "statement": "Verifier ensembling and AI-first-pass-with-human-adjudication generalise to ordinary knowledge work; formal verification, calibrated abstention and closed loops over a stationary distribution do not.",
+      "status": "inferred",
+      "locator": {
+        "section": "What would make me wrong"
+      },
+      "kind": "empirical"
+    },
+    {
+      "id": "c20",
+      "statement": "Nobody has measured how real knowledge work divides between checkable and open-ended tasks, or published production defect rates for it.",
+      "status": "inferred",
+      "locator": {
+        "section": "What would make me wrong"
+      },
+      "kind": "empirical"
+    },
+    {
+      "id": "c21",
+      "statement": "\"Made in Australia\" requires only that the last substantial transformation happened here, while \"Product of Australia\" requires the main ingredients and almost all processing to be Australian.",
+      "status": "sourced",
+      "locator": {
+        "section": "opening"
+      },
+      "kind": "empirical",
+      "evidence": [
+        "e16"
+      ]
+    },
+    {
+      "id": "c22",
+      "statement": "Of the papers accepted by the first review committee, 50.6 per cent were rejected by a second committee reviewing the same papers.",
+      "status": "sourced",
+      "locator": {
+        "section": "But surely a machine decision needs more justification than a human one?"
+      },
+      "kind": "empirical",
+      "evidence": [
+        "e17"
+      ]
+    },
+    {
+      "id": "c23",
+      "statement": "Across every condition tested in the choice-blindness experiments, no more than 26 per cent of the covert swaps were detected.",
+      "status": "sourced",
+      "locator": {
+        "section": "But surely a machine decision needs more justification than a human one?"
+      },
+      "kind": "empirical",
+      "evidence": [
+        "e18"
+      ]
+    },
+    {
+      "id": "c24",
+      "statement": "One of the Australian regulators supervising a licensed profession will publish guidance permitting an AI system to produce a regulated work product with no per-item human sign-off, before the end of 2028.",
+      "status": "inferred",
+      "locator": {
+        "section": "Is the badge at least a rough guide to quality?"
+      },
+      "kind": "empirical",
+      "evidence": [
+        "e7",
+        "e13",
+        "e14",
+        "e15"
+      ],
+      "assertion": "predictive",
+      "resolves": {
+        "by": "2028-12-31",
+        "criterion": "A named Australian regulator publishes guidance or a decision permitting an AI-produced work product in a compliance process with no per-item human sign-off. The date is a review date, not an expiry: a later arrival resolves the claim true on the wrong clock, and only a reversal of direction resolves it false."
+      },
+      "falsifier": "Regulators moving the other way: an existing per-item exemption withdrawn, or the verification advantage failing to transfer out of imaging and code."
+    },
+    {
+      "id": "c25",
+      "statement": "The capability and provenance signals overlap in what they name, and separate on who can answer and whether the answer expires.",
+      "status": "inferred",
+      "locator": {
+        "section": "Ask for the ingredients list"
+      },
+      "kind": "position",
+      "falsifier": "A disclosure that answers both questions, answerable by the same party, whose answer decays at the same rate."
+    },
+    {
+      "id": "c26",
+      "statement": "A disclosure designed to minimise liability is designed not to be useful, and organisations already reject that trade in financial, safety and incident reporting.",
+      "status": "inferred",
+      "locator": {
+        "section": "Will our lawyers sign this?"
+      },
+      "kind": "position",
+      "falsifier": "A regulated reporting regime whose minimum-liability form is also its most decision-useful form."
+    },
+    {
+      "id": "c27",
+      "statement": "The bar disclosure should meet is that a reader can interrogate it, not that a reader can independently reproduce it.",
+      "status": "inferred",
+      "locator": {
+        "section": "Ask for the ingredients list"
+      },
+      "kind": "position",
+      "falsifier": "A disclosure practice where readers routinely do reproduce the result, making interrogation the weaker standard."
+    },
+    {
+      "id": "c28",
+      "statement": "A choice can be read out of prefrontal and parietal activity up to ten seconds before it enters awareness, in a low-stakes button-press task with prediction a little above chance.",
+      "status": "sourced",
+      "locator": {
+        "section": "But surely a machine decision needs more justification than a human one?"
+      },
+      "kind": "empirical",
+      "evidence": [
+        "e19"
+      ],
+      "challenged": "holds-with-boundary"
+    },
+    {
+      "id": "c29",
+      "statement": "Chain-of-thought explanations systematically misrepresent the true reason for a model's answer; a biasing hint moved answers and dropped accuracy by as much as 36 per cent across thirteen tasks.",
+      "status": "sourced",
+      "locator": {
+        "section": "But surely a machine decision needs more justification than a human one?"
+      },
+      "kind": "empirical",
+      "evidence": [
+        "e20"
+      ]
+    },
+    {
+      "id": "c30",
+      "statement": "Claude 3.7 Sonnet acknowledged a hint it had used 25 per cent of the time and DeepSeek R1 39 per cent, and the unfaithful explanations were longer than the faithful ones.",
+      "status": "sourced",
+      "locator": {
+        "section": "But surely a machine decision needs more justification than a human one?"
+      },
+      "kind": "empirical",
+      "evidence": [
+        "e21"
+      ]
+    },
+    {
+      "id": "c31",
+      "statement": "The reasoning offered by a person and by a model are the same kind of object, a justification composed after the answer, so neither column of the checkbox can produce an explanation a reader could check.",
+      "status": "inferred",
+      "locator": {
+        "section": "But surely a machine decision needs more justification than a human one?"
+      },
+      "kind": "synthesis",
+      "evidence": [
+        "e18",
+        "e19",
+        "e20",
+        "e21"
+      ],
+      "falsifier": "A method that verifies, from outside, that a stated reason was the cause of the decision it describes.",
+      "holds_when": [
+        {
+          "dimension": "account strength",
+          "value": "unverifiable",
+          "basis": "inferred"
+        }
+      ],
+      "fails_when": [
+        {
+          "dimension": "account strength",
+          "value": "false",
+          "basis": "inferred"
+        }
+      ],
+      "unknown_region": "Whether a human's partial introspective access ever recovers the real cause accurately.",
+      "replaced_by": {
+        "claim": "c33"
+      }
+    },
+    {
+      "id": "c32",
+      "statement": "Australian obligations are already moving toward requiring more disclosure, not less: APRA's April 2026 statement, the National AI Centre's essential practices, and the Privacy Act's automated-decision policy duty from 10 December 2026.",
+      "status": "sourced",
+      "locator": {
+        "section": "Will our lawyers sign this?"
+      },
+      "kind": "empirical",
+      "evidence": [
+        "e3"
+      ],
+      "challenged": "holds-with-boundary"
+    },
+    {
+      "id": "c33",
+      "statement": "In the region where the strong claim fails, a person's after-the-fact account can be an accurate reconstruction of the real cause; what is missing is any way for a reader to tell which accounts those are.",
+      "status": "inferred",
+      "locator": {
+        "section": "But surely a machine decision needs more justification than a human one?"
+      },
+      "kind": "position",
+      "holds_when": [
+        {
+          "dimension": "account strength",
+          "value": "false",
+          "basis": "inferred"
+        }
+      ],
+      "falsifier": "A demonstration that after-the-fact accounts are never accurate, or a reliable external test that sorts the accurate ones from the confabulated ones.",
+      "evidence": []
+    }
+  ],
+  "evidence": [
+    {
+      "id": "e1",
+      "url": "https://www.elsevier.com/about/policies-and-standards/generative-ai-policies-for-journals",
+      "quote": "the name of the model or tool, the version used, and the developer or manufacturer",
+      "locator": "Generative AI policies for journals, images section",
+      "retrievedAt": "2026-08-30",
+      "sha256": "ef3da62f7c0194f0f6a930622b133726efdf7040d72092c835de05828a054936",
+      "textSha256": "58bb802e5536b0990f015829cfc914405f05cc1c222f89d07489a88f6331ee2f",
+      "custodian": "self"
+    },
+    {
+      "id": "e2",
+      "url": "https://www.icmje.org/recommendations/browse/artificial-intelligence/ai-use-by-authors.html",
+      "quote": "Chatbots (such as ChatGPT) and other AI-assisted tools should not be listed as authors because they cannot be responsible for the accuracy, integrity, and originality of the work, and these responsibilities are required for authorship",
+      "locator": "Section A, Use of AI by Authors",
+      "retrievedAt": "2026-08-30",
+      "sha256": "accacb647aa801a4c0797f998c7b29c7631b825a1c409409717b021f57208645",
+      "textSha256": "2b73a4105e2cbe0cdb670159c6c2088a6121f7e242272be8d36a43753405f3d2",
+      "custodian": "self"
+    },
+    {
+      "id": "e3",
+      "url": "http://web.archive.org/web/20260822045623/https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32024R1689",
+      "quote": "artificially generated or manipulated",
+      "locator": "Article 50, Regulation (EU) 2024/1689",
+      "retrievedAt": "2026-08-30",
+      "sha256": "98c1a3c3f9b2df91a883775498924fe4f9c71ed83d6525c59346367048cdd496",
+      "textSha256": "4a49de0c18a748f3d34e43b42fd7ad7660b3459cb58057624e216889f4ec2c82",
+      "custodian": "self",
+      "archiveUrl": "http://web.archive.org/web/20260822045623/https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32024R1689"
+    },
+    {
+      "id": "e4",
+      "url": "https://justinmberg.com/wp-content/uploads/Raj-Berg-Seamans_2026.pdf",
+      "quote": "In a series of 16 preregistered experiments (N = 27,491), we examine how evaluations of creative writing are affected by whether participants believe the content is produced with an AI model.",
+      "locator": "Abstract, p. 896",
+      "retrievedAt": "2026-08-30",
+      "sha256": "63cc491afbaead69664ea2eb4ff396ba08c051d324742a5da0b6d83a58d9ee89",
+      "textSha256": "63cc491afbaead69664ea2eb4ff396ba08c051d324742a5da0b6d83a58d9ee89",
+      "custodian": "self"
+    },
+    {
+      "id": "e5",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11892328/",
+      "quote": "AIGC labels minimally affect perceived accuracy, message credibility, or sharing intention",
+      "locator": "Abstract, Results",
+      "retrievedAt": "2026-08-30",
+      "sha256": "7eb276e6439f5138ffee8a66b4192d21e5880d1d821cbdac18f0d23d1396a883",
+      "textSha256": "810d1466d3ce440dc82afab9446d63efa608b1c922ca7b5bebb23f76cd7b16cb",
+      "custodian": "self"
+    },
+    {
+      "id": "e6",
+      "url": "https://static1.squarespace.com/static/51ed234ae4b0867e2385d879/t/5e5ebaa3f840e43f8fe6ea5d/1583266468630/2020+Pennycook+et+al+-+Management+Science.pdf",
+      "quote": "the implied truth effect was somewhat larger for false headlines (untagged: 36.2%; control: 29.8%)",
+      "locator": "Study 2 results",
+      "retrievedAt": "2026-08-30",
+      "sha256": "6a2d29b3732bb3a826fde5e7e3cbddb2b489cc8995a13c55476e1505f6487ecb",
+      "textSha256": "6a2d29b3732bb3a826fde5e7e3cbddb2b489cc8995a13c55476e1505f6487ecb",
+      "custodian": "self"
+    },
+    {
+      "id": "e7",
+      "url": "https://hai.stanford.edu/assets/files/ai_index_report_2026.pdf",
+      "quote": "Across 26 models, hallucination rates range from 22% to 94%",
+      "locator": "Chapter 3; and 'On SWE-bench Verified, for example, performance rose from approximately 60% in 2024 to close to 100% in 2025.'",
+      "retrievedAt": "2026-08-30",
+      "custodian": "third-party"
+    },
+    {
+      "id": "e8",
+      "url": "https://www.wiggin.com/publication/bartz-v-anthropic-first-court-decision-on-fair-use-defense-in-llm-training/",
+      "quote": "exceedingly transformative",
+      "locator": "Analysis of Alsup's June 2025 ruling; same source for 'pirated copies did displace demand for the authors' books'",
+      "retrievedAt": "2026-08-30",
+      "sha256": "fcfd0ed685643c136f672d57231538f27f9b8f3e2627c1e35c4e092d65041712",
+      "textSha256": "bfc43e1afe9671927078511cefc5007abcf60532dc6adc3a9f1038daad60e066",
+      "custodian": "self"
+    },
+    {
+      "id": "e9",
+      "url": "https://www.courtlistener.com/docket/69058235/bartz-v-anthropic-pbc/",
+      "quote": "ORDER GRANTING FINAL APPROVAL OF CLASS ACTION SETTLEMENT ... Signed by Judge Araceli Martinez-Olguin on July 20, 2026.",
+      "locator": "Docket entry #680; notices of appeal at #682-#683",
+      "retrievedAt": "2026-08-30",
+      "custodian": "third-party"
+    },
+    {
+      "id": "e10",
+      "url": "https://www.lawnext.com/2026/06/at-3rd-circuit-judges-press-ross-and-thomson-reuters-on-fair-use-ai-training-and-market-harm.html",
+      "quote": "oral argument",
+      "locator": "Report of the 11 June 2026 Third Circuit hearing; no decision issued as at 30 August 2026",
+      "retrievedAt": "2026-08-30",
+      "sha256": "139040e88359bd1fd646a0c2bc721537a2402d927d1aa228942023be01c21808",
+      "textSha256": "931d40a041776f6ec6fa93b970b12ad51eb29dee9e35279f8d152b960a391a66",
+      "custodian": "self"
+    },
+    {
+      "id": "e11",
+      "url": "https://www.goodwinlaw.com/en/insights/publications/2025/06/alerts-practices-aiml-northern-district-of-california-judge-rules",
+      "quote": "this ruling does not stand for the proposition that Meta's use of copyrighted materials to train its language models is lawful",
+      "locator": "Quoting Chhabria J, Kadrey v. Meta, 25 June 2025",
+      "retrievedAt": "2026-08-30",
+      "sha256": "bab0287d22671a458c207677b145e1d71631aa8753aa8fc2d6ee31a2682fae56",
+      "textSha256": "227b8230125cabdf0ba0e6fc785fa8ac46c723a175e8a70864a4c5ca566d8b5b",
+      "custodian": "self"
+    },
+    {
+      "id": "e12",
+      "url": "http://web.archive.org/web/2/https://www.dlapiper.com/en-us/insights/publications/2025/11/getty-images-v-stability-ai-the-uk-high-court-decision-offers-guidance-but-critical-questions-on-ai",
+      "quote": "The Claimants' withdrawal of these claims will disappoint many",
+      "locator": "On Getty's abandonment of its primary copyright and database-right claims during trial",
+      "retrievedAt": "2026-08-30",
+      "sha256": "152324b73940f8048c679e3aa88c7ca1ca8f05c2ed196668fd6b9ed1827af6fd",
+      "textSha256": "e3d1b375bd54c6c3a5ec0b511693174745a9b2cf4cf0faa33206059d20f661f4",
+      "custodian": "self"
+    },
+    {
+      "id": "e13",
+      "url": "https://hazyresearch.stanford.edu/blog/2025-06-18-weaver",
+      "quote": "Oracle Pass@100 = 82.8%, majority voting = 45.5%",
+      "locator": "GPQA Diamond with Llama 3.3 70B; the 37.3-point gap is the difference between these two figures",
+      "retrievedAt": "2026-08-30",
+      "sha256": "3073df507958699e97bbf6cf8cfa1fe9f16883c7c5e6765933cc039ea929e268",
+      "textSha256": "db161cd6a8922f8aca3e98da3120e097e9efb94701f04297f6b2927ca6b74ce8",
+      "custodian": "self"
+    },
+    {
+      "id": "e14",
+      "url": "https://www.digitaldiagnostics.com/fda-permits-marketing-of-lumineticscore-formerly-known-as-idx-dr-for-automated-detection-of-diabetic-retinopathy-in-primary-care/",
+      "quote": "the first autonomous, AI-based diagnostic system authorized for commercialization by the FDA",
+      "locator": "Press release; also 'makes an assessment without the need for a clinician to also interpret the image or results'",
+      "retrievedAt": "2026-08-30",
+      "sha256": "c6fb388fd5c3c270e5e20e4655526b66af9e42cd55bb643ca79ad6e594ee8c2c",
+      "textSha256": "77e9c46c7df7777a7f1233610be82dbeeeac1a3e9e3616906ac9af8e6bec2d9f",
+      "custodian": "self"
+    },
+    {
+      "id": "e15",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13036691/",
+      "quote": "The interval cancer rate was 1.55 per 1000 participants (95% CI: 1.23, 1.92)",
+      "locator": "PMC commentary quoting the primary MASAI trial; standard arm 1.76 per 1000",
+      "retrievedAt": "2026-08-30",
+      "sha256": "df6a9d23deb6e251c101f6bffb1a75123f40ba09a6c8f9b94246fa867f100efe",
+      "textSha256": "3545d0a8f91042ebdec32b5f7ed19b2195fa2be0d4670d19afdb737d20b23b78",
+      "custodian": "self"
+    },
+    {
+      "id": "e16",
+      "url": "https://www.accc.gov.au/business/advertising-and-promotions/country-of-origin-claims",
+      "quote": "\"Made in\" generally means the last substantial step in the making of the product happened in that country, whereas \"Product of\" requires the main ingredients to come from the stated country and almost all processing to have occurred there.",
+      "locator": "Country of origin claims, definitions",
+      "retrievedAt": "2026-08-30",
+      "custodian": "third-party"
+    },
+    {
+      "id": "e17",
+      "url": "https://blog.neurips.cc/2021/12/08/the-neurips-2021-consistency-experiment/",
+      "quote": "In 2014, 49.5% of the papers accepted by the first committee were rejected by the second ... This year, this number was 50.6%.",
+      "locator": "Inconsistent decisions; 882 duplicated papers of 8,765 submissions",
+      "retrievedAt": "2026-08-30",
+      "sha256": "7317beb1a29a0afede5541b078c2a6738a29d6baf326f4e81037cbf8a868587d",
+      "textSha256": "600d21edda905bc9a7d831a6fdff4cc3eae98969f38bae85f9539bb2fee43dd6",
+      "custodian": "self"
+    },
+    {
+      "id": "e18",
+      "url": "https://www.lucs.lu.se/fileadmin/user_upload/lucs/2011/01/Johansson-et-al.-2005-Failure-to-Detect-Mismatches-Between-Intention-and-Outcome-in-a-Simple-Decision-Task.pdf",
+      "quote": "Tallying all forms of detection across all groups revealed that no more than 26% of all M trials were exposed.",
+      "locator": "Results; M trials = covertly manipulated trials",
+      "retrievedAt": "2026-08-30",
+      "sha256": "d30aaeac79bc477b9bb6fdda77915847a038557527a2134322ac3e44d66104be",
+      "textSha256": "d30aaeac79bc477b9bb6fdda77915847a038557527a2134322ac3e44d66104be",
+      "custodian": "self"
+    },
+    {
+      "id": "e19",
+      "url": "https://www.nature.com/articles/nn.2112",
+      "quote": "a decision can be encoded in brain activity of prefrontal and parietal cortex up to 10 s before it enters awareness",
+      "locator": "Abstract",
+      "retrievedAt": "2026-08-30",
+      "sha256": "45fea441e9714ca7978596b7494bf0da601ab74d3b71759e0211056e09420847",
+      "textSha256": "c2443e741c7390b8fb2d86f7137bb7f3140616cfbe2664fbb658cb2d89041661",
+      "custodian": "self"
+    },
+    {
+      "id": "e20",
+      "url": "https://arxiv.org/abs/2305.04388",
+      "quote": "CoT explanations can systematically misrepresent the true reason for a model's prediction ... This causes accuracy to drop by as much as 36% on a suite of 13 tasks from BIG-Bench Hard",
+      "locator": "Abstract",
+      "retrievedAt": "2026-08-30",
+      "sha256": "00bf2be48f00133943b4e940b6bc0a211e1927052e252b94662d1de2279af89f",
+      "textSha256": "3f6cd17320eab0f5ae5361416eaa5f65aa754bd0dd819fd3c5f2e6deffd172c6",
+      "custodian": "self"
+    },
+    {
+      "id": "e21",
+      "url": "https://www.anthropic.com/research/reasoning-models-dont-say-think",
+      "quote": "Claude 3.7 Sonnet mentioned the hint 25% of the time, and DeepSeek R1 mentioned it 39% of the time. A substantial majority of answers, then, were unfaithful.",
+      "locator": "Testing for faithfulness; also 'the unfaithful Chains-of-Thought were substantially longer than the faithful ones'",
+      "retrievedAt": "2026-08-30",
+      "sha256": "63355316428499823aaa35c03cfb2a110a04ea40bb815017e224cebf13513453",
+      "textSha256": "29ae73941d361798183b35cf87a372ba102935c1e534cefebe706d49a86f8580",
+      "custodian": "self"
+    }
+  ],
+  "disclosure": {
+    "attribution": "Written by Andrew Ramsden, Peak State Global. AI tools assisted the research and drafting; all claims were checked against the retrieved sources named below. Pipeline: Claude Opus 5 (claude-opus-5, 1M context) running in Claude Code (VSCode extension, no build version exposed), with the SOURCED research and audit prompts (sourced repo, commit 29728f7) and the retrieval-ladder reference (no version).",
+    "accountable": "Andrew Ramsden, Peak State Global (contact via peakstate.global).",
+    "limitations": "The MASAI interval-cancer figures were read through a PubMed Central commentary quoting the trial, not the Lancet paper itself, which was paywalled at the time of retrieval. The Bartz, Kadrey, Ross and Getty rulings were read through law-firm analyses quoting the judgments, not the judgments themselves, except for the Bartz docket entries, which were read directly, and the Getty analysis through a web archive copy because the publisher blocks automated retrieval. The 2 December 2026 extension to the EU marking duty is asserted by a secondary source without an Official Journal citation. The claim about an Australian regulator by 2028 is a forecast, and its date and settling criterion are stated with it in the text.",
+    "references": "Nineteen sources, retrieved on 30 August 2026, each figure quoted with its locator in the research notes. Court dates and settlement status were confirmed against the CourtListener docket for Bartz v. Anthropic, 4:24-cv-05417 (N.D. Cal.), through 25 August 2026. AI and breast cancer screening at a crossroads: Insights from the MASAI trial. (2026). PubMed Central. https://pmc.ncbi.nlm.nih.gov/articles/PMC13036691/ Australian Competition & Consumer Commission. (n.d.). Country of origin claims. Retrieved August 30, 2026, from https://www.accc.gov.au/business/advertising-and-promotions/country-of-origin-claims Beygelzimer, A., Dauphin, Y., Liang, P., & Wortman Vaughan, J. (2021, December 8). The NeurIPS 2021 consistency experiment. NeurIPS Blog. https://blog.neurips.cc/2021/12/08/the-neurips-2021-consistency-experiment/ Coalition for Content Provenance and Authenticity. (2026). C2PA specification (Version 2.3). https://spec.c2pa.org/specifications/specifications/2.3/specs/C2PA_Specification.html Digital Diagnostics. (n.d.). FDA permits marketing of LumineticsCore (formerly known as IDx-DR) for automated detection of diabetic retinopathy in primary care [Press release]. https://www.digitaldiagnostics.com/fda-permits-marketing-of-lumineticscore-formerly-known-as-idx-dr-for-automated-detection-of-diabetic-retinopathy-in-primary-care/ DLA Piper. (2025). Getty Images v Stability AI: The UK High Court decision offers guidance, but critical questions on AI and copyright infringement remain. http://web.archive.org/web/2/https://www.dlapiper.com/en-us/insights/publications/2025/11/getty-images-v-stability-ai-the-uk-high-court-decision-offers-guidance-but-critical-questions-on-ai Elsevier. (n.d.). Generative AI policies for journals. https://www.elsevier.com/about/policies-and-standards/generative-ai-policies-for-journals Goodwin Law. (2025). Northern District of California judge rules that Meta's training of AI models is fair use. https://www.goodwinlaw.com/en/insights/publications/2025/06/alerts-practices-aiml-northern-district-of-california-judge-rules Impact of artificial intelligence-generated content labels on perceived accuracy, message credibility, and sharing intentions for misinformation. (2025). PubMed Central. https://pmc.ncbi.nlm.nih.gov/articles/PMC11892328/ International Committee of Medical Journal Editors. (n.d.). AI use by authors. https://www.icmje.org/recommendations/browse/artificial-intelligence/ai-use-by-authors.html International Press Telecommunications Council. (n.d.). Digital source type NewsCodes. https://cv.iptc.org/newscodes/digitalsourcetype/ Johansson, P., Hall, L., Sikström, S., & Olsson, A. (2005). Failure to detect mismatches between intention and outcome in a simple decision task. Science, 310(5745), 116–119. https://doi.org/10.1126/science.1111709 LawSites. (2026, June). At 3rd Circuit, judges press ROSS and Thomson Reuters on fair use, AI training and market harm. https://www.lawnext.com/2026/06/at-3rd-circuit-judges-press-ross-and-thomson-reuters-on-fair-use-ai-training-and-market-harm.html Pennycook, G., Bear, A., Collins, E. T., & Rand, D. G. (2020). The implied truth effect: Attaching warnings to a subset of fake news headlines increases perceived accuracy of headlines without warnings. Management Science, 66(11), 4944–4957. https://doi.org/10.1287/mnsc.2019.3478 Raj, M., Berg, J. M., & Seamans, R. (2026). The artificial intelligence disclosure penalty: Humans persistently devalue AI-generated creative writing. Journal of Experimental Psychology: General, 155(4), 896–915. https://doi.org/10.1037/xge0001889 Regulation (EU) 2024/1689 of the European Parliament and of the Council of 13 June 2024 laying down harmonised rules on artificial intelligence (Artificial Intelligence Act). (2024). Official Journal of the European Union, L 2024/1689. http://web.archive.org/web/20260822045623/https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32024R1689 Stanford Institute for Human-Centered Artificial Intelligence. (2026). Artificial intelligence index report 2026. https://hai.stanford.edu/assets/files/ai_index_report_2026.pdf Weaver: Shrinking the generation-verification gap with weak verifiers. (2025, June 18). Hazy Research, Stanford University. https://hazyresearch.stanford.edu/blog/2025-06-18-weaver Wiggin and Dana. (2025). Bartz v. Anthropic: First court decision on fair use defense in LLM training. https://www.wiggin.com/publication/bartz-v-anthropic-first-court-decision-on-fair-use-defense-in-llm-training/"
+  },
+  "opposed": {
+    "grade": "cross-model-fresh-thread",
+    "at": "2026-08-30T09:05:00Z",
+    "raised": 17,
+    "model": "gpt-5.6-sol",
+    "thread": "codex subagent, spine v2",
+    "note": "Two cross-model passes. The first attacked the spine (6 findings); the second attacked the finished prose (9), aimed at the two sections never challenged. Six were correct and changed the text: the 50.6% figure now claims dependence on which reviewers were drawn rather than noise; choice blindness is narrowed to fluency not being evidence; MASAI is separated from the autonomy claim; the forecast target is narrowed to named regulators and published guidance; the uneven-capability claim is marked as expectation, not measurement; and mechanism transfer is labelled as inference. Three are open with the author: the financial-statements analogy, the discovery-exposure risk of detailed disclosure, and the self-implicating line. A third pass attacked the reasoning section alone and found five: Soon et al. covers a trivial task at near-chance prediction and cannot carry deliberated judgement; 'constructed after' does not entail 'not the cause'; the human/model symmetry equivocates because a model has no introspective access by construction; and the strong version proves too much, since it would empty the article's own case for disclosure. All four are answered by moving the claim from 'the account is false' to 'the account cannot be checked', which is also what connects it to the recommendation: a check leaves a trace, a reason does not. The author reviewed the third pass and reaffirmed the strong human/model parallel as a position to stand behind; the published text states the parallel as exact, and the boundary record on c31/c33 carries where the reconstruction-can-be-accurate objection still applies."
+  },
+  "dimensions": [
+    {
+      "name": "account strength",
+      "definition": "How strong a claim is being made about the reason someone gives for a decision, from 'cannot be checked from outside' up to 'is not the real cause'.",
+      "level": 1,
+      "firstSeen": "2026-08-31",
+      "uses": 2,
+      "mintedBy": "model",
+      "mintedModel": "claude-opus-5"
+    }
+  ]
+}
