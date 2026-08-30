@@ -459,8 +459,11 @@ def _unstaked(claims):
         return []
     out = []
     for cid, claim in claims.items():
-        # A stance or a lived experience may describe movement without owing a date.
-        if claim.get("kind") in ("position", "story"):
+        # Only lived experience is exempt. A `position` is NOT: demoting a directional
+        # claim to a stance to escape the resolution is the exact move rule S names, and
+        # an earlier version of this check skipped positions and therefore passed the
+        # artefact it was written for.
+        if claim.get("kind") == "story":
             continue
         statement = (claim.get("statement") or "").lower()
         hit = next((w for w in DIRECTION if w in statement), None)
@@ -841,10 +844,15 @@ def _self_check():
              "statement": "It reaches zero on bounded work.",
              "resolves": {"by": "2028-01-01", "criterion": "the published rate reads 0"}}]}
         assert severities(staked, FLAG) == [], severities(staked, FLAG)
-        # A stance may describe movement without owing a resolution.
+        # A stance is NOT exempt: demoting a direction to a position to dodge the
+        # resolution is the move the rule exists to catch.
         stance = {"claims": [{"id": "c1", "kind": "position", "falsifier": "a flat year",
-                              "statement": "Everything is decaying."}]}
-        assert severities(stance, FLAG) == [], severities(stance, FLAG)
+                              "statement": "The signal decays as systems improve."}]}
+        assert len(severities(stance, FLAG)) == 1, severities(stance, FLAG)
+        # Lived experience is exempt.
+        told = {"claims": [{"id": "c1", "kind": "story", "witness": "Andrew",
+                            "statement": "It decayed on me over time."}]}
+        assert severities(told, FLAG) == [], severities(told, FLAG)
 
     cases = [("an argument that turns on a direction stakes a forecast",
               case_unstaked_direction),

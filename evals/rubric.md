@@ -1,5 +1,5 @@
 ---
-rubricVersion: 3
+rubricVersion: 4
 frozen: 2026-08-30
 reanchored: 2026-08-29
 ---
@@ -38,8 +38,22 @@ and this paragraph is the disclosure: **a good C9 score in round 03 means the pa
 fresh instruction, not that the instruction was correct.** Read it as a conformance check, never as
 evidence the shape earns its keep. That evidence, if it comes, comes from C1 to C8 moving.
 
-**v3 scores are not comparable to v2 or v1 scores.** The ledger records the ruler version per round
-for exactly this reason.
+**v4, after round 03.** Two changes, both from what round 03's graders found.
+
+C8 gains a **quality clause**. Round 03's refusal made the falsifier field mandatory and one run
+answered it with a stamped template across nine claims, which one grader marked down and the other
+counted as present. Presence is now enforced by the skill, so the criterion scores whether the
+falsifier names an observation somebody could go and make.
+
+C9 is rewritten for the paper shape as it now stands: definitions in two subsections with a family
+named for each term, propositions carried as claims, and a verdict table that restates the
+proposition it is keyed to. **C9 is still conformance and still reported separately.** It measures
+whether the paper followed the instruction, never whether the instruction was any good.
+
+**v4 scores are not comparable to v3, v2 or v1.** The ledger records the ruler version per round for
+exactly this reason. This is the fourth consecutive round under a moved ruler, which is a deliberate
+choice: the target is still being discovered, so learning per round is the output and the trend is
+not yet the point.
 
 ## What the suite is scoring
 
@@ -158,18 +172,24 @@ reading, so it is settled here rather than left to the grader.
 A claim is out of scope only if the artefact or sidecar makes it clear which of those two it is.
 "Nobody wrote one" is not out of scope.
 
-- **3.** Every in-scope claim carries a `falsifier` in the sidecar, specific enough to check.
+- **3.** Every in-scope claim carries a `falsifier` in the sidecar, and each one **names an
+  observation somebody could go and make**: a measurement, a trial result, a published figure, a
+  count. Different claims have different falsifiers, because different claims fail for different
+  reasons.
 - **2.** Every in-scope claim carries one **except a single identifiable class** — for example the
   inferred claims, or the rival claims the pass wrote — and the artefact still states checkable
   falsifiers for the headline positions in prose. This is the rung for a run that did the work and
   missed a category.
 - **1.** The artefact states falsifiers for the headline positions only, or the sidecar's coverage
   is scattered with no pattern to it. Also 1 if the falsifiers present are vague ("if the data
-  changed").
+  changed"), **or if a group of claims share one stamped phrase with the specifics swapped out**.
+  A template is what a run writes when a gate demands a field it has nothing to put in, and it is
+  worth less than an honest absence because it passes a count.
 - **0.** None.
 
-**Count before you score.** Name the number of in-scope claims and the number carrying a falsifier
-in your reason line. A criterion whose score cannot be traced to a count is an impression.
+**Count, then read three.** Name the number of in-scope claims and the number carrying a falsifier.
+Then quote one falsifier and say whether you could go and check it. A count alone cannot see a
+template, which is the failure this criterion now exists to catch.
 
 ### C9 — Paper shape (weight 2)
 

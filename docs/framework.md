@@ -156,7 +156,9 @@ and already owes a `resolves` date and criterion, so the machinery was there and
 
 `integrate.py` refuses on the second one: a sidecar whose load-bearing claims argue movement
 while no claim in the file is predictive is an argument resting on a direction it never
-stakes. `reference/research-mode.md` carries the process half, which is to retrieve and
+stakes. Only `story` is exempt. A `position` is not, because demoting a directional claim to
+a stance is the move rule S names, and the first version of this check exempted positions
+and therefore passed the artefact it had been written for. `reference/research-mode.md` carries the process half, which is to retrieve and
 project in separate passes, because the two compete for attention and retrieval always wins.
 
 ## 7. Claim strength is a separate axis
