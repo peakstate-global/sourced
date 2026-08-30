@@ -164,7 +164,10 @@ iii) Fold both ledgers:
         python3 decisions.py fold <artefact>
 
     Folding twice is safe. A record replaces the entry with its id rather than adding a second one.
-iv) Run the adversarial pass over what the ledgers now say, and record the boundary of any claim
+iv) Run the adversarial pass **in the foreground**, over what the ledgers now say. A
+    backgrounded pass in round 03 stalled on stdin at startup and returned 26 minutes
+    after the run had finished, written into a directory that had already been measured.
+    Run it and wait for it., and record the boundary of any claim
     that fails or holds only conditionally (`reference/boundary-record.md`). **A claim the pass
     itself writes carries the same work as the claim it replaces**: a `falsifier` and a region.
     Mark it `"origin": "adversarial"`. `integrate.py` refuses a promoted rival claim that carries
@@ -192,9 +195,25 @@ vi) Write the dimension definitions the boundaries use into the sidecar:
     boundary a reader cannot apply, because "holds when severity is high" only travels if
     `severity` says what it is measured with. This runs after the boundaries exist, which is
     why it is here and not at capture.
-vii) Re-verify before delivery: `python3 sourced.py --check`. A claim only hurts you at the moment it
+vii) Record what was actually done to each claim, and read the assurance back:
+
+        python3 underwrite.py <artefact>.sourced
+
+    Each claim carries `underwriting`, a list of acts with the actor on each: which tool
+    checked the quote, which model challenged it, which person read it. **The assurance
+    level is derived from the acts and is never asserted**, so a reader can disagree with
+    it only by disputing an act.
+
+    **Do not write `expert-reviewed` because a model decided to.** A signature nobody
+    signed is worth less than an honest A1. If no person read the claim, the level says so,
+    and the provenance block says so, which is the whole of the U rule made checkable.
+
+    Whether a level is *sufficient* is a policy question and the policy belongs to whoever
+    carries the risk. `--policy` takes theirs; the built-in default is deliberately thin.
+
+viii) Re-verify before delivery: `python3 sourced.py --check`. A claim only hurts you at the moment it
    is used.
-viii) Generate the provenance block from the sidecar: `/sourced statement <artefact>`.
+ix) Generate the provenance block from the sidecar: `/sourced statement <artefact>`.
 
 ## The shape of the paper
 
@@ -231,35 +250,73 @@ before they can be persuaded by anything under it.
 **2. What is actually being claimed.** Brought forward from `First. Sharpen the question`. Two
 sub-parts, in this order, both required.
 
-**`### Definitions`** - the terms the two camps use differently. Not the technical terms: the
-*contested* ones. Round 02 found one in every subject it touched, and in every case the
-disagreement turned out to be partly about the word: "decline" covering a price and an
-institutional position, "growth" covering GDP and physical throughput, "benefit" covering a trial
-average and an individual outcome. Three or four blocks, not ten. A definitions section that
-defines everything defines nothing.
+**`### Definitions`.** Not the technical terms: the *contested* ones, the words two sides of the
+argument use differently. Round 02 found one in every subject it touched, and in every case the
+disagreement turned out to be partly about the word.
 
-Each block is four lines:
+**Say what the words mean here. Never tell the reader their usage is wrong.** The section describes
+this paper's vocabulary, not the field's. A definition good enough to borrow travels on its own; an
+instruction to change how somebody speaks seeds resistance in exactly the reader you most want to
+persuade. So every line reads *in this paper*, and the reader is free to keep their own words.
 
-    **Growth.**
-    **Is:** monetary output, measured as GDP.
-    **Is not:** physical throughput, the energy, materials and emissions an economy moves.
-    **Instead:** say *throughput* for the physical quantity.
-    **Splits:** P2, P4.
+Two subsections, in this order:
 
-Write it in the parties' own terms, never adjudicated. The block exists so both camps can recognise
-themselves in it, not to award the word to one of them. `Splits` names the propositions the
-distinction divides, so a definition that splits nothing gets cut.
+- **`#### Terms not used here`** — one line each, no properties. The term, the term this paper uses
+  instead, and one sentence on why. Then the paper never discusses it again. Keep this short: it is
+  a signpost, not an argument.
 
-**`### The propositions`** - the claim broken into statements evidence can bear on separately,
-**enumerated and labelled `P1`...`Pn`**, each carrying its kind: empirical, definitional,
-predictive or normative. A normative proposition cannot be settled by retrieval, and saying so here
-is what stops a run answering the easy half and presenting it as the whole.
+      **Victimhood** -> **perceived agency**
+      Judges the person rather than describing something measurable, and reads as an accusation to
+      anyone who was in fact wronged.
+
+- **`#### Terms used here`** — the full blocks, for terms the paper actually uses. A block never
+  mixes a retired term with its replacement: once the paper has moved to a better word, the block
+  is about the better word. Mixing the two is what made these unreadable before.
+
+      **Perceived agency.** [judgement-free]
+      - **In this paper** — how far a person sees the outcomes in their life as following from
+        what they do.
+      - **Measured by** — established self-report scales.
+      - **Propositions it divides** — P5, P7.
+
+  Bullets, indented, one property per line. `Propositions it divides` names the propositions the
+  distinction separates from each other, so a definition that divides nothing gets cut.
+
+**Every defined term names its family.** Six, and each names the condition the word is in, so the
+tag is a diagnosis an author can check rather than an instruction they have to derive.
+
+| Family | The word is… | So the paper… | The line it uses |
+|---|---|---|---|
+| `umbrella` | a cover for several kinds of itself — take one part and you still have the thing | names the kind wherever a claim rests on one, and keeps the umbrella for the family | **Comprises** |
+| `compound` | made of parts all required at once — take one away and the word says nothing | gives every part, every time | **Compounds** |
+| `overloaded` | one spelling carrying two unrelated meanings | retires it, and uses a separate word for each meaning | **Means, in the debate** |
+| `unmeasured` | naming something nobody has measured | says what is missing **first**, then what was measured instead, and why they are not the same | **Gap** |
+| `imprecise` | vague where an exact term already exists | uses the exact one | **Exactly** |
+| `judgement` | saying what *ought* to be, not what is | answers the factual half and does not dress the rest as a finding | **Not settled by evidence** |
+
+**Umbrella against compound, in one question:** *can you take one part and still have the thing?*
+Calming work on its own is still somatic practice — umbrella. A likelihood on its own is not a risk
+— compound. The consequence differs, which is why they are separate families: an umbrella term
+stays usable bare, a compound term never is.
+
+**A word with a measurable neighbour is not a judgement.** *Victimhood* looks like one and is not:
+*perceived agency* measures the same thing without the verdict, so victimhood is set aside as
+`imprecise` and the measurable term gets the block. `judgement` is only for a word with no such
+neighbour — the bare *ought*, as in "growth **should** be subordinated to ecological limits".
+
+**`### The propositions`** — the claim broken into statements evidence can bear on separately,
+**enumerated and labelled `P1`…`Pn`**, each carrying its kind: empirical, definitional, predictive
+or normative. A normative proposition cannot be settled by retrieval, and saying so here is what
+stops a run answering the easy half and presenting it as the whole.
 
 **Counting them is not listing them.** A round-02 paper wrote "that gives eight separately testable
 propositions" and never enumerated them, which left its own verdict table unmappable.
 
-Use uppercase `P`, one style throughout. The label is used again in the table and in the body
-section headings, and it is what the reader follows through the paper.
+**A proposition is a claim.** It has the same shape as any other — a statement, a verdict,
+conditions, a falsifier — and the only differences are that it comes from decomposing the question
+rather than from the evidence, and that other claims hang off it. So it lives in `claims[]` with
+`role: "proposition"`, and the claims that answer it carry `answers: "<its id>"`. There is no
+separate structure, because two homes for one truth is how they drift apart.
 
 **3. The verdict table.** Before the argument, never after. See below.
 
@@ -306,40 +363,49 @@ Then the provenance block, under its own `## Provenance` heading, unchanged othe
 It reads the ledger, so the table cannot drift from it. A row you disagree with is a boundary
 recorded wrongly, and the fix is `boundary.py`, not the sentence.
 
-**The table is keyed to the propositions.** One row per proposition, in `P` order, carrying the
-label and the proposition's own wording, because those are the best-written sentences in the paper
-and they belong where the reader arrives. A claim that needs its own verdict is grouped **under**
-its proposition as `P2.1`, `P2.2`, not mixed in flat. Set `proposition: "P2"` on a claim to place
-it.
+**Four columns.**
 
-A flat list of every claim carrying a boundary is what this replaced. One round-02 paper rendered
-32 undifferentiated rows against 6 propositions, every verdict the same two words, and a reader had
-no way in.
+| Proposition | Verdict | Conditions | Evidence and reasoning |
+|---|---|---|---|
+| P1 — the dollar's real exchange rate will be lower in 10 to 15 years | Holds narrowly | Holds on the real trade-weighted rate. Fails as a statement about the dollar's institutional position. | Rate near a series high on a large external deficit. |
+| P1.1 — the fall is already running | Falsified | Unconditional | The rate rose over the four years to 2026. |
 
-| Proposition | Verdict | Conditions |
-|---|---|---|
-| P1 - the dollar's real exchange rate will be lower | Holds narrowly | Holds on the real trade-weighted rate, which sits near a series high with a large external deficit behind it. Fails as a statement about the dollar's institutional position, which is not moving the same way. |
-| P1.1 - the decline is already running | Falsified | The rate rose over the four years to 2026. A forecast of a lower rate is not a continuation of a fall. |
+- **Column one restates the proposition**, beside its label. Not the claim's wording, not a
+  paragraph — the proposition's own sentence, which is the best-written line in the paper and is
+  wasted anywhere else. A reader must never have to scroll back to learn what `P1` was.
+- **Column two is the verdict word alone**, from the closed list below. Nothing else in the cell.
+- **Column three is the conditions, or the word `Unconditional`.** It is not a second place to
+  explain the verdict. A claim with no boundary has no conditions, and saying `Unconditional` is
+  clearer than silence, which reads as an omission.
+- **Column four is the evidence and the reasoning**, in a few words.
 
-**Three columns, and the third is `Conditions`.** Not `Where`. The column carries the whole
-interpretive load, because it is where "promising but thin" and "not established, not refuted"
-live, so it gets a name that says what it is for. A fourth column naming the evidence in a few
-words earns its place on most subjects.
+**Sub-rows carry the nuance.** A claim that needs its own verdict is grouped under its proposition
+as `P2.1`, `P2.2`, in `P` order. Set `answers: "<proposition id>"` on the claim to place it.
 
-**`Conditions` is a written sentence, not a field dump.** Give each boundary a `reads_as`: one or
-two sentences, in your own words, saying where the claim holds and where it breaks. The generator
-prints `reads_as` when it is there and falls back to concatenating `holds_when`, `fails_when` and
+**Push the conditionality downwards.** A proposition whose verdict is `Holds narrowly` or
+`Contested` is carrying a disagreement that has not been resolved into anything a reader can use.
+Decompose it until each leaf is as close to `Unconditional` as the evidence allows:
+
+    P1   The sky is blue          Holds narrowly   Depends on the weather
+    P1.1 The sky is blue          Holds            Fine weather
+    P1.2 The sky is grey          Holds            Stormy weather
+
+The parent carries the nuance and the leaves carry clean verdicts, so the reader watches a
+disagreement resolve into two things that are both true. **`integrate.py` asks for children on any
+narrow or contested proposition**, and a paper that genuinely cannot split one says why.
+
+**Conditions is a written sentence, not a field dump.** Give each boundary a `reads_as`. The
+generator prints it when present and falls back to concatenating `holds_when`, `fails_when` and
 `unknown_region` when it is not, which is what round 02 shipped and it read like this:
 
     fails when inferential step: body psychotherapy had no benefit whatsoever;
     control group activity: body psychotherapy versus no intervention
 
-That is machine-readable and reader-hostile. The conditions themselves stay as they are, because
-`dimensions.py` and the boundary records need them. `reads_as` is what a person reads, and
-`boundary.py table` warns for every row it had to fall back on.
+Machine-readable and reader-hostile. The conditions stay as they are, because `dimensions.py` needs
+them; `reads_as` is what a person reads. `boundary.py table` warns for every row that took the
+fallback.
 
-**The verdict word comes from this list and nowhere else.** One word, one meaning, so that two
-papers can be read side by side and a verdict means the same thing in both.
+**The verdict word comes from this list and nowhere else.**
 
 | Verdict | Means | Carried in the sidecar by |
 |---|---|---|
@@ -349,14 +415,84 @@ papers can be read side by side and a verdict means the same thing in both.
 | `Unevaluated` | Nobody has measured it, which is not the same as false | `unknown_region` |
 | `Contested` | Sources disagree and the conflict is open | an open `conflicts` record |
 
-Do not invent a sixth. "Promising but thin", "not established, not refuted" and "attempted
-unresolved" all say something real, and all of them belong in `Conditions`, which is free text and
-exists for exactly that. **The verdict cell holds the word alone and nothing else.**
+**How this lines up with the adversarial pass's four moves.** The moves resolve a *finding* during
+the pass; the verdicts describe a *claim* in the paper. They are different objects and neither
+replaces the other, but they meet in one place:
 
-**Every verdict is derivable from fields the sidecar already holds**, which is the point: the table
-is a reading of the ledger, not a second opinion about it. A row whose verdict you cannot trace to
-one of those fields means the boundary was never recorded, and the fix is `boundary.py`, not a
-better adjective.
+| Move (`reference/adversarial-pass.md`) | Usually produces the verdict |
+|---|---|
+| Conditional — each side holds in a nameable region | `Holds narrowly` |
+| Reframe — a named shared assumption dropped | `Holds`, on a re-stated claim |
+| Redirect — the observation stands, the conclusion does not | `Falsified`, with `replaced_by` |
+| Hold — nothing available settles it | `Contested` |
+
+**`Hold` and `Contested` are the same situation seen from two sides**, and a paper should never
+carry one without the other. `Unevaluated` is a different thing again: nobody disagrees, nobody has
+measured it.
+
+Do not invent a sixth verdict. "Promising but thin" and "not established, not refuted" belong in
+`Conditions`, which is free text and exists for exactly that.
+
+**Every verdict is derivable from fields the sidecar already holds.** A row whose verdict you cannot
+trace to one of those fields means the boundary was never recorded, and the fix is `boundary.py`,
+not a better adjective.
+
+### Evidence: what a source is allowed to contribute
+
+**One source, as many quotes as it earns.** A source cited for more than one claim gets **one
+evidence row per quote**, all sharing the `url`, the `sha256` and the `originGroup`, because they
+are the same capture read twice. Nothing ever stopped this and no run has done it: twelve papers
+across three rounds produced zero sources quoted twice, so every source contributed its single
+strongest sentence and nothing else it said was recorded.
+
+**Capture what cuts against you.** Where a cited source says something that undermines the claim it
+is cited for, that sentence is captured as its own row with `supports.direction: "against"` or
+`"mixed"`. This is the only mechanical defence against cherry-picking the standard has: a reader
+cannot see what a source said that we left out, so the run has to put it in. It also feeds
+`conflicts.detect()`, which reads directions and conditions and is currently near-blind because
+almost nothing carries them.
+
+**A quote is a sentence, not a fragment of markup.** Where the useful evidence is a number inside
+structured data — a search count, a table cell, a JSON field — the quote is still the bytes from
+the capture, and the row carries **`quoteGloss`**: one plain sentence saying what the fragment
+means. Round 03 shipped `"quote": "8 8 0"` against a claim about how many trials exist. The 8 is
+genuinely in the capture, so the gate passed it, and no reader could tell which of the three
+numbers was the count. `claims.py` asks for a gloss when a quote is mostly not letters.
+
+**Custody: somebody other than you holds a copy.** Every cited capture is run with `--archive`, so
+the row carries an `archiveUrl` and `custodian: self+third-party`. Without it the hash proves only
+that the quote matches *our own file*, and an auditor asking whether the page really said that on
+the day has nothing to check. Rounds 01 to 03 wrote **zero** archive URLs across 48 cited rows,
+which is the largest single hole in the standard as it stands.
+
+Where the archive service refuses or is down, say so on the row and in Limitations. A source that
+could not be archived is a disclosed limit, not a blocked run — but a paper where *nothing* was
+archived means nobody tried, and `integrate.py` refuses that.
+
+**A claim says where it appears in the paper.** `claims[].locator` carries the section or heading
+the claim is argued in. Without it the sidecar audits the ledger and not the artefact, and a
+sentence that drifts away from the claim behind it is invisible. Rounds 01 to 03 wrote zero.
+
+### Plain English, and where the jargon is allowed to live
+
+**The paper and the sidecar have different readers.** The paper is read by somebody deciding
+something. The sidecar is read by an auditor or a machine. Forcing one register on both makes the
+paper opaque or the sidecar imprecise, so they get different rules.
+
+**In the paper:**
+
+- Write ASD-STE100 Simplified Technical English: one idea per sentence, active voice, present
+  tense, one word for one meaning.
+- **Every term of art is either in Definitions or glossed in the sentence that first uses it.** No
+  exceptions, and the gloss is plain even where the term is not. Round 03 shipped "no trial made it
+  an endpoint" inside a definitions block whose whole purpose was stopping jargon from hiding a
+  distinction; "no trial asked about it" says the same thing.
+- **If a sentence needs a following clause starting "which means", the sentence before it was too
+  technical.** Rewrite it rather than explaining it.
+
+**In the sidecar:** the technical vocabulary stays, and the sidecar carries its own `definitions`
+registry giving the technical sense of every term the paper defines plainly. The two are checkable
+against each other, which is the point.
 
 ## What this mode does not do
 

@@ -13,6 +13,7 @@ quote is read out of the capture rather than out of the live page.
         [--locator "p. 12"] [--slide 3] [--origin mit-2026] [--id c4]
     python3 claims.py append <artefact> --statement "…" --status inferred
     python3 claims.py append <artefact> --statement "…" --falsifier "what would kill it"
+                                        [--quote-gloss "what a non-prose quote means"]
     python3 claims.py fold <artefact>        ledger lines -> claims[] and evidence[]
     python3 claims.py --self-check           four cases, known answers, no network
 
@@ -112,8 +113,24 @@ def quote_is_in_capture(quote, row):
     return True, str(path)
 
 
+def is_prose(quote):
+    """True when a quote reads as a sentence rather than as stripped markup.
+
+    Round 03 recorded `"quote": "8 8 0"` against a claim about how many trials exist. It
+    was the Count, RetMax and RetStart of a PubMed search response with the tags removed:
+    genuinely present in the capture, so the check passed it, and unreadable to anybody.
+    A quote below half letters is structured data wearing a quotation's clothes, and it
+    needs a sentence saying what it means.
+    """
+    text = (quote or "").strip()
+    if len(text) < 12:
+        return False
+    letters = sum(ch.isalpha() or ch.isspace() for ch in text)
+    return letters / len(text) >= 0.6
+
+
 def record(artefact, statement, status="sourced", url="", quote="", locator="", origin="",
-           slide=None, claim_id="", at=None, falsifier=""):
+           slide=None, claim_id="", at=None, falsifier="", quote_gloss=""):
     """Build one ledger line: the claim, and the evidence it rests on.
 
     The claim object is exactly the sidecar's `claims[]` member, so folding can put it in
@@ -128,6 +145,11 @@ def record(artefact, statement, status="sourced", url="", quote="", locator="", 
     existing = read_ledger(artefact)
     claim_id = claim_id or f"c{len(existing) + 1}"
     claim = {"id": claim_id, "statement": statement, "status": status}
+    if quote and not is_prose(quote) and not quote_gloss.strip():
+        raise ValueError(
+            f"the quote {quote.strip()[:40]!r} is not prose, so a reader cannot tell what it "
+            f"says. Pass --quote-gloss with one plain sentence naming what the fragment means "
+            f"(reference/research-mode.md, Evidence).")
     if falsifier.strip():
         # What would kill this claim, recorded while the evidence is still in front of
         # you. Written here rather than gathered at the end, because a falsifier invented
@@ -244,11 +266,11 @@ def _cli(argv):
         raise SystemExit(__doc__.strip().splitlines()[0])
     mode, artefact, rest = argv[0], argv[1], argv[2:]
     kw = {"statement": "", "status": "sourced", "url": "", "quote": "", "locator": "",
-          "origin": "", "slide": None, "claim_id": "", "falsifier": ""}
+          "origin": "", "slide": None, "claim_id": "", "falsifier": "", "quote_gloss": ""}
     flags = {"--statement": "statement", "--status": "status", "--url": "url",
              "--quote": "quote", "--locator": "locator", "--origin": "origin",
              "--slide": "slide", "--id": "claim_id", "--store": "store",
-             "--falsifier": "falsifier"}
+             "--falsifier": "falsifier", "--quote-gloss": "quote_gloss"}
     while rest:
         flag, rest = rest[0], rest[1:]
         val, rest = (rest[0], rest[1:]) if rest else ("", [])
@@ -280,6 +302,12 @@ def _cli(argv):
 
 
 def _self_check():
+    # A quote that is stripped markup needs a sentence saying what it means.
+    assert is_prose("Mixed model regression showed significant intervention effects.")
+    assert not is_prose("8 8 0"), "a run of numbers is not a quotation"
+    assert not is_prose('{"count": 8, "retmax": 8}'), "structured data is not a quotation"
+    assert is_prose("The dollar was on one side of 89% of all FX trades in April 2025.")
+
     """Four cases with known answers, no network. The threshold is all four, because a
     claim recorded against a quote that is not in the capture is the exact failure this
     script exists to prevent, and it would be invisible in the finished sidecar."""

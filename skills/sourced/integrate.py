@@ -248,6 +248,9 @@ def findings(data):
     out.extend(_stale(data, claims))
     out.extend(_unconfirmed(data))
     out.extend(_rival_parity(data, claims))
+    out.extend(_templated_falsifiers(data, claims))
+    out.extend(_custody(data))
+    out.extend(_proposition_decomposition(data, claims))
     out.extend(_dimensions_defined(data, claims))
     out.extend(_boundary_prompts(data, claims))
     return out
@@ -336,6 +339,111 @@ def _dimensions_defined(data, claims):
               f"{shown}. A dimension named but undefined is a boundary a reader cannot "
               f"apply. Run `python3 dimensions.py --sidecar <artefact>.sourced` and write "
               f"what each one is measured with.")]
+
+
+def _templated_falsifiers(data, claims):
+    """Refuse a set of falsifiers that share one stamped phrase.
+
+    Round 03's rival-parity gate made the field mandatory and one run answered it with
+    nine claims carrying an identical stem and the specifics swapped out. It passed a
+    count and told a reader nothing, which is worse than an honest absence: an absence is
+    visible and a template is not.
+
+    The test is a shared prefix across three or more claims. Falsifiers legitimately
+    resemble each other on one subject, so the bar is a long identical opening, not a
+    similar one.
+    """
+    STEM, MIN = 45, 3
+    seen = {}
+    for cid, claim in claims.items():
+        f = " ".join((claim.get("falsifier") or "").split())
+        if len(f) < STEM:
+            continue
+        seen.setdefault(f[:STEM].lower(), []).append(cid)
+    out = []
+    for stem, ids in seen.items():
+        if len(ids) < MIN:
+            continue
+        out.append(Finding(
+            FAIL, f"{len(ids)} claims share one falsifier template: {', '.join(sorted(ids)[:6])}"
+                  f"{' ...' if len(ids) > 6 else ''}. Each begins {stem.strip()!r}. A falsifier "
+                  f"names the observation that would kill THIS claim, so two claims that fail "
+                  f"for different reasons cannot share a sentence. Write them per claim, or say "
+                  f"the claim cannot be falsified and mark it definitional."))
+    return out
+
+
+def _proposition_decomposition(data, claims):
+    """Ask a narrow or contested proposition to say what it splits into.
+
+    A proposition that only ever reads `Holds narrowly` is carrying a disagreement the
+    paper has not resolved into anything a reader can use. Pushing the conditionality
+    down until each leaf is close to unconditional is what turns "it depends" into two
+    things that are both true.
+
+    A flag, not a refusal. Whether a proposition can be split is a judgement about the
+    subject, and some genuinely cannot.
+    """
+    out = []
+    answered = {c.get("answers") for c in claims.values() if c.get("answers")}
+    for cid, claim in claims.items():
+        if claim.get("role") != "proposition":
+            continue
+        narrow = (boundary.conditions(claim, "holds_when")
+                  and boundary.conditions(claim, "fails_when"))
+        contested = claim.get("challenged") == "attempted-unresolved"
+        if not (narrow or contested):
+            continue
+        if cid in answered:
+            continue
+        out.append(Finding(
+            FLAG, f"proposition {cid} is "
+                  f"{'contested' if contested else 'true in one region and false in another'} "
+                  f"and nothing answers it. Split it until each part is close to unconditional, "
+                  f"with each child carrying answers={cid!r}, so the reader sees the "
+                  f"disagreement resolve into parts that are each straightforwardly true. If it "
+                  f"cannot be split, say so in the paper and this flag is answered."))
+    return out
+
+
+def _custody(data):
+    """Refuse a delivery where nothing was archived, flag the rows that were missed.
+
+    The capture hash proves a quote matches our own file. It says nothing about whether
+    the page said that on the day, which is the first thing an audit asks. `archiveUrl`
+    has been in the schema throughout and rounds 01 to 03 wrote zero across 48 cited
+    rows, so the entire evidence base was self-attested.
+
+    Refusing per row would block a run whenever the archive service is down. Refusing a
+    paper where NOTHING was archived cannot be a service outage.
+    """
+    rows = [r for r in (data.get("evidence") or []) if isinstance(r, dict) and r.get("url")]
+    if not rows:
+        return []
+    # Custody became a requirement at schema 1.8. An older sidecar predates the rule and
+    # is flagged, never refused: a gate that fails a file written before it existed is a
+    # gate nobody can adopt.
+    try:
+        version = tuple(int(x) for x in str(data.get("sourced") or "1.0").split(".")[:2])
+    except ValueError:
+        version = (1, 0)
+    if version < (1, 8):
+        return []            # the rule did not exist when this file was written
+    archived = [r for r in rows if (r.get("archiveUrl") or "").strip()]
+    if not archived:
+        return [Finding(
+            FAIL, f"none of the {len(rows)} cited sources has an archiveUrl, so every quote "
+                  f"rests on a file we hold ourselves. Re-run each with `--archive`. If the "
+                  f"archive service refused, say so on the row and in Limitations; a whole "
+                  f"paper with nothing archived is not an outage.")]
+    missing = [r.get("id") for r in rows if not (r.get("archiveUrl") or "").strip()]
+    if missing:
+        return [Finding(
+            FLAG, f"{len(missing)} cited source(s) have no third-party copy: "
+                  f"{', '.join(str(m) for m in missing[:6])}"
+                  f"{' ...' if len(missing) > 6 else ''}. Their quotes rest on our capture "
+                  f"alone, which is a limit on the evidence and belongs in Limitations.")]
+    return []
 
 
 def _boundary_prompts(data, claims):
@@ -561,6 +669,9 @@ def _self_check():
             "severity": "baseline score on the trial's own scale",
             "period": "calendar years the observation covers"}
 
+    cond_free = {"statement": "s", "challenged": "holds", "origin": "adversarial",
+                 "holds_when": [{"dimension": "air quality", "value": "clean", "basis": "observed"}]}
+
     def defined(data):
         return dict(data, dimensions=DIMS) if "dimensions" not in data else data
 
@@ -734,6 +845,41 @@ def _self_check():
         as_list = dict(undefined, dimensions=[{"name": "Air Quality", "definition": "visible haze"}])
         assert [f for f in findings(as_list) if f.severity == FAIL] == [], "matching is case-insensitive"
 
+    def case_falsifier_template_refused():
+        # Round 03: nine rival claims, one stamped stem, specifics swapped out. It passed
+        # a count and told a reader nothing.
+        stem = "An observation showing this distinction makes no difference to the estimate"
+        many = {"claims": [dict(cond_free, id=f"r{i}", falsifier=f"{stem}: c{i} fails to separate them")
+                           for i in range(1, 5)], "evidence": []}
+        bad = severities(many, FAIL)
+        assert len(bad) == 1 and "template" in bad[0].message, bad
+        assert "r1" in bad[0].message, bad[0].message
+
+        # Two is not a pattern; distinct falsifiers pass however long they are.
+        pair = dict(many, claims=many["claims"][:2])
+        assert severities(pair, FAIL) == [], "two claims are not a template"
+        varied = dict(many, claims=[dict(c, falsifier=f"A trial in population {i} reporting no gap")
+                                    for i, c in enumerate(many["claims"])])
+        assert severities(varied, FAIL) == [], severities(varied, FAIL)
+
+    def case_narrow_proposition_asks_to_be_split():
+        prop = {"id": "p1", "statement": "The sky is blue.", "role": "proposition",
+                "falsifier": "a blue sky photographed grey at noon",
+                "holds_when": [cond("air quality", "clean", "tested")],
+                "fails_when": [cond("air quality", "hazy", "tested")],
+                "replaced_by": "p1x", "unknown_region": "dusk"}
+        lone = {"claims": [prop, {"id": "p1x", "statement": "The sky is grey in haze.",
+                                  "falsifier": "a hazy sky measured blue",
+                                  "holds_when": [cond("air quality", "hazy", "tested")]}],
+                "evidence": []}
+        soft = severities(lone, FLAG)
+        assert any("p1" in f.message and "Split it" in f.message for f in soft), soft
+        assert severities(lone, FAIL) == [], "asking for a split never fails the gate"
+
+        # A proposition with a child answering it is satisfied.
+        answered = dict(lone, claims=[prop, dict(lone["claims"][1], answers="p1")])
+        assert not any("Split it" in f.message for f in severities(answered, FLAG))
+
     def case_mixed_asks_for_the_boundary():
         both = ev("e9", "c1", "mixed", cond("air quality", "hazy"))
         naked = {"claims": [{"id": "c1", "statement": "The sky is blue."}],
@@ -873,6 +1019,10 @@ def _self_check():
               case_rival_claim_carries_its_own_work),
              ("a boundary naming an undefined dimension fails the delivery",
               case_dimensions_must_be_defined),
+             ("falsifiers sharing one stamped template are refused",
+              case_falsifier_template_refused),
+             ("a narrow proposition is asked to split, and it is a flag not a refusal",
+              case_narrow_proposition_asks_to_be_split),
              ("a mixed row asks for the boundary, and stops once it is recorded",
               case_mixed_asks_for_the_boundary),
              ("an unreadable file fails without a traceback", case_unreadable),

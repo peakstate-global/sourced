@@ -14,10 +14,13 @@ self-explaining to anyone who opens it, and a real JSON Schema (draft 2020-12) t
 ```json
 {
   "$schema": "https://peakstate.global/sourced/v1.schema.json",
-  "sourced": "1.7",
+  "sourced": "1.8",
   "artefact": { "path": "deck.pptx", "sha256": "…", "producedAt": "2026-08-26" },
   "claims": [
     { "id": "c1", "statement": "…", "status": "sourced",
+      "role": "proposition", "answers": "c1", "reads_as": "…", "basis": "…",
+      "impact": "moderate", "domain": "medical",
+      "underwriting": [ { "act": "quote-checked", "by": "sourced.py", "at": "…" } ],
       "locator": { "slide": 3 }, "evidence": ["e1"],
       "level": 1, "finer": "c3", "challenged": "holds-with-boundary",
       "kind": "empirical", "assertion": "statistical",
@@ -25,7 +28,7 @@ self-explaining to anyone who opens it, and a real JSON Schema (draft 2020-12) t
       "owner": { "name": "…", "checked": "…", "since": "2026-08-29" } }
   ],
   "evidence": [
-    { "id": "e1", "url": "…", "quote": "…", "locator": "p. 178",
+    { "id": "e1", "url": "…", "quote": "…", "quoteGloss": "…", "locator": "p. 178",
       "retrievedAt": "2026-08-26", "sha256": "…", "textSha256": "…",
       "originGroup": "…", "custodian": "self+third-party", "archiveUrl": "…",
       "selfInterested": false }
@@ -257,3 +260,38 @@ derived and never stored**, and a stored `strength` or `tier` on a claim is stil
 file already on disk stays valid and an implementation that ignores the array is not broken. It is
 folded in from `<artefact>.decisions.jsonl` by `decisions.py`; see `reference/decision-ledger.md`
 for the record shape and why the chosen option carries no clause.
+
+
+## 1.8 — propositions, custody, and what was actually done
+
+**`role` and `answers` carry the propositions.** A proposition is a claim: same statement, same
+verdict, same conditions, same falsifier. It differs only in coming from the question rather than
+from the evidence, and in having other claims hang off it. So it lives in `claims[]` with
+`role: "proposition"`, and a claim answering it carries `answers: "<its id>"`. There is no separate
+array, because two homes for one truth is how they drift apart — which is exactly what happened
+when the propositions lived only in the artefact's prose and the verdict table could not restate
+them.
+
+**`reads_as` is the Conditions column in a sentence.** The machine conditions stay in `holds_when`
+and `fails_when` because `dimensions.py` needs them; `reads_as` is what a person reads.
+
+**`basis` is the evidence in a few words**, for the table's fourth column.
+
+**`quoteGloss` on an evidence row** says what a non-prose quote means. `claims.py` asks for one when
+a quote is under 60 per cent letters, after a run recorded `"8 8 0"` — a search response with its
+tags stripped — against a claim about how many trials exist.
+
+**`archiveUrl` is expected on every cited row from 1.8**, and `integrate.py` refuses a 1.8 sidecar
+where nothing was archived. Rounds 01 to 03 wrote zero across 48 cited rows, so the whole evidence
+base was self-attested: the hash proved a quote matched *our own file* and nothing more. An
+individual source the archive refused is a disclosed limit; a paper with none is nobody trying.
+
+**Several rows may share a `url`.** One row per quote, sharing the capture hash and the
+`originGroup`, because they are the same file read twice. Nothing ever forbade this and no run had
+done it.
+
+**`underwriting` records acts, not identities.** Each entry is a thing that was done — the quote
+checked, the arithmetic recomputed, a challenge survived — with the actor and the time on it. The
+assurance level is derived from the acts by `underwrite.py` and is never stored, because a stored
+level is an assertion and a derived one can be argued with. `impact` and `domain` feed the risk
+rating; both are optional and both default conservatively.

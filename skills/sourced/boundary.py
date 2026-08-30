@@ -451,7 +451,7 @@ def _self_check():
     md = table({"claims": [dict(both, reading="Reserve share")],
                 "conflicts": [{"claim": "c9", "state": "open"}]})
     assert "| Reserve share | Holds narrowly |" in md, md
-    assert md.splitlines()[1] == "|---|---|---|", md
+    assert md.splitlines()[1] == "|---|---|---|---|", md
     assert table({"claims": [{"id": "c3", "statement": "no boundary here"}]}) == "", \
         "a claim with no boundary and no open conflict earns no row"
 
@@ -461,20 +461,24 @@ def _self_check():
     assert _region(dict(night, id="c9")).startswith(("holds when", "fails when", "not tested")), \
         "no reads_as falls back to the fields"
 
-    # The table is keyed to the propositions, and repeats become P2.1, P2.2.
+    # The table restates the proposition, and answering claims render beneath it.
     keyed = {"claims": [
-        dict(night, id="a", proposition="P2", reading="second", reads_as="x"),
-        dict(night, id="b", proposition="P1", reading="first", reads_as="y"),
-        dict(night, id="c", proposition="P1", reading="first detail", reads_as="z"),
+        dict(night, id="p1", role="proposition", statement="The sky is blue", reads_as="x"),
+        dict(night, id="c9", answers="p1", statement="It is blue at noon", reads_as="y"),
+        dict(night, id="p2", role="proposition", statement="The sky is grey", reads_as="z"),
     ]}
     md = table(keyed)
-    assert md.splitlines()[0] == "| Proposition | Verdict | Conditions |", "third column is Conditions"
+    assert md.splitlines()[0] == "| Proposition | Verdict | Conditions | Evidence and reasoning |", md
     body = md.splitlines()[2:]
-    assert body[0].startswith("| P1 - first |"), "propositions sort by number, not ledger order"
-    assert body[1].startswith("| P1.1 - first detail |"), "a second claim on P1 becomes P1.1"
-    assert body[2].startswith("| P2 - second |"), "P2 follows P1"
+    assert body[0].startswith("| P1 - The sky is blue |"), body
+    assert body[1].startswith("| P1.1 - It is blue at noon |"), body
+    assert body[2].startswith("| P2 - The sky is grey |"), body
 
-    print("boundary: self-check passed (10 of 10 cases; the threshold is 10 of 10)")
+    # A claim with no boundary at all says Unconditional rather than leaving it blank.
+    bare = {"id": "c1", "statement": "s", "challenged": "holds"}
+    assert _region(bare) == "Unconditional", _region(bare)
+
+    print("boundary: self-check passed (11 of 11 cases; the threshold is 11 of 11)")
 
 
 VERDICTS = ("Holds", "Holds narrowly", "Falsified", "Unevaluated", "Contested")
@@ -522,7 +526,13 @@ def _region(claim):
         entries = conditions(claim, field)
         if entries:
             return f"{lead} {'; '.join(dimensions.label(e) for e in entries[:2])}"
-    return (claim.get("unknown_region") or "").strip() or "not tested"
+    unknown = (claim.get("unknown_region") or "").strip()
+    if unknown:
+        return unknown
+    # No boundary at all. Say so in a word rather than leaving the cell to be filled
+    # with the reasoning, which is what round 03 did: a blank reads as an omission and
+    # a restated justification reads as a condition that is not there.
+    return "Unconditional"
 
 
 def _sort_key(claim, order):
@@ -541,51 +551,78 @@ def _sort_key(claim, order):
 def table(data):
     """The verdict table, as markdown, keyed to the propositions.
 
-    This is the artefact's required table (`reference/research-mode.md`). It is
-    generated so it cannot drift from the ledger: a row you disagree with is a boundary
-    recorded wrongly, and the fix is the record, not the sentence.
+    Four columns: the proposition restated beside its label, the verdict word alone, the
+    conditions or `Unconditional`, and the evidence in a few words.
 
-    Rows carry the proposition they belong to. A claim naming a proposition renders as
-    `P2.1` beneath it; a claim that IS the proposition renders as `P2` when its
-    `proposition` matches its own label. Round 02 rendered every boundary-carrying claim
-    flat, 32 rows against 6 propositions, and a reader had no way in.
+    Column one carries the PROPOSITION's own sentence, not the claim's. Round 03 printed
+    the claim wording under a proposition label, so a reader had to scroll back to learn
+    what P1 was, and on one paper the label and the wording had drifted far enough that
+    the verdict was wrong for the proposition it was filed under.
 
-    The first column reads `reading` when the claim carries one, which is the short
-    proposition the sharpening step produced. Without it the whole statement goes in the
-    cell, and a paragraph in a table cell is the sign that the question was never split.
+    A claim answering a proposition renders beneath it as P2.1, P2.2, in ledger order.
     """
+    claims = data.get("claims") or []
+    by_id = {c.get("id"): c for c in claims if isinstance(c, dict)}
     contested = {c.get("claim") for c in (data.get("conflicts") or [])
                  if isinstance(c, dict) and c.get("state") == "open"}
-    rows = [c for c in data.get("claims") or []
-            if has_boundary(c) or c.get("id") in contested]
-    if not rows:
+
+    props = [c for c in claims if c.get("role") == "proposition"]
+    labelled, order = {}, []
+    for i, prop in enumerate(props, 1):
+        labelled[prop.get("id")] = f"P{i}"
+        order.append(prop)
+
+    def text_of(claim):
+        return (claim.get("reading") or claim.get("statement")
+                or claim.get("assertion") or claim.get("id") or "").strip().rstrip(".")
+
+    def row(label, claim):
+        head = f"{label} - {text_of(claim)}" if label else text_of(claim)
+        return (f"| {head} | {verdict(claim, contested)} "
+                f"| {_region(claim)} | {(claim.get('basis') or '').strip()} |")
+
+    out = ["| Proposition | Verdict | Conditions | Evidence and reasoning |",
+           "|---|---|---|---|"]
+    dumped, placed = [], set()
+
+    for prop in order:
+        pid, tag = prop.get("id"), labelled[prop.get("id")]
+        out.append(row(tag, prop)); placed.add(pid)
+        if not (prop.get("reads_as") or "").strip() and has_boundary(prop):
+            dumped.append(pid)
+        n = 0
+        for c in claims:
+            if c.get("answers") != pid or c.get("id") == pid:
+                continue
+            if not (has_boundary(c) or c.get("id") in contested):
+                continue
+            n += 1
+            out.append(row(f"{tag}.{n}", c)); placed.add(c.get("id"))
+            if not (c.get("reads_as") or "").strip():
+                dumped.append(c.get("id"))
+
+    # Anything carrying a boundary that no proposition claimed. Round 03's papers were
+    # entirely this, which is why the table read as a flat list.
+    orphans = [c for c in claims if c.get("id") not in placed
+               and (has_boundary(c) or c.get("id") in contested)]
+    for c in orphans:
+        out.append(row("", c))
+        if not (c.get("reads_as") or "").strip():
+            dumped.append(c.get("id"))
+
+    if len(out) == 2:
         return ""
-    rows = sorted(rows, key=lambda c: _sort_key(c, (data.get("claims") or []).index(c)))
-
-    seen, dumped = {}, []
-    out = ["| Proposition | Verdict | Conditions |", "|---|---|---|"]
-    for claim in rows:
-        label = (claim.get("reading") or claim.get("statement")
-                 or claim.get("assertion") or claim.get("id") or "")
-        prop = (claim.get("proposition") or "").strip().upper()
-        if prop:
-            n = seen.get(prop, 0)
-            seen[prop] = n + 1
-            tag = prop if n == 0 else f"{prop}.{n}"
-            label = f"{tag} - {label.strip().rstrip('.')}"
-        else:
-            label = label.strip().rstrip(".")
-        if not (claim.get("reads_as") or "").strip():
-            dumped.append(claim.get("id") or label[:30])
-        out.append(f"| {label} | {verdict(claim, contested)} | {_region(claim)} |")
-
     if dumped:
         print(f"boundary: {len(dumped)} row(s) fell back to the raw conditions because no "
               f"reads_as was written: {', '.join(str(d) for d in dumped[:6])}"
               f"{' ...' if len(dumped) > 6 else ''}", file=sys.stderr)
-    if not seen:
-        print("boundary: no claim names a proposition, so the table is flat. Set "
-              "proposition on each claim to key it (reference/research-mode.md).",
+    if not props:
+        print("boundary: no claim carries role='proposition', so the table cannot restate "
+              "what each row is about. Set role and answers (reference/research-mode.md).",
+              file=sys.stderr)
+    elif orphans:
+        print(f"boundary: {len(orphans)} claim(s) carry a boundary and answer no proposition, "
+              f"so they render unkeyed: {', '.join(str(c.get('id')) for c in orphans[:6])}",
               file=sys.stderr)
     return "\n".join(out)
 
