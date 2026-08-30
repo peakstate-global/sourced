@@ -65,10 +65,10 @@ tooling, because the scope line is what stops this becoming ceremony on a one-li
   are one source: collapse origin before counting. Say plainly what could not be grounded.
 - **O**pposed & Integrated — argue the strongest case against a conclusion before presenting it,
   then build the surviving position, not just the objections. Name the move that
-  resolved each disagreement: **Conditional** (each holds in a stated region), **Reframe** (both share a hidden
+  resolved each: **Conditional** (each holds in a stated region), **Reframe** (both share a hidden
   assumption — **name it**, or it is not a reframe), **Redirect** (the observation is sound, the
   conclusion is not), **Hold** (nothing settles it — name what would, ship open). Splitting the
-  difference is not a move. The requirement is a **fresh thread, explicitly adversarial**, because an
+  difference is a last resort. The requirement is a **fresh thread, explicitly adversarial**, because an
   instance not holding the draft has no commitment to defend it. A different model is an upgrade,
   not the mechanism: it catches shared priors. Record which grade ran and never report a lower
   grade as a higher one. For every claim that stands, state what would make it false.

@@ -112,13 +112,18 @@ moves, or is recorded as open:
 - **Redirect** — the observation is sound and the conclusion drawn from it is not. Say what the
   evidence does support, not merely what it fails to support.
 - **Hold** — nothing available settles it. Name the evidence that would, and ship the tension open.
+- **Compromise** — last resort. Nothing resolved it and something still has to ship. Say why the
+  other three failed.
 
-Splitting the difference is not a move. Before choosing, check whether the two claims are about
-the same level of description at all; when they are not, that is a level confusion, and it routes
-to Conditional with the level as the region, or to Hold.
+Before choosing, check whether the two claims are about the same level of description at all; when
+they are not, that is a level confusion, and it routes to Conditional with the level as the region,
+or to Hold.
 
-Record which move produced each resolution. A resolution with no named move is the shape a
-verdict takes when it is pretending to be a boundary.
+Record which move produced each resolution. A resolution with no named move is the shape a verdict
+takes when it is pretending to be a boundary. In the sidecar this is enforced: a `resolved`
+conflict must carry `move`, `reframe` and `compromise` must each carry a `move_note` saying the
+assumption dropped or why the others failed, and `hold` is not a value — holding is the conflict
+left `open`.
 
 ## What is recorded
 

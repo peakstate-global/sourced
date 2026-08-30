@@ -117,6 +117,18 @@ SUPPORT_BY = (AUTHOR, MODEL)
 
 REQUIRED = ("id", "claim", "between", "dimensions", "state")
 
+# The integration moves, from docs/philosophy.md position 8. A RESOLVED conflict names the
+# move that resolved it, so a reader can tell a boundary from a verdict wearing one.
+# `hold` is absent on purpose: holding IS `state: "open"` with the unknown region named,
+# so recording it as a resolution would let an unresolved tension read as a resolved one.
+MOVES = ("conditional", "reframe", "redirect", "compromise")
+# Two moves cannot be checked by shape alone, so each must say the thing that makes it
+# honest. Reframe names the assumption both sides shared, because "a higher-order synthesis
+# dissolves the tension" is a sentence anyone can write about anything. Compromise says why
+# the other three failed, because the midpoint of two evidenced positions usually has no
+# evidence at all: it is the last resort, never the default.
+MOVES_NEEDING_NOTE = ("reframe", "compromise")
+
 NO_SHARED_DIMENSION = ("they disagree, but no dimension is named by both, so there is "
                        "nothing yet to say where each is right")
 SAME_VALUES = ("they disagree, but every dimension both name carries the same value, so "
@@ -420,7 +432,22 @@ def validate_conflicts(data):
             assert boundary.has_boundary(claims[target]), (
                 f"{here}: claim {target!r} carries no boundary record, so this conflict "
                 f"resolved into nothing")
+            move = rec.get("move")
+            assert move in MOVES, (
+                f"{here}: a resolved conflict names the move that resolved it, and "
+                f"{move!r} is not one of {list(MOVES)}. Holding is not a resolution: "
+                f"leave the conflict open with its unknown region named")
+            if move in MOVES_NEEDING_NOTE:
+                note = rec.get("move_note")
+                assert isinstance(note, str) and note.strip(), (
+                    f"{here}: move {move!r} requires `move_note` — "
+                    + ("the assumption both sides shared, which dropping removed"
+                       if move == "reframe"
+                       else "why conditional, reframe and redirect each failed"))
         else:
+            assert "move" not in rec, (
+                f"{here}: an open conflict carries no move. Holding is what an open "
+                f"conflict already is, so naming a move here would read as resolved")
             assert "resolved_into" not in rec, (
                 f"{here}: an open conflict cannot already name what it resolved into")
             assert isinstance(rec.get("unknown_region"), str) and rec["unknown_region"].strip(), (
@@ -622,7 +649,8 @@ def _self_check():
                 "holds_when": [cond("air quality", "clean", "tested")],
                 "unknown_region": "dusk, and every latitude above 60 degrees."}
         naked = {"id": "c3", "statement": "Something with no boundary record."}
-        rec = dict(detect(base)[0], state="resolved", resolved_into="c2")
+        rec = dict(detect(base)[0], state="resolved", resolved_into="c2",
+                   move="conditional")
         data = {"claims": base["claims"] + [held, naked], "evidence": base["evidence"],
                 "conflicts": [rec]}
         assert validate_conflicts(data)
@@ -645,6 +673,64 @@ def _self_check():
             assert "unknown region" in str(e), e
             return
         raise AssertionError("an open conflict with no unknown region must be refused")
+
+    def case_moves():
+        """The move is how a reader tells a boundary from a verdict wearing one.
+
+        Four rules, and each exists because of a way the letter was got wrong in practice:
+        a resolution with no move, holding recorded as a resolution, a reframe that names
+        no assumption, and a compromise reached without trying anything else first.
+        """
+        held = {"id": "c2", "statement": "The sky is blue in clean air.",
+                "holds_when": [cond("air quality", "clean", "tested")],
+                "unknown_region": "dusk, and every latitude above 60 degrees."}
+        base_data = {"claims": base["claims"] + [held], "evidence": base["evidence"]}
+        rec = dict(detect(base)[0], state="resolved", resolved_into="c2")
+
+        # every listed move is accepted, with a note where the move needs one
+        for move in MOVES:
+            row = dict(rec, move=move)
+            if move in MOVES_NEEDING_NOTE:
+                row["move_note"] = "Both sides assumed the reading was taken outdoors."
+            assert validate_conflicts(dict(base_data, conflicts=[row])), move
+
+        # a resolution with no move, and a move that is not one of the four
+        for bad_move, word in ((None, "names the move"), ("hold", "Holding is not"),
+                               ("transcend", "names the move")):
+            row = dict(rec)
+            if bad_move is not None:
+                row["move"] = bad_move
+            try:
+                validate_conflicts(dict(base_data, conflicts=[row]))
+            except AssertionError as e:
+                assert word in str(e), e
+                continue
+            raise AssertionError(f"move {bad_move!r} must be refused")
+
+        # reframe and compromise each have to say the thing that makes them honest
+        for move in MOVES_NEEDING_NOTE:
+            for note in (None, "   "):
+                row = dict(rec, move=move)
+                if note is not None:
+                    row["move_note"] = note
+                try:
+                    validate_conflicts(dict(base_data, conflicts=[row]))
+                except AssertionError as e:
+                    assert "move_note" in str(e), e
+                    continue
+                raise AssertionError(f"{move} without a note must be refused")
+
+        # holding is state open, so an open conflict carries no move at all
+        open_rec = dict(detect(base)[0], state="open",
+                        unknown_region="every reading taken indoors")
+        assert validate_conflicts(dict(base_data, conflicts=[open_rec]))
+        try:
+            validate_conflicts(dict(base_data,
+                                    conflicts=[dict(open_rec, move="conditional")]))
+        except AssertionError as e:
+            assert "open conflict carries no move" in str(e), e
+        else:
+            raise AssertionError("a move on an open conflict must be refused")
 
     def case_refusals():
         good = dict(detect(base)[0], unknown_region="nobody has looked at dusk.")
@@ -756,7 +842,8 @@ def _self_check():
                 "unknown_region": "dusk, and every latitude above 60 degrees."}
         rec = {"id": "x1", "claim": "c1",
                "between": [{"evidence": "e1", "outcome": "for"}, {"claim": "c9"}],
-               "dimensions": ["air quality"], "state": "resolved", "resolved_into": "c1"}
+               "dimensions": ["air quality"], "state": "resolved", "resolved_into": "c1",
+               "move": "conditional"}
         data = {"claims": [held, rival], "evidence": [clean, dirty], "conflicts": [rec]}
         assert validate_conflicts(data), "a conflict naming a claim as a side must validate"
         # The differing dimensions come off the two claims' own conditions.
@@ -869,6 +956,8 @@ def _self_check():
               case_overload_is_a_false_conflict),
              ("a conflict is open or resolved, and nothing else", case_states),
              ("resolved requires a claim that carries a boundary", case_resolution),
+             ("a resolved conflict names its move, and reframe and compromise "
+              "must say why", case_moves),
              ("a malformed conflict or support is refused", case_refusals),
              ("a support records who set it, and absent reads as author",
               case_who_set_the_support),

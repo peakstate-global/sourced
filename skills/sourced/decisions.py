@@ -636,7 +636,8 @@ def _self_check():
                 "unknown_region": "dusk."}
         rivalry = base | {"claims": [held, rival], "evidence": [], "conflicts": [
             {"id": "x1", "claim": "c1", "between": [{"claim": "c9"}],
-             "dimensions": ["air quality"], "state": "resolved", "resolved_into": "c1"}]}
+             "dimensions": ["air quality"], "state": "resolved", "resolved_into": "c1",
+              "move": "conditional"}]}
         rivalry["conflicts"][0]["between"] = [
             {"claim": "c9"},
             {"claim": "c10"}]

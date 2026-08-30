@@ -208,6 +208,21 @@ one that held. **`opposed` is unchanged and stays:** it records which grade of p
 the artefact, `challenged` records what that pass found about one claim, and neither derives
 from the other.
 
+**A resolved conflict names its move, in sourced 1.7.** `move` is required when `state` is
+`resolved`, and must be one of `conditional`, `reframe`, `redirect`, `compromise` — the
+integration moves in position 8 of `docs/philosophy.md`. Two of them cannot be checked by shape,
+so each carries a required `move_note`: `reframe` names the assumption both sides shared, because
+"a higher-order synthesis dissolves the tension" is a sentence anyone can write about anything;
+`compromise` says why conditional, reframe and redirect each failed, because it is the last resort
+and not the default.
+
+`hold` is deliberately not a value. Holding IS a conflict left `open` with its `unknown_region`
+named, so an open conflict carries no `move` at all. Allowing both forms would let an unresolved
+tension read as a resolved one, which is the failure the move exists to prevent.
+`conflicts.validate_conflicts()` refuses a resolution with no move, a move outside the four,
+`hold` in either position, a missing or blank `move_note` on the two that need one, and a move on
+an open conflict.
+
 **A conflict side may name a claim, in sourced 1.6.** `between` still holds exactly two sides,
 and a side is `{"evidence": "e1", "outcome": "for"}` exactly as before, or `{"claim": "c9"}`
 naming a competing claim. That is the shape an adversarial pass produces: it does not hand you

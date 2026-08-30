@@ -189,16 +189,23 @@ one each. Where a name differs, the Astrolabe sibling is given.
 | Reframe | Both sides share a hidden assumption, and dropping it removes the trade-off | **Name the assumption.** Unnamed, this is not a reframe | Transcend |
 | Redirect | The observation is sound and the conclusion drawn from it is not | State what the evidence does support, not merely what it fails to support | Redirect |
 | Hold | The tension is real and nothing available settles it | Name what evidence would settle it, and say the tension is open | Hold |
+| Compromise | Last resort. Nothing resolved it and something still has to ship | Say why the other three failed | Compromise |
+
+**In the sidecar, Hold is not a field.** Holding IS a conflict left `open` with its unknown
+region named, so a resolved conflict may never record it. That keeps an unresolved tension from
+reading as a resolved one, which is the failure the move exists to prevent.
 
 **Hold is the move that keeps the other three honest.** A set of moves that all resolve will
 manufacture resolutions. Naming non-resolution as a legitimate, recordable outcome is what stops
 the framework rewarding a confident synthesis over an accurate one. It is the same instinct as
 shipping an open conflict, given a name so it can be chosen rather than settled for.
 
-**Splitting the difference is not a move.** The midpoint between two evidenced positions is
-usually a position with no evidence at all. Astrolabe treats compromise as net-negative by
-concession and distinct from bifurcate; in claims work it is worse than that, and it is recorded
-here as an anti-pattern.
+**Compromise is the last resort, never the default.** The midpoint between two evidenced
+positions is usually a position with no evidence at all, so it is the move you reach for when the
+other three have failed and something still has to ship. Astrolabe treats it as net-negative by
+concession and distinct from bifurcate, and that reading holds here. It stays available because a
+move that is banned gets used anyway and mislabelled, which is worse than a compromise that says
+it is one. A sidecar recording it must say why conditional, reframe and redirect each failed.
 
 **The naming test on Reframe is load-bearing.** Without it, "a higher-order synthesis dissolves
 the tension" is a sentence anyone can write about anything, and it becomes the cheapest way to
