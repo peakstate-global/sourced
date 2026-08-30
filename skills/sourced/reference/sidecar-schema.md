@@ -14,12 +14,12 @@ self-explaining to anyone who opens it, and a real JSON Schema (draft 2020-12) t
 ```json
 {
   "$schema": "https://peakstate.global/sourced/v1.schema.json",
-  "sourced": "1.9",
+  "sourced": "1.10",
   "artefact": { "path": "deck.pptx", "sha256": "…", "producedAt": "2026-08-26" },
   "claims": [
     { "id": "c1", "statement": "…", "status": "sourced",
       "role": "proposition", "answers": "c1", "reads_as": "…", "basis": "…",
-      "impact": "moderate", "domain": "medical", "would_settle": "…",
+      "impact": "moderate", "domain": "medical", "would_settle": "…", "label": "P2.3",
       "underwriting": [ { "act": "quote-checked", "by": "sourced.py", "at": "…" } ],
       "locator": { "slide": 3 }, "evidence": ["e1"],
       "level": 1, "finer": "c3", "challenged": "holds-with-boundary",
@@ -321,3 +321,30 @@ carrying a verdict reads as a double negative underneath one.
 
 **A genuinely contested proposition must be split**, one sub-proposition per side, each with its own
 boundary. That is the integration step, and it is now a refusal rather than a prompt.
+
+
+## 1.10 — the label, the gloss, and what counts as a second source
+
+**`label` is the P-number the paper shows for a claim.** A verdict table renders `P2.3` and, until
+now, nothing in `claims[]` carried that string, so a sub-row id resolved to prose and no check could
+tell whether the body's `P2.3` was the table's. Two round-05 graders found this independently on two
+papers each. Set it with `claims.py set --id c9 --label P2.3`.
+
+**`quoteGloss` is now written.** `claims.py` had demanded a gloss for a non-prose quote since 1.8 and
+never stored it, so a round-05 run had six rows to hand-patch. A gate that extracts work and discards
+it is worse than no gate.
+
+**`Contested` requires both sides of the conflict to rest on a retrieved source.** A conflict between
+an evidence row and a claim the adversarial pass wrote is the pass arguing with itself: worth
+recording, and not two sources disagreeing, which is what the word tells a reader. Round 05 shipped
+one, where the row's own evidence cell said no retrieved source decomposed the quantity at all.
+
+**The archive URL is checked against the URL it claims to snapshot.** The save endpoint follows
+redirects, so a page that redirects returns a snapshot of the destination; a round-05 run was handed
+a snapshot of a different page than the one it cited. A wrong archive URL is worse than none, because
+it reads as independent custody of a document nobody archived.
+
+**Write the fine word in `assertion`, not the coarse one in `kind`.** `kind` takes `empirical`,
+`synthesis`, `position` or `story`. `assertion` takes `definitional`, `normative`, `predictive` and
+the rest, and `kinds.kind_of()` derives the coarse rung from it. `research-mode` was asking for the
+fine words under the coarse field, and a run spent a gate failure discovering it.

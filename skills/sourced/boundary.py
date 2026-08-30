@@ -477,6 +477,15 @@ def _self_check():
     assert body[1].startswith("| P1.1 - It is blue at noon |"), body
     assert body[2].startswith("| P2 - The sky is grey |"), body
 
+    # A conflict whose rival is a pass-written claim is not two sources disagreeing.
+    data_one = {"evidence": [{"id": "e1"}, {"id": "e2"}]}
+    both_ev = {"between": [{"evidence": "e1"}, {"evidence": "e2"}]}
+    one_claim = {"between": [{"evidence": "e1"}, {"claim": "c44"}]}
+    assert retrieved_sided(both_ev, data_one) is True
+    assert retrieved_sided(one_claim, data_one) is False, \
+        "the adversarial pass arguing with itself is not a second source"
+    assert retrieved_sided({"between": [{"evidence": "e1"}]}, data_one) is False
+
     # attempted-unresolved with nothing contesting it is untested, not contested.
     lonely = {"id": "c7", "statement": "s", "challenged": "attempted-unresolved"}
     assert verdict(lonely) == "Unevaluated", verdict(lonely)
@@ -512,10 +521,26 @@ def _self_check():
         ok = "| P5.2 - unconditional priority of the limit over provision | Holds | x | y |"
         assert check_labels(ok, a) == [], check_labels(ok, a)
 
-    print("boundary: self-check passed (18 of 18 cases; the threshold is 18 of 18)")
+    print("boundary: self-check passed (21 of 21 cases; the threshold is 21 of 21)")
 
 
 VERDICTS = ("Holds", "Holds narrowly", "Falsified", "Unevaluated", "Contested")
+
+
+def retrieved_sided(conflict, data):
+    """True when both sides of a conflict rest on a retrieved source.
+
+    A conflict between an evidence row and a claim the adversarial pass wrote is the pass
+    arguing with itself. That is worth recording and it is not two sources disagreeing,
+    which is what `Contested` tells a reader. Round 05 shipped one: the rival was c44,
+    written by the pass, and the row's own evidence cell said no retrieved source
+    decomposed the quantity at all.
+    """
+    ev_ids = {e.get("id") for e in (data.get("evidence") or []) if isinstance(e, dict)}
+    sides = conflict.get("between") or []
+    if len(sides) < 2:
+        return False
+    return all(isinstance(s, dict) and s.get("evidence") in ev_ids for s in sides)
 
 
 def verdict(claim, open_claims=()):

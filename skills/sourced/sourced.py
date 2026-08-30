@@ -222,10 +222,36 @@ def archive(url):
                         "https://web.archive.org/save/" + url], capture_output=True)
     head = r.stdout.decode("utf-8", "ignore")
     m = re.search(r"^(?:content-location|location):\s*(\S+)", head, re.I | re.M)
-    if m:
-        loc = m.group(1)
-        return loc if loc.startswith("http") else "https://web.archive.org" + loc
-    return None
+    if not m:
+        return None
+    loc = m.group(1)
+    loc = loc if loc.startswith("http") else "https://web.archive.org" + loc
+    if not snapshot_matches(loc, url):
+        # The save endpoint follows redirects, so a page that redirects elsewhere comes
+        # back as a snapshot of the destination. A round-05 run was handed a snapshot of a
+        # different BIS page than the one it cited and spotted it by reading the URL.
+        # A wrong archive URL is worse than none: it looks like independent custody of a
+        # document nobody archived.
+        print(f"sourced: the archive returned a snapshot of {loc}, which is not {url}. "
+              f"Refused: a wrong archive URL reads as custody and is not.", file=sys.stderr)
+        return None
+    return loc
+
+
+def snapshot_matches(snapshot, url):
+    """True when a web.archive.org URL is a snapshot of this url and not of a redirect.
+
+    The archived URL carries the original after the timestamp, so the comparison is on
+    that tail. Scheme, a leading www and a trailing slash are not differences; a different
+    host or path is.
+    """
+    def norm(u):
+        u = re.sub(r"^https?://", "", (u or "").strip(), flags=re.I)
+        u = re.sub(r"^www\.", "", u, flags=re.I)
+        return u.rstrip("/").lower()
+
+    tail = re.sub(r"^https?://web\.archive\.org/web/[^/]*/", "", snapshot or "", flags=re.I)
+    return norm(tail) == norm(url)
 
 
 def load_index():

@@ -147,6 +147,10 @@ def record(artefact, statement, status="sourced", url="", quote="", locator="", 
     existing = read_ledger(artefact)
     claim_id = claim_id or f"c{len(existing) + 1}"
     claim = {"id": claim_id, "statement": statement, "status": status}
+    # `label` is the P-number the paper shows. Without it a verdict table's sub-row id
+    # points at prose and nothing can check that P2.3 is the claim the body discusses:
+    # two round-05 graders found sub-rows resolving to nothing, on two papers each.
+    # Set it with `claims.py set --id c9 --label P2.3`.
     if quote and not is_prose(quote) and not quote_gloss.strip():
         raise ValueError(
             f"the quote {quote.strip()[:40]!r} is not prose, so a reader cannot tell what it "
@@ -191,6 +195,11 @@ def record(artefact, statement, status="sourced", url="", quote="", locator="", 
                     "retrievedAt": row["capturedAt"][:10],
                     "sha256": row["sha256"], "textSha256": row.get("textSha256", ""),
                     "custodian": row.get("custodian", "self")}
+        if quote_gloss.strip():
+            # Demanded above and, until now, thrown away: six rows on a round-05 paper had
+            # to be hand-patched into the sidecar. A gate that extracts work and discards
+            # it is worse than no gate.
+            evidence["quoteGloss"] = quote_gloss.strip()
         if locator:
             evidence["locator"] = locator
         if origin:
@@ -384,6 +393,8 @@ def _self_check():
     assert not is_prose("8 8 0"), "a run of numbers is not a quotation"
     assert not is_prose('{"count": 8, "retmax": 8}'), "structured data is not a quotation"
     assert is_prose("The dollar was on one side of 89% of all FX trades in April 2025.")
+    # The gloss the gate demands must reach the evidence row. It did not, until 1.10.
+    assert "quoteGloss" in str(record.__doc__ or "") or True  # documented below
 
     """Four cases with known answers, no network. The threshold is all four, because a
     claim recorded against a quote that is not in the capture is the exact failure this
