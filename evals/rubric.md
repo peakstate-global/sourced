@@ -1,5 +1,5 @@
 ---
-rubricVersion: 6
+rubricVersion: 7
 frozen: 2026-08-30
 reanchored: 2026-08-29
 ---
@@ -79,7 +79,21 @@ C9 checks that a proposition statement contains no verdict word. One round-04 pa
 proposition asserting that the premises *are challenged*, which then took the verdict `Contested`,
 and no reader could work out what was being claimed.
 
-**v6 scores are not comparable to v5, v4, v3, v2 or v1.** The ledger records the ruler version per round for
+**v7, correcting v6.** Two of v6's changes were wrong and round 05's graders caught both.
+
+C6's cap fired on any paper containing a `fails_when` region marked `untested`. But the skill was
+changed in the same night to *let* a run mark such a region honestly, so the rubric penalised the
+exact behaviour the skill was built to produce, and capped three of four papers for doing the right
+thing. The cap now fires only where a paper **conflates** the two states.
+
+C9 listed six definition families while the skill had seven. Every paper using the seventh was
+marked down for following the specification. That is the third time one half of the instrument moved
+without the other.
+
+C9 also gains a partial reading: it scored a paper carrying 6 of 18 propositions in the sidecar the
+same as one carrying none.
+
+**v7 scores are not comparable to v6, v5, v4, v3, v2 or v1.** The ledger records the ruler version per round for
 exactly this reason. This is the fourth consecutive round under a moved ruler, which is a deliberate
 choice: the target is still being discovered, so learning per round is the output and the trend is
 not yet the point.
@@ -191,7 +205,13 @@ and they are different findings for a reader:
 
 **A region a claim "fails in" that contains no evidence is untested, not failed.** "Fails as a claim
 about active-control trials, because none exist" is not a failure of the claim; it is an absence of
-trials. Where you find this, cap the criterion at 2 however good the rest is, and say which rows.
+trials.
+
+**Cap at 2 only where the paper CONFLATES the two.** A row that says a claim fails in a region
+nobody has measured, or a verdict of `Contested` with no second source behind it, is the defect.
+**A region explicitly marked `untested` — in the prose, or as a boundary `basis` — is the paper
+getting this right, and must not be penalised.** v6 capped three of four papers for labelling the
+distinction honestly, which is the opposite of what this criterion is for.
 
 ### C7 — Mechanism over verdict (weight 2)
 
@@ -258,7 +278,7 @@ i) **Definitions, in two subsections.** *Terms not used here*, each with what th
    instead and one line on why; then *Terms used here*, as full blocks. A block describes a term the
    paper keeps — it never mixes a retired term and its replacement in one entry.
 ii) **A family named on each defined term**, from the closed set: `umbrella`, `compound`,
-    `overloaded`, `unmeasured`, `imprecise`, `judgement`.
+    `overloaded`, `unmeasured`, `imprecise`, `judgement`, `specific`. **Seven.**
 iii) **Propositions stated positively, with no verdict word inside them.** A proposition asserts
      what might be true; the verdict column says how it fared. A proposition containing `holds`,
      `falsified`, `unevaluated` or `contested` produces a double negative the reader cannot unpick.
@@ -279,6 +299,10 @@ a reader who only checks that labels exist.
 
 - **3.** All five present, and a label followed through the split, the table and the body names the
   same claim in each. A sub-row's id resolves to a claim in the sidecar.
+**Propositions in the sidecar are scored by proportion, not presence.** A paper carrying 6 of 18 as
+`role: proposition` is not the same as one carrying none, and v6 scored them alike. All or nearly
+all is a 3; most is a 2; a handful is a 1.
+
 - **2.** All five present, and a label points at different things in two places — the table restates
   a different claim from the proposition it is keyed to, a body heading uses a number the table
   gives to another claim, or sub-row ids do not resolve to sidecar claims. Also 2 if the
