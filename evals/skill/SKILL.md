@@ -115,6 +115,21 @@ v) **Recommendations.** What to change in the skill, and what to change in the r
 Then one line appended to `LEDGER.md`, and `python3 round.py compare` to check the trend reads
 correctly. Commit the round folder wherever the measurements are kept.
 
+## Step 7. Hand over the papers themselves
+
+**Every round closes by linking each position paper and its sidecar.** The report says what the
+round measured; the papers are what it measured, and a reader who cannot open one is taking the
+scores on trust. One line per topic, the paper and its sidecar together:
+
+    - **T-usd** - [paper](runs/T-usd/artefact.md) - [sidecar](runs/T-usd/artefact.md.sourced)
+
+Link the sidecar every time, next to its paper, never as an afterthought. It carries the claims,
+the boundaries, the decision log and the falsifiers, so it is the half that makes a score
+checkable. This is the same rule the standard puts on the artefact's own provenance block, applied
+to the round: a paper is delivered with its evidence or it is not delivered.
+
+Paths are relative to the round folder, so the block survives being pasted anywhere under it.
+
 ## What this skill will not do
 
 - **It will not change a frozen file to make a round work.** Topics, prompt, rubric and features
