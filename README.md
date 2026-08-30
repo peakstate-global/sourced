@@ -42,12 +42,18 @@ for the fix.
 | | Check | Answers the problem | Human failure mode |
 |---|---|---|---|
 | **S** | Sourced | Nobody can tell where any of it came from. | Fluency bias |
-| **O** | Opposed | Nothing ever argued back. | Confirmation bias, plus sycophancy |
+| **O** | Opposed & Integrated | Nothing ever argued back — or it argued back and nothing was built from what it found. | Confirmation bias, plus sycophancy |
 | **U** | Underwritten | If it is wrong, no name is on it. | Diffusion of responsibility |
 | **R** | Recorded | The reasoning was never written down (while it happened). | Narrative fallacy |
 | **C** | Constrained | There is no safety net. Nothing stops it doing the wrong thing. | Normalisation of deviance |
 | **E** | Evaluated | The system changed since it was checked. | Frozen baseline |
 | **D** | Disclosed | The reader cannot tell what was checked, or by whom. | Automation bias |
+
+**O carries two words on purpose.** Opposed blocks the under-evidenced claim, which is the
+primary outcome. Integrated takes what survives further: using the evidence conditionally where
+it holds, or finding the resolution that makes the tension unnecessary. One word made the second
+half look like a by-product, and in practice that produced reviews which listed objections and
+stopped. The asymmetry is deliberate, not a forced acronym.
 
 **Four of the seven have no manual version at volume: S, R, C and E.** That is the argument for
 building them into systems rather than teaching them as a discipline.
@@ -63,6 +69,33 @@ References:   What backs it, where it lives, and how it can be checked.
 
 **Every line must either make a limit transparent, or let the reader go and check something.** A line
 that does neither is a motherhood statement and comes out. See [docs/provenance-block.md](docs/provenance-block.md).
+
+Attribution carries a **technical fidelity line**: the model identifiers, the harness, the skills
+or tools invoked, and a version for each, in C2PA's `softwareAgent` name-and-version shape. A model
+and a version tell a reader something they can check. "AI was involved" tells them only which prior
+to apply, and it stops predicting anything the moment the underlying systems get good.
+
+## What no existing standard covers
+
+Retrieval on 30 August 2026 across C2PA, the IPTC digital source type vocabulary, Elsevier and
+ICMJE author policies, model cards, datasheets for datasets, the EU AI Act and OAIC guidance found
+no standard that does any of the following. Stated as at that date and scoped to what was
+retrieved, not as a universal claim.
+
+1. Provides a vocabulary for AI-authored or AI-analysed **prose and reasoning**. IPTC stops at media.
+2. Documents a **multi-step agent pipeline** — orchestrator, subagents, tools, harness, system
+   prompt — as one disclosed unit.
+3. Defines a **sufficiency test for the provenance of a claim**. The OAIC does set criteria for
+   explaining an automated decision; GDPR and the EU AI Act use "meaningful" and "main elements"
+   without defining them. Neither addresses whether a claim's evidence is adequately disclosed.
+4. Separates a **recalled** claim from an **inferred** conclusion at claim level.
+5. Requires a structured **falsification companion** per claim.
+
+The block is designed toward EU AI Act Article 86, which asks for the role of the AI system in the
+decision-making procedure and the main elements of the decision taken. **Nothing here is a
+compliance claim.** The Australian automated decision making obligation commencing 10 December 2026
+is a privacy-policy-level notice duty about the kinds of decisions a system makes, not a
+per-decision explanation duty, so an artefact-level provenance block does not discharge it.
 
 ## What is here
 

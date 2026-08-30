@@ -12,11 +12,30 @@ Every deliverable that contains model output ships with a **provenance block**:
 four labels, in this order, in a fixed shape.
 
 ```
-Attribution:  Who authored it, and that AI tools assisted, in one sentence.
+Attribution:  Who authored it, and that AI tools assisted, in one sentence,
+              followed by the technical fidelity line.
 Accountable:  The named person who answers for it.
 Limitations:  What is not backed, and how far each claim is from its source.
 References:   What backs it, where it lives, and how it can be checked.
 ```
+
+### The technical fidelity line
+
+Attribution names the pipeline, not the fact of a machine: **model identifiers, the harness or
+framework, the skills or tools invoked, and a version for each.** Where a component has no
+version, say so rather than dropping the component.
+
+Use C2PA's `softwareAgent` name-and-version shape per component, and IPTC `digitalSourceType`
+terms when the artefact is media. Confirmed against C2PA specification 2.3 and the IPTC
+vocabulary on 30 August 2026. Same vocabulary as tooling that already exists, so the block stays
+machine-readable without a new dialect.
+
+**Why this grain.** Disclosure exists so a reader can assess the work. A model and a version tell
+them something they can check. "AI was involved" tells them only which prior to apply, and it
+stops predicting anything the moment the underlying systems get good. It is never a badge, and
+never staged so that it pre-empts a reader's judgement.
+
+**No exemption for short form.** A rule with an exemption is a rule people route around.
 
 ## The test that governs what goes in it
 

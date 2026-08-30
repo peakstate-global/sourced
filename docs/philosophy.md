@@ -176,6 +176,58 @@ made quietly in a draft. It opens when the disagreement is found, it stays open 
 into a boundary, and where it cannot be resolved it ships open, with the unknown region named.
 Shipping an open conflict is honest. Resolving it silently is not.
 
+### The four moves
+
+Saying integration is the goal without saying how to do it produced passes that agreed with the
+instruction and then listed objections anyway. These are the moves, aligned deliberately with the
+response categories in the Astrolabe project so the two share a vocabulary rather than inventing
+one each. Where a name differs, the Astrolabe sibling is given.
+
+| Move | Applies when | The test that stops it being mush | Astrolabe sibling |
+|---|---|---|---|
+| Conditional | The tension is real and each side holds in a nameable region | State the region, and the observation that places a case in it | Bifurcate |
+| Reframe | Both sides share a hidden assumption, and dropping it removes the trade-off | **Name the assumption.** Unnamed, this is not a reframe | Transcend |
+| Redirect | The observation is sound and the conclusion drawn from it is not | State what the evidence does support, not merely what it fails to support | Redirect |
+| Hold | The tension is real and nothing available settles it | Name what evidence would settle it, and say the tension is open | Hold |
+
+**Hold is the move that keeps the other three honest.** A set of moves that all resolve will
+manufacture resolutions. Naming non-resolution as a legitimate, recordable outcome is what stops
+the framework rewarding a confident synthesis over an accurate one. It is the same instinct as
+shipping an open conflict, given a name so it can be chosen rather than settled for.
+
+**Splitting the difference is not a move.** The midpoint between two evidenced positions is
+usually a position with no evidence at all. Astrolabe treats compromise as net-negative by
+concession and distinct from bifurcate; in claims work it is worse than that, and it is recorded
+here as an anti-pattern.
+
+**The naming test on Reframe is load-bearing.** Without it, "a higher-order synthesis dissolves
+the tension" is a sentence anyone can write about anything, and it becomes the cheapest way to
+fake rigour inside a framework built to prevent exactly that.
+
+**Level confusion is a diagnostic, not a move.** An earlier draft listed a fifth move: both claims
+true at different levels of description. That was wrong. Every move above pairs a diagnosis with
+an action, and this one has no action attached — noticing the level difference explains why the
+two collided and leaves you where you were. Adopting the higher level as the answer only coheres
+from an integral stance, and even there the move is to take what is true from each level rather
+than to climb, which is Conditional or Redirect again. So it runs as a check before the moves: ask
+whether the two claims are about the same level of description at all, and when they are not,
+route to Conditional with the level as the region, or to Hold. Record the detection either way,
+because "these were never in conflict, they were about different things" is a finding a reader
+can use.
+
+**Two worked examples of Reframe, because it is the move most often claimed and least often done.**
+
+*Manufacturing.* Quality and cost were held to be opposed: better quality meant more inspection,
+and more inspection cost more. The variable both sides held fixed was process variation. Reduce
+the variation and defects fall, rework falls, and cost falls with them. Quality stopped being
+something bought by inspecting and became something designed in. The trade-off was an artefact of
+the assumption that inspection was the lever.
+
+*Software delivery.* Speed and stability were held to be opposed for decades. Research into
+delivery performance found the two move together, because the variable both camps held fixed was
+batch size. Large releases make speed and safety genuinely opposed; small ones make them the same
+thing. Nobody split the difference, and the axis stopped existing.
+
 ---
 
 ## 9. Conditions are an open vocabulary, held in a registry

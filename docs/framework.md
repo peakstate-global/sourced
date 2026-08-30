@@ -26,12 +26,18 @@ theirs before being handed a name for the fix.
 | | Check | Answers the problem | Human failure mode |
 |---|---|---|---|
 | **S** | Sourced | Nobody can tell where any of it came from. | Fluency bias |
-| **O** | Opposed | Nothing ever argued back. | Confirmation bias, plus sycophancy |
+| **O** | Opposed & Integrated | Nothing ever argued back — or it argued back and nothing was built from what it found. | Confirmation bias, plus sycophancy |
 | **U** | Underwritten | If it is wrong, no name is on it. | Diffusion of responsibility |
 | **R** | Recorded | The reasoning was never written down (while it happened). | Narrative fallacy |
 | **C** | Constrained | There is no safety net. Nothing stops it doing the wrong thing. | Normalisation of deviance |
 | **E** | Evaluated | The system changed since it was checked. | Frozen baseline |
 | **D** | Disclosed | The reader cannot tell what was checked, or by whom. | Automation bias |
+
+**O carries two words on purpose.** Opposed blocks the under-evidenced claim, which is the
+primary outcome. Integrated takes what survives further: using the evidence conditionally where
+it holds, or finding the resolution that makes the tension unnecessary. One word made the second
+half look like a by-product, and in practice that produced reviews which listed objections and
+stopped. The asymmetry is deliberate, not a forced acronym.
 
 **The parenthesis in R is deliberate.** Two failures, not one: the reasoning was never
 written down, and it was never written down *at the time*. Reconstructing it afterwards
@@ -42,7 +48,7 @@ produces a story, not the reasoning.
 | | In your own work | When a team runs it at volume |
 |---|---|---|
 | **S** | Ask for the verbatim sentence plus page or timestamp. A fabricated quote fails a text search in two seconds. | Retrieval with citations enforced in the pipeline, plus a hash of what was retrieved so you can tell when a source moves. |
-| **O** | Run the challenge on a second tool, from a different model family. Pre-register the answer you expect. | A standing adversarial pass, with conflicts logged rather than resolved silently. |
+| **O** | Run the challenge on a second tool, from a different model family. Pre-register the answer you expect. Then resolve what it found with one of the four moves, or record the tension as open. | A standing adversarial pass, with conflicts logged rather than resolved silently, and every resolution naming the move that produced it. |
 | **U** | Write the check, not the act: "I verified every figure against source", never "reviewed". | A named owner per system, not per document. Nobody can sign ten thousand outputs. |
 | **R** | Three lines in the doc while the work happens: what you decided, what you rejected, which model and when. | Traces emitted by the system: prompt, model version, tools, retrieved context. |
 | **C** | A standing instruction: no number without a source, no claims about a named person, no legal conclusions. | Guardrails that fail closed and visibly. |

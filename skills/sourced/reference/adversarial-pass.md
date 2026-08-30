@@ -100,6 +100,26 @@ a tone to adopt while doing the others.
   conflict whose two sides are both model-proposed, so the author knows what nobody has
   confirmed.
 
+## Resolving what the pass found
+
+A pass that returns objections has done half the work. Every finding resolves with one of the four
+moves, or is recorded as open:
+
+- **Conditional** — each side holds in a nameable region. State the region, and the observation
+  that places a case in it.
+- **Reframe** — both sides share a hidden assumption, and dropping it removes the trade-off.
+  **Name the assumption.** If you cannot name it, this is not a reframe.
+- **Redirect** — the observation is sound and the conclusion drawn from it is not. Say what the
+  evidence does support, not merely what it fails to support.
+- **Hold** — nothing available settles it. Name the evidence that would, and ship the tension open.
+
+Splitting the difference is not a move. Before choosing, check whether the two claims are about
+the same level of description at all; when they are not, that is a level confusion, and it routes
+to Conditional with the level as the region, or to Hold.
+
+Record which move produced each resolution. A resolution with no named move is the shape a
+verdict takes when it is pretending to be a boundary.
+
 ## What is recorded
 
 The optional top-level `opposed` object on the sidecar, in `sourced` 1.2:
