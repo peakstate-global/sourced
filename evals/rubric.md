@@ -1,5 +1,5 @@
 ---
-rubricVersion: 4
+rubricVersion: 5
 frozen: 2026-08-30
 reanchored: 2026-08-29
 ---
@@ -50,7 +50,23 @@ named for each term, propositions carried as claims, and a verdict table that re
 proposition it is keyed to. **C9 is still conformance and still reported separately.** It measures
 whether the paper followed the instruction, never whether the instruction was any good.
 
-**v4 scores are not comparable to v3, v2 or v1.** The ledger records the ruler version per round for
+**v5, after round 04.** Four repairs, every one of them something a grader hit.
+
+C9 now says how labels are checked. It split on all four papers in the same direction, which is one
+ambiguous anchor rather than four differing papers: one grader read "labels agree" as the five parts
+being present and labelled, the other as the body, the table and the sidecar cross-referencing
+correctly. Two disputes were then settled by counting, and the cross-reference reading caught real
+defects the presence reading missed. So the anchor says cross-reference.
+
+C8 gains a rung for a paper that is mostly specific with one templated class, because 43 good
+falsifiers and 9 stamped ones fitted the 1 and the 2 anchor equally. Its scope ruling now covers
+normative claims, which can no more carry an observational falsifier than definitional ones can.
+
+C3 separates a process-provenance sentence from a limit on the evidence. "The hashes were
+re-checked" is not something a reader decides differently for, and counting it as padding cost two
+papers a mark.
+
+**v5 scores are not comparable to v4, v3, v2 or v1.** The ledger records the ruler version per round for
 exactly this reason. This is the fourth consecutive round under a moved ruler, which is a deliberate
 choice: the target is still being discovered, so learning per round is the output and the trend is
 not yet the point.
@@ -92,6 +108,12 @@ Each anchor describes the artefact, not the process. A grader who cannot point a
 - **2.** Real limits stated, padded with one or two that change nothing.
 - **1.** Boilerplate hedging.
 - **0.** None, or the piece undercuts its own contribution instead of the evidence.
+
+**A process sentence is not a limitation.** "The hashes were re-checked", "captures were re-verified
+before delivery", "the prior corpus held nothing" describe how the work was done. They belong in
+Attribution or in the body, and in Limitations they are neither padding nor substance — they are
+misfiled. **Do not count them either way**: judge the section on the sentences that are genuinely
+about the evidence, and note the misfiling in your reason line.
 
 **Generated text is judged the same as written text.** `conflicts.py` writes a Limitations sentence
 for every open conflict, and those sentences are templated. A templated line still passes the
@@ -165,9 +187,11 @@ reading, so it is settled here rather than left to the grader.
   includes `inferred` claims, and it includes rival or replacement claims the pass itself wrote.
   A claim carrying the integrated position is the *most* in scope, not the least: it is doing the
   most work and is the least externally checkable.
-- **Out of scope:** claims refuted or withdrawn during the pass, and claims that are purely
-  definitional — a statement of what a word will mean in this paper cannot be falsified by an
-  observation, and demanding one produces a fake.
+- **Out of scope:** claims refuted or withdrawn during the pass; claims that are purely
+  **definitional**, since a statement of what a word will mean here cannot be falsified by an
+  observation; and claims that are purely **normative**, for the same reason — an *ought* is not
+  settled by a measurement, and demanding a falsifier for one produces a fake. Both must be marked
+  as such in the sidecar to be excused.
 
 A claim is out of scope only if the artefact or sidecar makes it clear which of those two it is.
 "Nobody wrote one" is not out of scope.
@@ -176,7 +200,12 @@ A claim is out of scope only if the artefact or sidecar makes it clear which of 
   observation somebody could go and make**: a measurement, a trial result, a published figure, a
   count. Different claims have different falsifiers, because different claims fail for different
   reasons.
-- **2.** Every in-scope claim carries one **except a single identifiable class** — for example the
+- **2.** Every in-scope claim carries one, and **either** all are specific **except a single
+  identifiable class** that carries none, **or** most are specific and **one identifiable class is
+  templated** — a group sharing a stamped stem, typically the claims the adversarial pass wrote.
+  This is the rung for 43 specific falsifiers and 9 stamped ones. Name both counts.
+- **2 (the older reading, still valid).** Every in-scope claim carries one except a single
+  identifiable class — for example the
   inferred claims, or the rival claims the pass wrote — and the artefact still states checkable
   falsifiers for the headline positions in prose. This is the rung for a run that did the work and
   missed a category.
@@ -213,10 +242,18 @@ iv) **A verdict table that restates the proposition** in column one alongside it
 v) **A forward-view section**, present and named, or an explicit statement that no forward view is
    supportable and why.
 
-- **3.** All five present, and the labels agree across the propositions, the table and the body
-  sections, so a reader can follow `P3` from the split to the verdict to the argument.
-- **2.** All five present, labels drift somewhere — the table restates a different claim from the
-  proposition it is keyed to, or the propositions are enumerated but not carried in the sidecar.
+**Check the labels by cross-reference, not by presence.** Pick two or three labels and follow each
+one through all three places: the proposition list, the verdict table row, and the body section
+heading. They must name the same claim in each. A label that appears everywhere and points at
+different things in two of them is the defect this criterion exists to catch, and it is invisible to
+a reader who only checks that labels exist.
+
+- **3.** All five present, and a label followed through the split, the table and the body names the
+  same claim in each. A sub-row's id resolves to a claim in the sidecar.
+- **2.** All five present, and a label points at different things in two places — the table restates
+  a different claim from the proposition it is keyed to, a body heading uses a number the table
+  gives to another claim, or sub-row ids do not resolve to sidecar claims. Also 2 if the
+  propositions are enumerated but not carried in the sidecar.
 - **1.** Three or four present.
 - **0.** Two or fewer.
 

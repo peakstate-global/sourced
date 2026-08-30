@@ -1,6 +1,6 @@
 {
   "$comment": "The frozen feature list. Coverage is measured against this, never against an agent's self-report. When the skill grows a feature it is added here, and the round that first sees it says so. Detection `not_instrumented` means we have no objective signal for it: it is listed and reported separately, never counted as used or unused, because a feature we cannot measure must not quietly depress the score. v3 (2026-08-29, after round 01): boundary.py is detected by the per-claim fields it actually writes, not a top-level key it never wrote; and three features added for the shape of the delivered artefact. Those three are measured here, by mechanical detection against this frozen list, and deliberately NOT by any scored rubric criterion: the skill gained them before this file named them, so a criterion written for them now would be the rubric chasing the skill.",
-  "featuresVersion": 6,
+  "featuresVersion": 7,
   "features": [
     {
       "id": "sourced.py",
@@ -149,8 +149,8 @@
     {
       "id": "artefact:definitions",
       "group": "shape",
-      "detect": "artefact_re:^\\*\\*Is not:\\*\\*",
-      "note": "Terms the two camps use differently are defined in the is / is not / instead form"
+      "detect": "artefact_re:^\\s*[-*]?\\s*\\*\\*In this paper\\*\\*",
+      "note": "Each defined term says what it means in this paper, rather than instructing the reader"
     },
     {
       "id": "artefact:propositions-labelled",
@@ -192,7 +192,7 @@
       "id": "artefact:unconditional",
       "group": "shape",
       "detect": "artefact_re:\\|\\s*Unconditional",
-      "note": "A claim with no boundary says so in the Conditions column instead of repeating the reasoning"
+      "note": "A claim with no boundary says Unconditional in the Conditions column. This measures the generator, not the author: boundary.py emits it, so a miss means the table was written by hand or the generator was overridden."
     },
     {
       "id": "claims:propositions",
