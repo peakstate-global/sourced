@@ -1,5 +1,5 @@
 ---
-rubricVersion: 7
+rubricVersion: 8
 frozen: 2026-08-30
 reanchored: 2026-08-29
 ---
@@ -93,7 +93,30 @@ without the other.
 C9 also gains a partial reading: it scored a paper carrying 6 of 18 propositions in the sidecar the
 same as one carrying none.
 
-**v7 scores are not comparable to v6, v5, v4, v3, v2 or v1.** The ledger records the ruler version per round for
+**v8 — every criterion is now a property of the artefact, not a property of the process.**
+
+Three criteria used to name our machinery: C2 wanted an adversarial pass recorded in a sidecar, C8
+wanted a `falsifier` field, C9 described our nine headings. **A rubric written that way chases the
+skill** — C9 needed rewriting in three consecutive rounds because the skill's headings moved — and
+it cannot score a paper produced any other way, which makes a control arm impossible to judge
+fairly.
+
+So each one is restated as the property it was really testing. C2 asks whether a reader can see
+what was attacked and what survived, however that is recorded. C8 asks whether load-bearing claims
+name what would overturn them, anywhere in the output. C9 asks whether the paper is decomposed and
+navigable, without naming a heading.
+
+**Nothing is weakened by this.** A sidecar is still the best way to satisfy C2 and C8, and a paper
+that has one will score well. It is no longer the *only* way, which is the point: the rubric now
+measures the depth we wanted rather than the mechanism we happened to build.
+
+**The criteria are grounded in defects we have actually observed**, not in an idea of what good
+looks like. Five rounds produced a real list: fabricated and mis-targeted citations, one quote per
+source hiding what else it said, falsifiers that restate the claim, untested regions labelled
+contested, propositions containing their own verdict, verdicts not matching the proposition they sit
+under. Each is named in the anchor it belongs to.
+
+**v8 scores are not comparable to v7, v6, v5, v4, v3, v2 or v1.** The ledger records the ruler version per round for
 exactly this reason. This is the fourth consecutive round under a moved ruler, which is a deliberate
 choice: the target is still being discovered, so learning per round is the output and the trend is
 not yet the point.
@@ -122,11 +145,19 @@ Each anchor describes the artefact, not the process. A grader who cannot point a
 
 ### C2 — Robust and defensible (weight 3)
 
-- **3.** Every load-bearing claim has been through an adversarial pass, and the pass is recorded:
-  what was attacked, what survived, what did not.
-- **2.** A pass ran and is summarised, but which claims it touched is not recoverable.
-- **1.** Counter-arguments mentioned, no pass run.
-- **0.** Assertion. No challenge anywhere.
+**The property:** the strongest case against the paper's own conclusion was engaged, and a reader
+can see what that engagement changed. **However it is recorded.** A sidecar carrying a per-claim
+`challenged` state is the cleanest way to show it; a section saying "I thought X, this objection
+forced me to drop it, here is what replaced it" shows the same thing.
+
+- **3.** Load-bearing claims have been attacked, and a reader can tell **which** claims and **what
+  changed** — including claims of the author's own that died.
+- **2.** The challenge is described but which claims it touched is not recoverable.
+- **1.** Counter-arguments mentioned and answered, with no sign that any of them moved the position.
+- **0.** Assertion. Nothing engaged.
+
+**A paper that reports no claim of its own dying is suspicious at a 3**, not disqualified: it
+happens, but it is rare enough to say so.
 
 ### C3 — Limitations acknowledged (weight 2)
 
@@ -223,8 +254,13 @@ distinction honestly, which is the opposite of what this criterion is for.
 
 ### C8 — Falsifier stated (weight 2)
 
-**Where the falsifier must live:** on the claim, in the sidecar's `falsifier` field. A falsifier
-section in the artefact covering the headline positions is a 2, however good it is.
+**The property:** the claims that carry the conclusion name the observation that would overturn
+them, and a reader could go and make that observation.
+
+**Anywhere in the output counts.** A `falsifier` field per claim is the most auditable form and the
+easiest to score, but a sentence in the body — "this is wrong if the next trial reports X" — is the
+same property. What does not count is a falsifier attached only to the headline while the claims
+underneath carry none, because those are what the conclusion actually rests on.
 
 **Scope — which claims need one.** Round 02's graders disagreed on this and both defended their
 reading, so it is settled here rather than left to the grader.
@@ -266,9 +302,32 @@ A claim is out of scope only if the artefact or sidecar makes it clear which of 
 Then quote one falsifier and say whether you could go and check it. A count alone cannot see a
 template, which is the failure this criterion now exists to catch.
 
-### C9 — Paper shape (weight 2)
+### C9 — Decomposed and navigable (weight 2)
 
-**Conformance only** (see the v3 and v4 notes at the top). This criterion asks whether the paper has
+**The property:** a reader can find out where the paper stands on each part of the question without
+reading it end to end, and can follow one part through the argument.
+
+**No heading is named here, deliberately.** Until v8 this criterion described our own layout, which
+meant it had to be rewritten every time the layout moved and could not score a paper written any
+other way.
+
+Four things carry it, and each can be satisfied by any structure:
+
+i) **The question is split** into parts evidence can bear on separately, and the split is visible.
+ii) **Contested words are defined** — the words two sides of the argument use differently — and the
+    paper says what it means by them rather than instructing the reader.
+iii) **There is a scannable statement of where each part stands**, before or alongside the
+     argument, so a reader knows the shape before following it.
+iv) **Labels hold.** Whatever names the parts — numbers, headings, terms — the same name means the
+    same thing in the summary, the argument and any supporting record. **Check by following two or
+    three labels through, not by confirming labels exist.**
+
+- **3.** All four, and a followed label names the same thing everywhere.
+- **2.** All four present, and a label points at different things in two places.
+- **1.** Two or three present.
+- **0.** One or none.
+
+**Old conformance note, still true.** This criterion asks whether the paper has
 the shape the skill specifies. It scores structure, never quality: whether the forward view is any
 *good* is C4's job, and a paper can score 3 here and 1 there.
 
@@ -323,6 +382,13 @@ information about the rubric.
 
 ### G1 — Provenance honesty
 
+**The property: every citation exists, and says what the paper claims it says.**
+
+Where the paper carries a capture store, check the quote against the capture — it is cheaper and
+exact. **Where it does not, check against the live source yourself.** A paper produced without this
+framework is not excused the standard; it is held to it with more work on the grader's side, which
+is the correct direction for the burden to run.
+
 **Check the quote against the capture in the run store, never against the sidecar's evidence
 row.** An evidence row carries one representative quote per source. An artefact may legitimately
 quote several passages from the same capture, and only one of them will be in the row. Round 01
@@ -351,6 +417,31 @@ scoring the reasoning of an ungrounded artefact is scoring fiction.
 The test: does the integrated position change what a reader would do, expect, or watch for? If the
 answer is the same whichever side was right, nothing was integrated and the run has produced
 diplomacy. Generosity is the method here, not the output.
+
+## The defects this rubric is built from
+
+**Every anchor above is grounded in something that actually happened**, across five rounds and four
+topics. Listed here so the coverage is auditable and so a new criterion has to name the failure it
+prevents rather than a virtue it admires.
+
+| Defect observed | Where it is caught |
+|---|---|
+| A citation pointing at a different paper than the one described | G1 |
+| A quote that is not in the source it is attributed to | G1 |
+| One quote per source, hiding whatever else that source said | G1, C3 |
+| A falsifier that restates the claim: "an observation showing the opposite of X" | C8 |
+| A group of claims sharing one stamped falsifier with the details swapped | C8 |
+| A region nobody has measured, labelled as a region the claim fails in | C6 |
+| A verdict of contested where nothing contests the claim | C6 |
+| A proposition containing its own verdict, so the reader unpicks a double negative | C9 |
+| A summary row naming a different claim from the section that argues it | C9 |
+| A conclusion whose supporting claims carry no way to be wrong | C8, C4 |
+| Limitations padded with sentences about process rather than evidence | C3 |
+| A position that changes nothing a reader would do | G2 |
+
+**When a grader's note names a defect not in this table, the rubric is not yet comprehensive.** That
+has happened in every round so far, which is the honest state of it: the note field is the detector,
+and a round whose notes name no new class is the first evidence of saturation.
 
 ## Scoring mechanics
 
