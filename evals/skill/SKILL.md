@@ -173,6 +173,43 @@ Four rules, and they are what stop the table lying:
 **If no comparison is legitimate, say that in one sentence and give the table anyway.** Three
 incomparable rounds is itself the finding, and it is the argument for holding the ruler still.
 
+## The control round — run once, not every round
+
+**A rubric we wrote measures conformance to a rubric we wrote.** It shows the papers match our
+taste. It does not show they are better than what a capable model produces without any of this, and
+that is the question the whole project rests on.
+
+**Arms.** The same frozen topics, run four ways: `sourced` (the skill), `bare` (the claim and the
+same framing, no skill), `prompted` (a good generic research instruction — cite sources, argue the
+other side), and `rival` (an independent third-party research skill).
+
+**Score the controls on the same rubric.** Since v8 every criterion is a property of the artefact
+rather than of the process, so a control paper can be scored fairly — it is not disqualified for
+lacking a sidecar, it is asked whether a reader can see what was attacked and what would overturn
+the claims. **Do not strip criteria for the control arm.** If a criterion cannot be satisfied
+without our machinery, that is a fault in the criterion.
+
+**G1 costs more on a control and is the number that matters most.** With no capture store, fetch
+every cited source and check it yourself. SOURCED's central claim is that it stops fabrication, so
+the headline result is the rate of citations that do not exist or do not say what was claimed, per
+arm. Rounds 04 and 05 caught mis-targeted identifiers three times *because* a quote had to be read
+out of a capture.
+
+**Then the judgement the rubric cannot give.** Blind the papers and ask the reader which they would
+rely on:
+
+    python3 blind.py pack <out-dir> sourced:<a.md> bare:<b.md> prompted:<c.md> rival:<d.md>
+    python3 blind.py unpack <out-dir>          # after judging, never before
+
+`blind.py` removes the framework's fingerprints — the provenance block, the working-record
+references, the laboratory banner, our own vocabulary — and leaves the argument, the evidence, the
+numbers and the citations untouched. **It blinds the label, not the voice.** A reader who recognises
+a house style anyway should say so, because that is a finding about how distinctive the output is.
+
+**Run this once the ruler is locked**, not every round. "Does this beat the stock approach" does not
+change round to round, and the answer is only worth having once the thing being compared has stopped
+moving.
+
 ## What this skill will not do
 
 - **It will not change a frozen file to make a round work.** Topics, prompt, rubric and features
