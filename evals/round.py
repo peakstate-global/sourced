@@ -72,6 +72,16 @@ def overlay(round_dir):
     return "", None
 
 
+def _arms():
+    f = HERE / "arms.json"
+    return json.loads(f.read_text()) if f.exists() else {}
+
+
+def _arms_hash():
+    f = HERE / "arms.json"
+    return hashlib.sha256(f.read_bytes()).hexdigest()[:16] if f.exists() else None
+
+
 def manifest(round_dir, allow_dirty=False):
     repo = SKILL.parent.parent
     sha = git(repo, "rev-parse", "HEAD")
@@ -93,6 +103,12 @@ def manifest(round_dir, allow_dirty=False):
         "featuresVersion": json.loads((HERE / "features.json").read_text())["featuresVersion"],
         "overlayApplied": bool(overlay(round_dir)[1]),
         "overlayHash": overlay(round_dir)[1],
+        # The control arms are frozen the way the prompt is, and hashed so that "the arms
+        # did not move" is checkable rather than asserted. SKILL.md promised this stamp
+        # and nothing implemented it, so prompts, models or settings could differ across
+        # rounds while the manifest looked identical.
+        "armsVersion": _arms().get("armsVersion"),
+        "armsHash": _arms_hash(),
         "topics": [t["id"] for t in topics["topics"]],
     }
 

@@ -1,5 +1,5 @@
 ---
-rubricVersion: 9
+rubricVersion: 10
 frozen: 2026-08-30
 reanchored: 2026-08-29
 ---
@@ -274,8 +274,9 @@ reading, so it is settled here rather than left to the grader.
 - **Out of scope:** claims refuted or withdrawn during the pass; claims that are purely
   **definitional**, since a statement of what a word will mean here cannot be falsified by an
   observation; and claims that are purely **normative**, for the same reason — an *ought* is not
-  settled by a measurement, and demanding a falsifier for one produces a fake. Both must be marked
-  as such in the sidecar to be excused.
+  settled by a measurement, and demanding a falsifier for one produces a fake. Both must be marked as such **somewhere in the paper
+  or its record** to be excused — a sentence saying "this is a judgement, not a finding" excuses it
+  exactly as a `kind` field does.
 
 A claim is out of scope only if the artefact or sidecar makes it clear which of those two it is.
 "Nobody wrote one" is not out of scope.
@@ -287,7 +288,7 @@ A claim is out of scope only if the artefact or sidecar makes it clear which of 
   reasons.
 - **2.** Every in-scope claim carries one, and **either** all are specific **except a single
   identifiable class** that carries none, **or** most are specific and **one identifiable class is
-  templated** — a group sharing a stamped stem, typically the claims the adversarial pass wrote.
+  templated** — a group sharing a stamped stem, whatever produced them.
   This is the rung for 43 specific falsifiers and 9 stamped ones. Name both counts.
 - **2 (the older reading, still valid).** Every in-scope claim carries one except a single
   identifiable class — for example the
@@ -378,31 +379,41 @@ every other score on the topic advisory.
 A fail here fails the topic. Everything else in the round is then advisory, because a grader
 scoring the reasoning of an ungrounded artefact is scoring fiction.
 
-### G1b — Evidence completeness
+### G1b — Attribution and representativeness
 
-**The property: the paper cites what its empirical claims rest on, and does not hide what its own
-sources also said.**
+**The property: the paper's empirical claims say where they come from, and a cited source read
+past the quoted sentence still supports the use made of it.**
 
-G1 checks the citations that are *there*. This checks the ones that are *not*, and it is the axis
-the rubric was missing: a paper can quote a true sentence, cite it correctly, and still mislead by
-never mentioning the contrary result three paragraphs later in the same source.
+G1 checks the citations that are there. This checks whether there are enough of them, and whether
+they were used fairly. It is the only place the suite looks at what a paper did *not* quote.
 
-Two readings, and both are checkable without knowing how the paper was made:
+**This is attribution coverage, not evidence recall.** It asks whether the paper's own claims are
+attributed. It does **not** ask whether the paper found the right literature — that would need an
+independent search and is out of scope for a grader. **Say so when reporting it**, because
+"attribution is complete" is a much weaker statement than "the evidence base is complete" and the
+two are easy to confuse.
 
-- **Recall.** Take the paper's load-bearing empirical claims — the ones the conclusion needs. What
-  proportion carry a citation at all? A claim of fact with no source is not a limitation to be
-  disclosed, it is an uncited claim.
-- **Representativeness.** For two or three cited sources, read past the quoted sentence. Does the
-  source, taken whole, support the use the paper makes of it? A source cited for a finding it
-  reports and contradicts elsewhere is being quoted, not used.
+**Bounded and deterministic, so two graders get the same answer:**
 
-**Fail if:** a load-bearing empirical claim carries no citation and no label saying it is the
-author's own inference; or a cited source materially contradicts, elsewhere in the same document,
-the use the paper makes of it, and the paper does not say so.
+- **Coverage.** List the load-bearing empirical claims — the ones the conclusion needs, not every
+  sentence. **Cap the list at ten**; where there are more, take the first ten in document order.
+  Report `cited` out of that list.
+- **Representativeness.** Take **the three most-cited sources**, ties broken by first appearance.
+  For each, read **the abstract, the results or findings section, and the limitations or discussion
+  section** — not the whole document. Report `checked`.
 
-**This gate is expensive and it is the one worth paying for.** It is also the only place the suite
-measures anything about the sources a paper did *not* quote, which is where a confident wrong answer
-usually hides.
+**Fail if:**
+
+- a load-bearing empirical claim carries no citation **and** no cited premises it is drawn from —
+  **a label saying "my own inference" does not excuse an empirical assertion**. An invented effect
+  size marked as the author's inference fails here, because an inference from nothing is a number
+  with no source; or
+- one of the three checked sources materially contradicts, in the sections read, the use the paper
+  makes of it, and the paper does not say so.
+
+**Report the numbers, not just the verdict:** how many load-bearing claims, how many cited, how many
+sources checked. **A gate with no denominator cannot be compared between papers**, and the counts
+are what make it possible to say anything about arms later.
 
 ### G2 — Anti-mush
 
@@ -445,13 +456,28 @@ and a round whose notes name no new class is the first evidence of saturation.
 - **Disagreements are recorded per criterion, never averaged.** A split score is the most
   informative output a round produces: it means the criterion is ambiguous, or one grader is
   reading something the other cannot see. Both are worth knowing.
-- Weighted mean over C1 to C9, out of 3. **Three gates** — G1, G1b, G2 — are pass or fail and
-  are reported separately.
-- **C9 is reported separately as well as in the mean**, because it is a conformance check
-  against a shape written in the same cycle. A round whose mean rose only because C9 landed
-  has not improved: say so.
+- **Weighted mean over C1 to C8 only.** C9 is a conformance check and is reported **beside** the
+  mean, never inside it. Including it meant a round could move because a paper adopted our layout,
+  which the rubric itself says is not improvement — reporting it separately did not undo that.
+- **Three gates** — G1, G1b, G2 — pass or fail, reported separately.
+- **C9 is outside the mean entirely**, because it is a conformance check. A round cannot move its
+  headline number by adopting a layout.
 - Codex unavailable falls back to `adversarial-reviewer`, and the report names which grader ran. A
   fallback is not reported as a cross-model pass.
+
+## What the weights do, and what they double-count
+
+The weights — C1 3, C2 3, C3 2, C4 3, C5 3, C6 3, C7 2, C8 2 — were set by judgement and have
+never been calibrated. **Two things follow and both should be said whenever a mean is quoted.**
+
+**Conditions and falsifiers are counted more than once.** A paper that adds boundary conditions and
+a falsifier to its claims raises C4, C6 and C8 together — eight of the twenty-one available weight
+— for what is substantially one property. The mean therefore moves faster on that property than on
+anything else, which is a choice nobody made deliberately.
+
+**So report the per-criterion table as the primary result and the mean as a convenience.** A
+conclusion that rests on the mean moving, and not on which criteria moved, is resting on the
+weighting.
 
 ## Triage before belief
 

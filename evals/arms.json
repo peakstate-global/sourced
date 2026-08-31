@@ -1,0 +1,26 @@
+{
+  "_note": "Frozen control arms. An arm decided at run time is not a control: a difference cannot be attributed to the framework and nobody can reproduce it. round.py hashes this file into the manifest. Change it and the hash changes, which is the point.",
+  "armsVersion": 1,
+  "shared": {
+    "model": "claude-opus-5",
+    "settings": { "temperature": "default", "thinking": "default" },
+    "note": "One model and one setting across every arm, or the comparison is between models rather than between methods."
+  },
+  "arms": {
+    "sourced": {
+      "invocation": "Run /sourced research on the claim below.",
+      "note": "The skill under test. Its full prompt is topics.json + prompt template, unchanged."
+    },
+    "bare": {
+      "prompt": "Research the claim below and write the most defensible integrated position you can reach. The claim is deliberately contentious; your job is not to pick a side and not to be even-handed about it. Write the result to {artefact}."
+    },
+    "prompted": {
+      "prompt": "Research the claim below and write the most defensible integrated position you can reach. The claim is deliberately contentious; your job is not to pick a side and not to be even-handed about it.\n\nCite a source for every factual claim. State the strongest case against your own conclusion and say what it changed. Say what would prove your position wrong. Say plainly what you could not establish.\n\nWrite the result to {artefact}."
+    },
+    "rival": {
+      "skill": "mattpocock-skills:research",
+      "version": "PIN BEFORE RUNNING - record the installed plugin version",
+      "invocation": "PIN BEFORE RUNNING - the verbatim invocation used"
+    }
+  }
+}

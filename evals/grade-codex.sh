@@ -46,6 +46,10 @@ For the G1 and G1b gates you may also:
   - read any captured source texts under $RUN_DIR/store, if that directory exists;
   - AND, where a citation has no capture, FETCH THE LIVE SOURCE and check it.
 
+For G1b, report the counts you used: how many load-bearing empirical claims the paper
+makes, how many of those carry a citation, and how many sources you read past the quoted
+sentence. A gate with no denominator cannot be compared between papers.
+
 Fetching live sources is expected, not exceptional: a paper produced without a capture
 store is held to the same standard with more work on your side. Before recording a G1
 fail, name the file or URL you checked and the string you searched for.
@@ -55,7 +59,7 @@ Read nothing else.
 Do not read any other round, any other run, or any note about what the skill was meant
 to improve.
 
-Score all NINE criteria C1 to C9 (0 to 3) and both gates G1 and G2 (pass or fail).
+Score all NINE criteria C1 to C9 (0 to 3) and ALL THREE gates G1, G1b and G2 (pass or fail).
 Every criterion scored 0 or 1 gets a one-line triage naming what is at fault, in the
 rubric's order: the topic, then the rubric, then the skill. C8 requires the count of
 in-scope claims, how many carry a falsifier, and one falsifier quoted with a note on
@@ -64,7 +68,9 @@ untested region with a contested one.
 
 Return strict JSON and nothing else:
 {"topic":"$TOPIC","C1":{"score":2,"why":"one line"}, ... ,"C9":{...},
- "G1":{"pass":true,"why":"one line"},"G2":{"pass":true,"why":"one line"},
+ "G1":{"pass":true,"why":"one line"},
+ "G1b":{"pass":true,"why":"one line","cited":12,"checked":3,"uncited":0},
+ "G2":{"pass":true,"why":"one line"},
  "triage":{},"note":"at most two lines"}
 
 Do NOT include a "grader" field. The harness records which model ran.

@@ -50,24 +50,39 @@ TELLS = [
     # else uses, so a table of them is an exact fingerprint. v1 claimed to remove "our
     # verdict vocabulary" and matched none of it: the reviewer found the claim was checked
     # against a list that did not contain the tells.
-    (r"(?im)^(\|[^|\n]*\|\s*)Verdict(\s*\|)", r"\1Standing\2"),
-    (r"(?i)\bHolds narrowly\b", "Partly"),
-    (r"(?i)\bUnevaluated\b", "Not measured"),
-    (r"(?i)\bContested\b", "Disputed"),
-    (r"(?i)\bFalsified\b", "Does not hold"),
-    (r"(?im)(\|\s*)Holds(\s*\|)", r"\1Supported\2"),
     (r"(?i)\bthe verdict table\b", "the summary table"),
     (r"(?i)\bverdict table\b", "summary table"),
-    (r"(?i)\bProposition (P\d)", r"Part \1"),
     (r"(?i)\bverdicts\b", "findings"),
     (r"(?i)\bverdict\b", "finding"),
 ]
+
+# The five verdict words are replaced ONLY inside a table cell. Run over the whole
+# document they rewrite quoted evidence, source titles and citation URLs — a paper
+# quoting "the hypothesis was falsified" or citing a page with "contested" in its slug
+# would come back altered, which breaks the guarantee that the argument and the evidence
+# are untouched and could bias the comparison it exists to enable.
+LEXICON = {"holds narrowly": "Partly", "unevaluated": "Not measured",
+           "contested": "Disputed", "falsified": "Does not hold", "holds": "Supported"}
+
+
+def _cells(line):
+    """Rewrite verdict words inside the cells of one markdown table row."""
+    parts = line.split("|")
+    for i, cell in enumerate(parts):
+        key = cell.strip().lower()
+        if key in LEXICON:
+            parts[i] = cell.replace(cell.strip(), LEXICON[key])
+        elif key == "verdict":
+            parts[i] = cell.replace(cell.strip(), "Standing")
+    return "|".join(parts)
 
 
 def strip(text):
     out = text
     for pat, sub in TELLS:
         out = re.sub(pat, sub, out)      # every pattern carries its own inline flags
+    out = "\n".join(_cells(ln) if ln.lstrip().startswith("|") else ln
+                     for ln in out.split("\n"))
     out = re.sub(r"\n{4,}", "\n\n\n", out)
     return out.strip() + "\n"
 
@@ -76,10 +91,10 @@ def pack(out_dir, pairs, seed=None):
     """Write blinded copies under neutral codes, and the key beside them, unread."""
     out = pathlib.Path(out_dir)
     papers = out / "papers"
-    if papers.exists() and any(papers.glob("P*.md")):
-        raise SystemExit(f"{papers} already holds papers. Packing into it would leave stale "
-                         f"files the key no longer names, so the reader could get an extra "
-                         f"paper or a count mismatch. Remove it first.")
+    if papers.exists() and any(papers.iterdir()):
+        raise SystemExit(f"{papers} is not empty. Packing into it could leave a stale paper, "
+                         f"README or key the new key does not name, so the reader gets an extra "
+                         f"document or a count mismatch. Remove it first.")
     papers.mkdir(parents=True, exist_ok=True)
     items = []
     for arm, path in pairs:
@@ -131,6 +146,14 @@ def _self_check():
     for word in ("Verdict", "Holds narrowly", "Unevaluated", "Contested", "Falsified"):
         assert word not in out, f"{word!r} survived the lexicon strip: {out}"
     assert "| P1 - a claim |" in out, "the rows themselves must survive"
+
+    # ...and the words survive OUTSIDE a table, because a quote, a title or a URL may
+    # legitimately contain them and rewriting those would corrupt the evidence.
+    prose = ('The authors wrote that the hypothesis was falsified.\n'
+             'See https://example.com/contested-ground for the debate.\n')
+    kept = strip(prose)
+    assert "falsified" in kept, kept
+    assert "contested-ground" in kept, "a URL must not be rewritten"
     assert "killed c19" in got, "the argument must survive"
     assert "## Body" in got, "structure must survive"
 
@@ -147,7 +170,7 @@ def _self_check():
         # order is decided by the shuffle, not by argument order.
         assert (pathlib.Path(d) / "out" / "papers" / "P01.md").exists()
 
-    print("blind: self-check passed (16 of 16 cases; the threshold is 16 of 16)")
+    print("blind: self-check passed (19 of 19 cases; the threshold is 19 of 19)")
 
 
 if __name__ == "__main__":

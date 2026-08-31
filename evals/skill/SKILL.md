@@ -184,17 +184,16 @@ same framing, no skill), `prompted` (a generic research instruction), and `rival
 third-party research skill).
 
 **Every arm is frozen and stamped, exactly like the prompt is.** An arm whose wording, model,
-settings or third-party version is decided at run time is not a control: a difference then cannot be
-attributed to the framework, and nobody can reproduce it. Before the round, write
-`arms.json` beside `topics.json`:
+settings or third-party version is decided at run time is not a control: a difference cannot then be
+attributed to the framework, and nobody can reproduce it.
 
-    { "bare":     { "prompt": "<verbatim, frozen>", "model": "...", "settings": {...} },
-      "prompted": { "prompt": "<verbatim, frozen>", "model": "...", "settings": {...} },
-      "rival":    { "skill": "mattpocock-skills:research", "version": "...",
-                    "invocation": "<verbatim>", "model": "...", "settings": {...} } }
+`evals/arms.json` carries all four arms including `sourced` itself, and `round.py new` records
+`armsVersion` and `armsHash` in the manifest. **The same model and settings across every arm**, or
+the comparison is between models rather than between methods.
 
-`round.py new` records its hash in the manifest. **The same model and settings across all four arms**,
-or the comparison is between models and not between methods.
+**Two fields in `arms.json` are unpinned and must be filled before the control round runs**: the
+rival skill's installed version and its verbatim invocation. A third-party skill that updates
+between rounds is a silent change of arm.
 
 **Score the controls on the same rubric.** Since v8 every criterion is a property of the artefact
 rather than of the process, so a control paper can be scored fairly — it is not disqualified for
@@ -229,9 +228,13 @@ framework beats the stock approach".**
 
 What it *can* establish, honestly:
 
-- **A fabrication rate per arm.** If a control's citations fail G1 or G1b at a materially different
-  rate, four topics is enough to see it, because the defect either appears or does not and the
-  effect size for that failure is large. **This is the finding worth the round.**
+- **Citation defects, counted and described.** G1b requires each sheet to report how many
+  load-bearing claims were found, how many carried a citation, and how many sources were read past
+  the quoted sentence — so there is a numerator and a denominator rather than a pass or a fail.
+  **Report these as incidents with their counts, not as a rate**: four topics and one run per arm
+  cannot establish that one arm's rate differs from another's, and a boolean gate never could.
+  **This is still the finding worth the round**, because a fabricated citation in a control is an
+  existence proof and does not need a rate to matter.
 - **Existence proofs.** "A bare run produced a paper with no way to check any of its numbers" is
   true if it happened once, and does not need replication.
 - **A reader's preference**, stated as one reader's preference.
