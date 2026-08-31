@@ -46,6 +46,21 @@ TELLS = [
     (r"(?i)\bthe adversarial pass\b", "the challenge round"),
     (r"(?i)\badversarial pass\b", "challenge round"),
     (r"(?i)\b(claims|boundary|integrate|dimensions|conflicts|underwrite)\.py\b", "a check"),
+    # The five verdict words are a closed vocabulary this framework mandates and nobody
+    # else uses, so a table of them is an exact fingerprint. v1 claimed to remove "our
+    # verdict vocabulary" and matched none of it: the reviewer found the claim was checked
+    # against a list that did not contain the tells.
+    (r"(?im)^(\|[^|\n]*\|\s*)Verdict(\s*\|)", r"\1Standing\2"),
+    (r"(?i)\bHolds narrowly\b", "Partly"),
+    (r"(?i)\bUnevaluated\b", "Not measured"),
+    (r"(?i)\bContested\b", "Disputed"),
+    (r"(?i)\bFalsified\b", "Does not hold"),
+    (r"(?im)(\|\s*)Holds(\s*\|)", r"\1Supported\2"),
+    (r"(?i)\bthe verdict table\b", "the summary table"),
+    (r"(?i)\bverdict table\b", "summary table"),
+    (r"(?i)\bProposition (P\d)", r"Part \1"),
+    (r"(?i)\bverdicts\b", "findings"),
+    (r"(?i)\bverdict\b", "finding"),
 ]
 
 
@@ -60,7 +75,12 @@ def strip(text):
 def pack(out_dir, pairs, seed=None):
     """Write blinded copies under neutral codes, and the key beside them, unread."""
     out = pathlib.Path(out_dir)
-    (out / "papers").mkdir(parents=True, exist_ok=True)
+    papers = out / "papers"
+    if papers.exists() and any(papers.glob("P*.md")):
+        raise SystemExit(f"{papers} already holds papers. Packing into it would leave stale "
+                         f"files the key no longer names, so the reader could get an extra "
+                         f"paper or a count mismatch. Remove it first.")
+    papers.mkdir(parents=True, exist_ok=True)
     items = []
     for arm, path in pairs:
         p = pathlib.Path(path)
@@ -97,6 +117,20 @@ def _self_check():
     for tell in ("SOURCED", "laboratory conditions", "artefact.md.sourced",
                  "adversarial pass", "claims.py", "## Provenance"):
         assert tell not in got, f"{tell!r} survived: {got}"
+
+    # The five verdict words are a closed vocabulary nobody outside this framework uses,
+    # so a table of them identifies the arm exactly. v1 claimed to strip them and matched
+    # none: the claim was verified against a list that did not contain the tells.
+    lex = ("| Proposition | Verdict | Conditions |\n"
+           "| P1 - a claim | Holds narrowly | x |\n"
+           "| P2 - another | Unevaluated | y |\n"
+           "| P3 - third | Contested | z |\n"
+           "| P4 - fourth | Falsified | w |\n"
+           "| P5 - fifth | Holds | v |\n\nThe verdict table says so.\n")
+    out = strip(lex)
+    for word in ("Verdict", "Holds narrowly", "Unevaluated", "Contested", "Falsified"):
+        assert word not in out, f"{word!r} survived the lexicon strip: {out}"
+    assert "| P1 - a claim |" in out, "the rows themselves must survive"
     assert "killed c19" in got, "the argument must survive"
     assert "## Body" in got, "structure must survive"
 
@@ -113,7 +147,7 @@ def _self_check():
         # order is decided by the shuffle, not by argument order.
         assert (pathlib.Path(d) / "out" / "papers" / "P01.md").exists()
 
-    print("blind: self-check passed (9 of 9 cases; the threshold is 9 of 9)")
+    print("blind: self-check passed (16 of 16 cases; the threshold is 16 of 16)")
 
 
 if __name__ == "__main__":
@@ -123,9 +157,13 @@ if __name__ == "__main__":
     cmd = argv[0]
     if cmd == "pack":
         pairs = [tuple(a.split(":", 1)) for a in argv[2:]]
-        for k in pack(argv[1], pairs):
-            print(f"  {k['code']}  <- {k['arm']}")
-        print(f"\nkey written to {argv[1]}/KEY.json — do not open it before judging")
+        key = pack(argv[1], pairs)
+        # Print the codes and NOT the arms. Whoever runs pack is usually whoever reads the
+        # papers, and printing the mapping unblinds them before they start without their
+        # ever opening the key.
+        print(f"  {len(key)} paper(s): {', '.join(k['code'] for k in key)}")
+        print(f"\n  papers in {argv[1]}/papers/")
+        print(f"  key in {argv[1]}/KEY.json — do not open it before judging")
     elif cmd == "unpack":
         for k in unpack(argv[1]):
             print(f"  {k['code']}  =  {k['arm']:10} {k['source']}")

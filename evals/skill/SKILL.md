@@ -86,7 +86,7 @@ not instrumented, never counted as unused.
 One scorer per topic per grader, fresh threads, in parallel.
 
 - **Claude**, via `Agent` on Opus.
-- **Codex**, via `./grade-codex.sh <run-dir> <rubric> <out-dir>` — **called directly, never through
+- **Codex**, via `evals/grade-codex.sh <run-dir> <rubric> <out-dir>` — **called directly, never through
   the `codex` subagent.** That subagent's wrapper is itself a Claude model instructed to forward to
   the Codex CLI, so a sheet came back whether or not Codex ran and the only evidence of which model
   reasoned was the sheet's own claim about itself. Round 05 returned one sheet self-identifying as
@@ -180,8 +180,21 @@ taste. It does not show they are better than what a capable model produces witho
 that is the question the whole project rests on.
 
 **Arms.** The same frozen topics, run four ways: `sourced` (the skill), `bare` (the claim and the
-same framing, no skill), `prompted` (a good generic research instruction — cite sources, argue the
-other side), and `rival` (an independent third-party research skill).
+same framing, no skill), `prompted` (a generic research instruction), and `rival` (an independent
+third-party research skill).
+
+**Every arm is frozen and stamped, exactly like the prompt is.** An arm whose wording, model,
+settings or third-party version is decided at run time is not a control: a difference then cannot be
+attributed to the framework, and nobody can reproduce it. Before the round, write
+`arms.json` beside `topics.json`:
+
+    { "bare":     { "prompt": "<verbatim, frozen>", "model": "...", "settings": {...} },
+      "prompted": { "prompt": "<verbatim, frozen>", "model": "...", "settings": {...} },
+      "rival":    { "skill": "mattpocock-skills:research", "version": "...",
+                    "invocation": "<verbatim>", "model": "...", "settings": {...} } }
+
+`round.py new` records its hash in the manifest. **The same model and settings across all four arms**,
+or the comparison is between models and not between methods.
 
 **Score the controls on the same rubric.** Since v8 every criterion is a property of the artefact
 rather than of the process, so a control paper can be scored fairly — it is not disqualified for
@@ -198,13 +211,33 @@ out of a capture.
 **Then the judgement the rubric cannot give.** Blind the papers and ask the reader which they would
 rely on:
 
-    python3 blind.py pack <out-dir> sourced:<a.md> bare:<b.md> prompted:<c.md> rival:<d.md>
-    python3 blind.py unpack <out-dir>          # after judging, never before
+    python3 evals/blind.py pack <out-dir> sourced:<a.md> bare:<b.md> prompted:<c.md> rival:<d.md>
+    python3 evals/blind.py unpack <out-dir>          # after judging, never before
 
-`blind.py` removes the framework's fingerprints — the provenance block, the working-record
+`evals/blind.py` removes the framework's fingerprints — the provenance block, the working-record
 references, the laboratory banner, our own vocabulary — and leaves the argument, the evidence, the
 numbers and the citations untouched. **It blinds the label, not the voice.** A reader who recognises
 a house style anyway should say so, because that is a finding about how distinctive the output is.
+
+### What the control round can and cannot show
+
+**Four topics, one run per arm, two graders and one reader supports a case study, not an effect.**
+The two graders are repeated measurements of the same output rather than independent samples, so
+the design has four independent topic comparisons, and stochastic generation cannot be separated
+from an arm difference. **Report it as "here is what happened on four questions", never as "the
+framework beats the stock approach".**
+
+What it *can* establish, honestly:
+
+- **A fabrication rate per arm.** If a control's citations fail G1 or G1b at a materially different
+  rate, four topics is enough to see it, because the defect either appears or does not and the
+  effect size for that failure is large. **This is the finding worth the round.**
+- **Existence proofs.** "A bare run produced a paper with no way to check any of its numbers" is
+  true if it happened once, and does not need replication.
+- **A reader's preference**, stated as one reader's preference.
+
+To claim an *effect* on the scored criteria the round would need repeated runs per arm-topic —
+three or more — and more topics, which is a materially larger spend and a separate decision.
 
 **Run this once the ruler is locked**, not every round. "Does this beat the stock approach" does not
 change round to round, and the answer is only worth having once the thing being compared has stopped

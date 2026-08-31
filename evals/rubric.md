@@ -1,12 +1,12 @@
 ---
-rubricVersion: 8
+rubricVersion: 9
 frozen: 2026-08-30
 reanchored: 2026-08-29
 ---
 
 # The rubric
 
-Eleven criteria. Nine score 0 to 3 against a written anchor. Two are gates: a zero there fails the
+Twelve criteria. Nine score 0 to 3 against a written anchor. Three are gates: a zero there fails the
 topic whatever the rest says, because a beautiful answer resting on a fabricated citation is worse
 than a poor one.
 
@@ -265,7 +265,9 @@ underneath carry none, because those are what the conclusion actually rests on.
 **Scope — which claims need one.** Round 02's graders disagreed on this and both defended their
 reading, so it is settled here rather than left to the grader.
 
-- **In scope:** every claim that survived the adversarial pass, whatever its `status`. That
+- **In scope:** every claim the conclusion rests on, whatever its `status` and however the paper
+  records it. Where a paper records a challenge round, that means every claim which survived it.
+  That
   includes `inferred` claims, and it includes rival or replacement claims the pass itself wrote.
   A claim carrying the integrated position is the *most* in scope, not the least: it is doing the
   most work and is the least externally checkable.
@@ -278,8 +280,9 @@ reading, so it is settled here rather than left to the grader.
 A claim is out of scope only if the artefact or sidecar makes it clear which of those two it is.
 "Nobody wrote one" is not out of scope.
 
-- **3.** Every in-scope claim carries a `falsifier` in the sidecar, and each one **names an
-  observation somebody could go and make**: a measurement, a trial result, a published figure, a
+- **3.** Every in-scope claim carries a falsifier **somewhere in the output** — a per-claim field,
+  a sentence in the body, a table column — and each one **names an observation somebody could go and
+  make**: a measurement, a trial result, a published figure, a
   count. Different claims have different falsifiers, because different claims fail for different
   reasons.
 - **2.** Every in-scope claim carries one, and **either** all are specific **except a single
@@ -291,12 +294,15 @@ A claim is out of scope only if the artefact or sidecar makes it clear which of 
   inferred claims, or the rival claims the pass wrote — and the artefact still states checkable
   falsifiers for the headline positions in prose. This is the rung for a run that did the work and
   missed a category.
-- **1.** The artefact states falsifiers for the headline positions only, or the sidecar's coverage
-  is scattered with no pattern to it. Also 1 if the falsifiers present are vague ("if the data
+- **1.** The paper states falsifiers for the headline positions only, or coverage is scattered with
+  no pattern to it. Also 1 if the falsifiers present are vague ("if the data
   changed"), **or if a group of claims share one stamped phrase with the specifics swapped out**.
   A template is what a run writes when a gate demands a field it has nothing to put in, and it is
   worth less than an honest absence because it passes a count.
 - **0.** None.
+
+**A per-claim field and a prose sentence score the same.** The field is easier to audit and that is
+a convenience for the grader, not a credit to the paper.
 
 **Count, then read three.** Name the number of in-scope claims and the number carrying a falsifier.
 Then quote one falsifier and say whether you could go and check it. A count alone cannot see a
@@ -327,58 +333,15 @@ iv) **Labels hold.** Whatever names the parts — numbers, headings, terms — t
 - **1.** Two or three present.
 - **0.** One or none.
 
-**Old conformance note, still true.** This criterion asks whether the paper has
-the shape the skill specifies. It scores structure, never quality: whether the forward view is any
-*good* is C4's job, and a paper can score 3 here and 1 there.
+**C9 is conformance, not quality.** Whether the forward view is any *good* is C4's job, and a paper
+can score 3 here and 1 there.
 
-Five parts carry it. All are required by `reference/research-mode.md`.
+**A paper is not required to use our layout.** Until v8 this criterion listed the skill's own
+headings and required them; that second scale was left standing underneath the new one in v8 and is
+removed in v9, because a control paper could satisfy navigability in full and still score 0 against
+it, with no rule telling a grader which scale to use.
 
-i) **Definitions, in two subsections.** *Terms not used here*, each with what the paper uses
-   instead and one line on why; then *Terms used here*, as full blocks. A block describes a term the
-   paper keeps — it never mixes a retired term and its replacement in one entry.
-ii) **A family named on each defined term**, from the closed set: `umbrella`, `compound`,
-    `overloaded`, `unmeasured`, `imprecise`, `judgement`, `specific`. **Seven.**
-iii) **Propositions stated positively, with no verdict word inside them.** A proposition asserts
-     what might be true; the verdict column says how it fared. A proposition containing `holds`,
-     `falsified`, `unevaluated` or `contested` produces a double negative the reader cannot unpick.
-     Also: **propositions enumerated and labelled `P1`…`Pn`**, each with its kind, and carried in the
-     sidecar as claims with `role: proposition` rather than living only in prose.
-iv) **A verdict table that restates the proposition** in column one alongside its label, with
-    supporting claims grouped beneath as `P2.1`, `P2.2`; a `Conditions` column that says
-    `Unconditional` rather than repeating the reasoning; and a fourth column for the evidence and
-    reasoning.
-v) **A forward-view section**, present and named, or an explicit statement that no forward view is
-   supportable and why.
-
-**Check the labels by cross-reference, not by presence.** Pick two or three labels and follow each
-one through all three places: the proposition list, the verdict table row, and the body section
-heading. They must name the same claim in each. A label that appears everywhere and points at
-different things in two of them is the defect this criterion exists to catch, and it is invisible to
-a reader who only checks that labels exist.
-
-- **3.** All five present, and a label followed through the split, the table and the body names the
-  same claim in each. A sub-row's id resolves to a claim in the sidecar.
-**Propositions in the sidecar are scored by proportion, not presence.** A paper carrying 6 of 18 as
-`role: proposition` is not the same as one carrying none, and v6 scored them alike. All or nearly
-all is a 3; most is a 2; a handful is a 1.
-
-- **2.** All five present, and a label points at different things in two places — the table restates
-  a different claim from the proposition it is keyed to, a body heading uses a number the table
-  gives to another claim, or sub-row ids do not resolve to sidecar claims. Also 2 if the
-  propositions are enumerated but not carried in the sidecar.
-- **1.** Three or four present.
-- **0.** Two or fewer.
-
-**Do not credit a part for being gestured at.** A paragraph discussing what a word means is not a
-definitions block. A sentence saying the claim contains several propositions is not an enumeration.
-A `Conditions` cell restating why the verdict was reached is not a condition.
-
-**One instruction that is not scored here but is worth knowing while you read:** the definitions say
-what the words mean *in this paper*, and never tell the reader their own usage is wrong. If a block
-reads as an instruction to the reader, note it — it is a real defect with no criterion, and that is
-information about the rubric.
-
-## The two gates
+## The three gates
 
 ### G1 — Provenance honesty
 
@@ -399,9 +362,14 @@ Read the captured text file under the store's dated folder and search it. **Norm
 provenance failure**: an en dash rendered as an em dash, a curly quote straightened, collapsed
 whitespace, or a line break inside a sentence are all the same quote. A changed word is not.
 
-**Fail if any of:** a citation that does not exist; a reference written from memory rather than
-retrieved; a quote that is not in the capture it is attributed to; RECALLED or INFERRED material
-presented as sourced; a number without its source.
+**Fail if any of:** a citation that does not exist; a citation that does not say what the paper
+claims it says; a quote that is not in the source it is attributed to; material the paper itself
+marks as recalled or inferred, presented as sourced; a number with no source given.
+
+**Do not fail on how a citation was produced.** v8 still listed "a reference written from memory
+rather than retrieved", which a grader cannot observe from the artefact and which is false-positive
+by construction on a correct citation from a paper with no capture store. **If the citation exists
+and entails the claim, it passes, whatever route it took.**
 
 **Before recording a fail, name the file you searched and the string you searched for.** A gate
 that fails a correct artefact is more expensive than one that passes a flawed one, because it makes
@@ -409,6 +377,32 @@ every other score on the topic advisory.
 
 A fail here fails the topic. Everything else in the round is then advisory, because a grader
 scoring the reasoning of an ungrounded artefact is scoring fiction.
+
+### G1b — Evidence completeness
+
+**The property: the paper cites what its empirical claims rest on, and does not hide what its own
+sources also said.**
+
+G1 checks the citations that are *there*. This checks the ones that are *not*, and it is the axis
+the rubric was missing: a paper can quote a true sentence, cite it correctly, and still mislead by
+never mentioning the contrary result three paragraphs later in the same source.
+
+Two readings, and both are checkable without knowing how the paper was made:
+
+- **Recall.** Take the paper's load-bearing empirical claims — the ones the conclusion needs. What
+  proportion carry a citation at all? A claim of fact with no source is not a limitation to be
+  disclosed, it is an uncited claim.
+- **Representativeness.** For two or three cited sources, read past the quoted sentence. Does the
+  source, taken whole, support the use the paper makes of it? A source cited for a finding it
+  reports and contradicts elsewhere is being quoted, not used.
+
+**Fail if:** a load-bearing empirical claim carries no citation and no label saying it is the
+author's own inference; or a cited source materially contradicts, elsewhere in the same document,
+the use the paper makes of it, and the paper does not say so.
+
+**This gate is expensive and it is the one worth paying for.** It is also the only place the suite
+measures anything about the sources a paper did *not* quote, which is where a confident wrong answer
+usually hides.
 
 ### G2 — Anti-mush
 
@@ -428,7 +422,8 @@ prevents rather than a virtue it admires.
 |---|---|
 | A citation pointing at a different paper than the one described | G1 |
 | A quote that is not in the source it is attributed to | G1 |
-| One quote per source, hiding whatever else that source said | G1, C3 |
+| One quote per source, hiding whatever else that source said | **G1b** |
+| A claim of fact with no citation and no label saying it is the author's own | **G1b** |
 | A falsifier that restates the claim: "an observation showing the opposite of X" | C8 |
 | A group of claims sharing one stamped falsifier with the details swapped | C8 |
 | A region nobody has measured, labelled as a region the claim fails in | C6 |
@@ -450,7 +445,8 @@ and a round whose notes name no new class is the first evidence of saturation.
 - **Disagreements are recorded per criterion, never averaged.** A split score is the most
   informative output a round produces: it means the criterion is ambiguous, or one grader is
   reading something the other cannot see. Both are worth knowing.
-- Weighted mean over C1 to C9, out of 3. Gates are pass or fail and are reported separately.
+- Weighted mean over C1 to C9, out of 3. **Three gates** — G1, G1b, G2 — are pass or fail and
+  are reported separately.
 - **C9 is reported separately as well as in the mean**, because it is a conformance check
   against a shape written in the same cycle. A round whose mean rose only because C9 landed
   has not improved: say so.
