@@ -5,6 +5,8 @@ description: Audit a document, deck, brief or report for claim provenance and em
 
 # SOURCED
 
+> **Paths.** `*.py` and `reference/*` resolve next to this file.
+
 Seven checks on any artefact containing model output. **S**ourced, **O**pposed, **U**nderwritten,
 **R**ecorded, **C**onstrained, **E**valuated, **D**isclosed.
 
