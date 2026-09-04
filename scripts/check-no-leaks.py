@@ -11,9 +11,8 @@ Run over the whole tree:    python3 scripts/check-no-leaks.py --all
 Run over commit authorship: python3 scripts/check-no-leaks.py --authors <range>
 
 The last one exists because file contents are not the only way a personal
-address reaches a public repo. Two commits went out of this repo authored as a
-real personal email while every sibling repo used the GitHub noreply address,
-and the content guard could not see it: an author line is metadata, not a file.
+address reaches a public repo. An author line is metadata, not a file, so the
+content guard cannot see it.
 """
 import re
 import subprocess
@@ -26,8 +25,6 @@ HARD = [
     # A trailing `...` or `<placeholder>` is documentation, not a real path.
     (re.compile(r"/Users/(?!\.{2,}|<)[A-Za-z0-9._-]+"), "absolute home path — use $HOME or ~"),
     (re.compile(r"/home/(?!\.{2,}|<)[A-Za-z0-9._-]+"), "absolute home path — use $HOME or ~"),
-    (re.compile(r"[A-Za-z0-9._%+-]+@(?:irama|peakstate|hoomans)\.[a-z.]+"), "personal email"),
-    (re.compile(r"org\.irama\.[A-Za-z0-9._-]+"), "personal launchd label"),
     (re.compile(r"\bsk-[A-Za-z0-9_-]{16,}"), "possible API key"),
     (re.compile(r"\bsk-ant-[A-Za-z0-9_-]{16,}"), "Anthropic key"),
     (re.compile(r"\bghp_[A-Za-z0-9]{20,}"), "GitHub token"),
@@ -37,80 +34,68 @@ HARD = [
     (re.compile(r"\bAKIA[0-9A-Z]{16}\b"), "AWS access key"),
     (re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----"), "private key"),
     (re.compile(r"\beyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}"), "JWT"),
-    # The tree is clean of these, so block rather than warn — a war story that
-    # names an app is how the private inventory leaks back in one line at a time.
-    # PORTED FROM irama-skills, WITH ONE DELIBERATE CHANGE: peakstate.global is the
-    # brand publishing this repo, so naming it is the point rather than a leak. Any
-    # private domain stays blocked: a war story that names a private app is how the
-    # inventory leaks back in one line at a time.
-    #
-    # The list itself is NOT in this file. A guard that spells out the domains it
-    # hides publishes them to everyone who reads the guard, which is the failure it
-    # exists to prevent. Put one domain per line in `.leakrc` (gitignored) or in
-    # LEAK_PRIVATE_DOMAINS, comma separated. With neither set the rule does not run,
-    # which is correct for anyone who cloned this and has no such list.
-    # Working conversation is not documentation. A public repo records the
-    # decision and the reason for it; the discussion that produced the decision
-    # is private material and belongs nowhere in it. Quoting a colleague's
-    # in-the-moment words also makes a permanent public record of a private
-    # exchange, which is not ours to publish however well meant.
-    #
-    # Paraphrase is the fix and it is also the better document: "the rule was
-    # written down and broken three times in one artefact" says the same thing
-    # as a quote, ages better, and reads as a finding rather than an exchange.
-    #
-    # Deliberately narrow. Quoting a SOURCE is the entire point of this
-    # framework and must never be blocked, so this fires only on speech
-    # attributed to a person who works on this repo.
 ]
 
-def _private_domains():
-    """One domain per line in .leakrc, or a comma-separated LEAK_PRIVATE_DOMAINS."""
+# The three rules below are built from a list this file does NOT contain.
+#
+# A guard that spells out the domains it blocks, the mail domains it watches, and
+# the names whose speech it refuses publishes all three to everyone who reads the
+# guard. That is the failure it exists to prevent, committed by the guard itself.
+#
+# Put the list in `.leakrc` at the repo root (gitignored), one entry per line:
+#
+#     irama.org                 a private domain
+#     names: Surname            someone who works on this repo
+#
+# or set LEAK_PRIVATE_DOMAINS / LEAK_TEAM_NAMES, comma separated. With neither
+# set the rules do not run, which is correct for anyone who cloned this and has
+# no such list.
+
+def _leakrc(prefix=None):
     import os
-    raw = os.environ.get("LEAK_PRIVATE_DOMAINS", "")
+    env = "LEAK_TEAM_NAMES" if prefix else "LEAK_PRIVATE_DOMAINS"
+    raw = os.environ.get(env, "")
     rc = Path(__file__).resolve().parent.parent / ".leakrc"
     if rc.exists():
-        raw += "\n" + rc.read_text()
-    out = [d.strip() for line in raw.replace(",", "\n").splitlines()
-           for d in [line.split("#")[0]] if d.strip()]
-    return sorted(set(out))
+        lines = rc.read_text().splitlines()
+        if prefix:
+            raw += "\n" + "\n".join(l.split(":", 1)[1] for l in lines
+                                     if l.strip().startswith(prefix))
+        else:
+            # Any `group: value` line belongs to another reader of this file
+            # (check-publishable.py reads commands:, repos:, libraries:, infra:).
+            # A domain never contains a colon, so this is the whole test.
+            raw += "\n" + "\n".join(l for l in lines if ":" not in l.split("#")[0])
+    return sorted({v.strip() for line in raw.replace(",", "\n").splitlines()
+                   for v in [line.split("#")[0]] if v.strip()})
 
 
-def _team_names():
-    """Surnames or given names of people who work on this repo, one per line in .leakrc
-    under a `names:` prefix, or in LEAK_TEAM_NAMES. Same reason as the domains: a guard
-    that spells out who it protects publishes that too."""
-    import os
-    raw = os.environ.get("LEAK_TEAM_NAMES", "")
-    rc = Path(__file__).resolve().parent.parent / ".leakrc"
-    if rc.exists():
-        raw += "\n" + "\n".join(l[6:] for l in rc.read_text().splitlines()
-                                 if l.strip().startswith("names:"))
-    return sorted({n.strip() for line in raw.replace(",", "\n").splitlines()
-                   for n in [line.split("#")[0]] if n.strip()})
-
-
-_names = _team_names()
-if _names:
-    # Working conversation is not documentation. A repo records the decision and the
-    # reason for it; the discussion that produced the decision is private material.
-    # Deliberately narrow: quoting a SOURCE is the whole point of this framework and
-    # must never be blocked, so this fires only on speech attributed to the team.
-    _quote = "[" + chr(34) + chr(0x201C) + chr(0x2018) + "']"
-    _verb = r"(?::\s*|\bsaid\b|\basked\b|\bwrote\b|\bput it\b|\bcomplained\b)"
-    _who = "|".join(re.escape(n) for n in _names)
-    HARD.append((
-        re.compile(r"\b(?:" + _who + r")\b[^\n" + chr(34) + r"]{0,60}?"
-                   + _verb + r"[^\n]{0,20}" + _quote),
-        "quoted working conversation — paraphrase the substance instead"))
-
-
-_domains = _private_domains()
+_domains = _leakrc()
 if _domains:
+    _alt = "|".join(re.escape(d) for d in _domains)
+    # A war story that names a private app is how the inventory leaks back one
+    # line at a time, so the domain blocks rather than warns.
+    HARD.append((re.compile(r"\b(?:[a-z0-9-]+\.)?(?:" + _alt + r")\b", re.I),
+                 "private app domain — describe it generically instead"))
+    _mail = "|".join(re.escape(d.split(".")[0]) for d in _domains)
+    HARD.append((re.compile(r"[A-Za-z0-9._%+-]+@(?:" + _mail + r")\.[a-z.]+"),
+                 "personal email"))
+    HARD.append((re.compile(r"org\.(?:" + _mail + r")\.[A-Za-z0-9._-]+"),
+                 "personal launchd label"))
+
+_names = _leakrc("names:")
+if _names:
+    # Working conversation is not documentation. A repo records the decision and
+    # the reason for it, never a quote of the exchange that produced it.
+    # Deliberately narrow: quoting a SOURCE must never be blocked, so this fires
+    # only on speech attributed to someone who works on this repo.
+    _quote = "[" + chr(34) + chr(0x201C) + chr(0x2018) + "']"
     HARD.append((
-        re.compile(r"\b(?:[a-z0-9-]+\.)?(?:%s)\b" % "|".join(re.escape(d) for d in _domains),
-                   re.I),
-        "private app domain — describe it generically instead"))
+        re.compile(r"\b(?:" + "|".join(re.escape(n) for n in _names) + r")\b"
+                   + r"[^\n" + chr(34) + r"]{0,60}?"
+                   + r"(?::\s*|\bsaid\b|\basked\b|\bwrote\b|\bput it\b|\bcomplained\b)"
+                   + r"[^\n]{0,20}" + _quote),
+        "quoted working conversation — paraphrase the substance instead"))
 
 
 # Reported for eyeballing, never blocks.
@@ -135,7 +120,11 @@ def all_files():
 # The email pattern, reused for authorship. Kept as a lookup into HARD rather
 # than a second copy, because two copies of a guard rule drift and the drift is
 # silent.
-EMAIL_RULE = next(p for p, label in HARD if label == "personal email")
+# `None` when there is no .leakrc and no env list — a fresh clone has no private
+# list to protect, so the rule does not exist. This was `next(...)` with no
+# default, which raised StopIteration at import and broke the guard entirely for
+# anyone but us.
+EMAIL_RULE = next((p for p, label in HARD if label == "personal email"), None)
 
 
 def check_authors(rev_range) -> int:
@@ -144,6 +133,8 @@ def check_authors(rev_range) -> int:
     Git hands a pre-push hook the range it is about to send. Everything in that
     range gets its author and committer lines read; a noreply address passes,
     a real one does not."""
+    if EMAIL_RULE is None:
+        return 0                      # no private list configured, nothing to match
     try:
         out = subprocess.run(
             ["git", "log", "--format=%H%x1f%an <%ae>%x1f%cn <%ce>", rev_range],
@@ -250,6 +241,28 @@ def check_shell(files, hits):
             hits.append((bits[0], bits[1], "shellcheck" + bits[3], bits[4].strip()))
 
 
+def selftest_no_leakrc() -> bool:
+    """The guard must import and run with no .leakrc in any parent directory.
+
+    Everyone who clones a public repo is in that state. This shipped broken: the
+    email rule only exists when a private list does, and the authorship check
+    looked it up with no default, so merely importing the module raised."""
+    import os, tempfile, shutil
+    with tempfile.TemporaryDirectory() as d:
+        dst = Path(d) / "scripts"
+        dst.mkdir()
+        shutil.copy(Path(__file__).resolve(), dst / "check-no-leaks.py")
+        env = {k: v for k, v in os.environ.items()
+               if k not in ("LEAK_PRIVATE_DOMAINS", "LEAK_TEAM_NAMES")}
+        r = subprocess.run([sys.executable, str(dst / "check-no-leaks.py"),
+                            "--authors", "no-such-ref..no-such-ref"],
+                           capture_output=True, text=True, env=env, cwd=d)
+        if r.returncode != 0:
+            print(f"selftest FAIL: no-.leakrc run exited {r.returncode}\n{r.stderr}")
+            return False
+    return True
+
+
 def selftest() -> int:
     """Three rules, three known answers. Both false positives these rules shipped
     with — a link inside a code span, and a format example in a code block — are
@@ -278,8 +291,45 @@ def selftest() -> int:
         if labels != want:
             print(f"selftest FAIL: expected {want}, got {labels}")
             ok = False
+    ok = selftest_no_leakrc() and ok
     print("selftest passed" if ok else "selftest FAILED")
     return 0 if ok else 1
+
+
+# A skill in this repo is published to the world the moment it is pushed. The
+# rule that keeps internal tooling out is not "remember to check" — it is a
+# named allowlist, so adding a skill takes a deliberate line in a file the
+# author has to write. This exists because a skill that only ever talked to
+# private infrastructure sat here for weeks before anybody noticed.
+PUBLIC_SKILLS = Path("skills/PUBLIC")
+
+
+def approved_skills() -> set:
+    if not PUBLIC_SKILLS.is_file():
+        return set()
+    out = set()
+    for line in PUBLIC_SKILLS.read_text(errors="ignore").splitlines():
+        line = line.split("#", 1)[0].strip()
+        if line:
+            out.add(line)
+    return out
+
+
+def check_new_skills(files, hits) -> None:
+    """Refuse a skill this repo has not been told it may publish."""
+    approved = approved_skills()
+    seen = set()
+    for name in files:
+        parts = Path(name).parts
+        if len(parts) < 2 or parts[0] != "skills":
+            continue
+        skill = parts[1]
+        if skill in approved or skill in seen or skill == PUBLIC_SKILLS.name:
+            continue
+        seen.add(skill)
+        hits.append((name, 0, "skill not approved for a public repo",
+                     f"{skill} — internal tooling stays in claude-config; if it really is "
+                     f"public, add '{skill}' to skills/PUBLIC and say so when you ask"))
 
 
 def main() -> int:
@@ -314,6 +364,7 @@ def main() -> int:
         check_portability(name, path, text, hard_hits)
 
     check_shell(files, hard_hits)
+    check_new_skills(files, hard_hits)
 
     if soft_hits:
         print(f"note: {len(soft_hits)} mention(s) of your own app domains (allowed):")

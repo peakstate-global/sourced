@@ -1,0 +1,4 @@
+# Skills this repo is allowed to publish. One per line.
+# Anything not listed is refused by scripts/check-no-leaks.py, so adding a
+# skill here is a deliberate act, not something a commit can do by accident.
+sourced
