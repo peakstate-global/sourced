@@ -7,7 +7,7 @@ written by hand**:
 
 ```
 Attribution:  Who authored it, and that AI tools assisted, in one sentence.
-Accountable:  The named person who answers for it.
+Accountable:  The named person who answers for it, and what they did NOT do.
 Limitations:  What is not backed, and how far each claim is from its source.
 References:   What backs it, where it lives, and how it can be checked.
 ```
@@ -20,6 +20,36 @@ comes out.
   locator."* — investigable. Pick one, check it, catch me.
 - *"Sources verified against originals."* — neither. It asserts diligence, which is the one
   thing a reader cannot verify. **Cut it.**
+
+**Accountable names a person and states their review status in the same breath.** The
+default form is:
+
+```
+Accountable: Andrew Ramsden (Not reviewed).
+```
+
+**A person is accountable for a process without reading every output of it.** That is not a
+compromise or a shortcut, it is how governance and quality control already work in every
+large organisation: a named person answers for the system, the sampling and the controls,
+and does not personally read each thing the system produces. Accountability is for the
+process. Review is for the artefact. They are different acts by possibly different people,
+and collapsing them is what makes a signature meaningless.
+
+So the name is correct and carries no implication about who read what. The failure is the
+**silence around it**, because a reader takes an unqualified name as a signature on the
+words in front of them.
+
+- **`(Not reviewed)` is the honest default** and it is never an apology. It says the named
+  person answers for how this was produced, and did not read this version line by line.
+- **Only the named person may replace it**, and only about a specific version:
+  `(Reviewed by Andrew Ramsden, version 3, 7 September 2026)`. A model may never write that
+  on their behalf, may never infer it from their name being present, and may never infer it
+  from them having asked for the work.
+- **Never write `expert-reviewed` because a model decided to.** The same rule the
+  `underwrite.py` acts already carry, said where the reader can see it.
+- **The acts in the sidecar are the evidence for whatever this line says.** If no act with a
+  human actor exists, the line says `(Not reviewed)`, and a line claiming otherwise is a
+  defect the sidecar contradicts.
 
 There is no `Verified:` label. Verification is a property of the references and belongs
 inside that line, stated as a checkable fact. **Limitations is as short as the truth allows.**

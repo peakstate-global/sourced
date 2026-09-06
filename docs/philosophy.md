@@ -114,6 +114,29 @@ A signature buys accountability, not accuracy. Wherever this framework asks for 
 who answers for the thing, and what specifically they verified. It is never asking for reassurance,
 and a disclosure that implies otherwise has failed the check it was written to pass.
 
+**A human can be accountable for the checks and balances without manually reviewing every output.**
+This is not a weaker form of accountability invented for AI, and it is not a loophole. It is how large
+organisations have always worked, and it has a name: governance and quality control. A named person
+answers for the process, the sampling, the controls and the escalation path. They do not personally
+read every output the process produces, and nobody has ever expected them to.
+
+So two different acts get two different records here, and the framework keeps them apart:
+
+- **Accountability** attaches to the process. It says who answers when the process produces something
+  wrong, and it is real whether or not that person read the artefact in front of you.
+- **Review** attaches to the artefact, and to one specific version of it. It is an act with an actor,
+  recorded in `underwriting` like any other act, and it is only ever true of the version it names.
+
+Collapsing them is what makes a signature meaningless, and it fails in both directions. Demanding
+personal review of every output makes accountability unaffordable, so it gets faked. Letting a name
+stand alone lets a reader infer a review that never happened, so it gets believed. Both end with a
+signature that carries no information.
+
+The practical consequence is that a name in a provenance block states its review status alongside it,
+and `(Not reviewed)` is the honest default rather than an admission. Only the named person may write
+anything stronger, and only about a specific version. A model may never infer review from the presence
+of a name, and may never infer it from that person having commissioned the work.
+
 ---
 
 ## 7. Limitations carries limits on the evidence
