@@ -274,3 +274,32 @@ Fold `conflicts` in as the top-level `conflicts[]` array, then run
 open. An open conflict is disclosed, never dropped.
 
     python3 skill_check.py --self-check     asserts this template carries no inner fence
+
+## The support check
+
+**The writer cannot see its own slips, so a reader who has not seen the sources checks the prose
+against the claims.** `quote_is_in_capture` proves a quote is in its source. It does not prove the
+sentence around the quote says only what the quote says. A writer who has read the whole page adds
+details from it, cites a true fact to the wrong claim, and lets a paraphrase drift. Re-reading its
+own draft does not catch these, because the extra detail still feels sourced. In the sourced-lite
+evals a fresh reader found 11 to 12 such problems per first draft, and delivered hard slips fell
+from 6 across three cases to 1, one run per case.
+
+Run it on the finished artefact, before the statement is generated. Take the best grade the host
+offers, in the same order as the pass: `cross-model-fresh-thread`, `same-model-fresh-thread`, or
+the by-hand route, where the user pastes the prompt and the artefact into a new chat. A self-check
+in the same thread is not this check: record `not-performed` instead. Give the reader only the
+artefact and its claims, never the captures:
+
+> You see only this document and its claims list. Do not use outside knowledge and do not browse.
+> List every phrase in the prose that states a name, number, date, place, method, source type,
+> scope or fact that the claim it cites does not contain in its statement or quote. If a sentence
+> cites no claim, check it against every claim. Also list every citation that does not hold the
+> fact beside it. In the references, check only that each entry names a source in the claims, not
+> its bibliographic details. For each problem give the phrase, where it is, the cited claim, and
+> why. If there are none, say NONE.
+
+Fix each problem by citing the claim that holds the detail, recording a new claim, or cutting the
+phrase, and change nothing else. Re-run the check on the fixed draft, at most twice. Log the grade,
+the issue count per pass and anything left open in the decision log, and carry anything open into
+Limitations.
