@@ -299,7 +299,11 @@ artefact and its claims, never the captures:
 > its bibliographic details. For each problem give the phrase, where it is, the cited claim, and
 > why. If there are none, say NONE.
 
-Fix each problem by citing the claim that holds the detail, recording a new claim, or cutting the
-phrase, and change nothing else. Re-run the check on the fixed draft, at most twice. Log the grade,
-the issue count per pass and anything left open in the decision log, and carry anything open into
-Limitations.
+Apply every problem the reader lists. Fix each one by citing the claim that holds the detail,
+recording a new claim, or cutting the phrase. Never keep a flagged phrase on your own judgement: the
+reader has not seen the sources, and that is the point. Change nothing else. Give each new reader the
+fixed draft word for word and nothing more, and repeat until it returns NONE or has run three times.
+When the writer ran the check itself and could overrule it, delivered hard slips stayed at 2 across
+three cases; with findings binding and the loop run to NONE they fell to 0, one run per case. Log the
+grade, the issue count per pass and anything left open in the decision log, and carry anything open
+into Limitations.
