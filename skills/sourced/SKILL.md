@@ -193,7 +193,7 @@ lands in the sidecar's `opposed` object and `decisions.py validate()` refuses an
 
 **Ask the pass for a map, never for a verdict.** For every disagreement, name the conditions each
 side held under and say where each is right. Never ask which claim survived or which is stronger.
-`reference/adversarial-pass.md` carries the shapes it returns and the by-hand handoff block.
+`reference/adversarial-pass.md` carries its shapes, the handoff block and the support check.
 
 ## The gate before a statement ships
 
