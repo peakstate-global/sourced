@@ -116,6 +116,14 @@ import vocabulary
 #       or unresolved. An unfalsifiable forecast must never be tiered as evidence.
 SCHEMA_VERSION = "1.7"
 
+
+def _version(v):
+    """'1.10' -> (1, 10), so 1.10 sorts above 1.7; anything unparseable is (1, 0)."""
+    try:
+        return tuple(int(x) for x in str(v or "1.0").split(".")[:2])
+    except ValueError:
+        return (1, 0)
+
 # The four grades of adversarial pass, best first. The identifier is the string that
 # travels: it is what goes in the sidecar, what the check compares, and what the
 # disclosure names. See reference/adversarial-pass.md for what each grade catches and
@@ -224,8 +232,11 @@ def fold(artefact):
         raise SystemExit(f"no sidecar at {side}; audit the artefact before folding")
     data = json.loads(side.read_text(encoding="utf-8"))
     data["decisions"] = read_ledger(artefact)
-    # A sidecar carrying a field from this version says this version. Nothing else about it changes.
-    data["sourced"] = SCHEMA_VERSION
+    # A sidecar carrying a field from this version says at least this version. Never lower it:
+    # a 1.10 sidecar folded back to 1.7 silently switched off integrate.py's 1.8 archive check
+    # (found 2026-10-06 on two LinkedIn audits, both corrected by hand).
+    if _version(data.get("sourced")) < _version(SCHEMA_VERSION):
+        data["sourced"] = SCHEMA_VERSION
     # Write to a temporary file and rename. The sidecar is the deliverable, and a
     # fold interrupted halfway through a truncating write leaves nothing to ship.
     tmp = side.with_suffix(side.suffix + ".tmp")
@@ -421,6 +432,8 @@ def _self_check():
         folded = json.loads(sidecar_path(art).read_text())
         assert folded["decisions"] == [r1, r2], "decisions[] must equal the ledger's lines"
         assert folded["sourced"] == SCHEMA_VERSION, "a sidecar carrying a field from this version says so"
+        # A newer sidecar keeps its version through a fold.
+        assert _version("1.10") > _version("1.7") and _version("junk") == (1, 0)
         assert folded["claims"] == [] and folded["disclosure"] == base["disclosure"]
 
         # Case 3: both validation cases. WITH decisions[] validates, and WITHOUT it still
