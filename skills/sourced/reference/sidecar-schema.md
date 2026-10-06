@@ -14,7 +14,7 @@ self-explaining to anyone who opens it, and a real JSON Schema (draft 2020-12) t
 ```json
 {
   "$schema": "https://peakstate.global/sourced/v1.schema.json",
-  "sourced": "1.10",
+  "sourced": "1.11",
   "artefact": { "path": "deck.pptx", "sha256": "…", "producedAt": "2026-08-26" },
   "claims": [
     { "id": "c1", "statement": "…", "status": "sourced",
@@ -31,7 +31,8 @@ self-explaining to anyone who opens it, and a real JSON Schema (draft 2020-12) t
     { "id": "e1", "url": "…", "quote": "…", "quoteGloss": "…", "locator": "p. 178",
       "retrievedAt": "2026-08-26", "sha256": "…", "textSha256": "…",
       "originGroup": "…", "custodian": "self+third-party", "archiveUrl": "…",
-      "selfInterested": false }
+      "selfInterested": false,
+      "reference": "Full APA 7 entry, retrieved this session" }
   ],
   "dimensions": [
     { "name": "air quality", "definition": "One sentence saying what it means.",
@@ -348,3 +349,11 @@ it reads as independent custody of a document nobody archived.
 `synthesis`, `position` or `story`. `assertion` takes `definitional`, `normative`, `predictive` and
 the rest, and `kinds.kind_of()` derives the coarse rung from it. `research-mode` was asking for the
 fine words under the coarse field, and a run spent a gate failure discovering it.
+
+## 1.11 — the reference a statement is built from
+
+**`reference` holds the full APA 7 entry for an evidence row**, written from the retrieved source,
+never from memory. It is optional on the row and additive, so every 1.10 sidecar stays valid.
+`statement.py` refuses to build References while any cited row lacks it, because a bare URL is not
+a reference and the reader cannot retrieve a source from shorthand. Before 1.11 an auditor kept the
+entries in a side file and hand-built the block, which is the step this field removes.

@@ -149,3 +149,13 @@ retrieval date only where the content is designed to change (a live database, a 
 **Never write an entry from memory.** Every element comes from the source retrieved this
 session. Missing element → use the APA rule for it (`(n.d.)`, title in the author
 position) and say so in Limitations. Do not invent a volume or a page range.
+
+## Generating the block
+
+    python3 statement.py <file.sourced> --agent "<model and version>" --agent "<harness and version>" --write
+
+It applies every rule above: the grade sentence lands in Attribution or Limitations by grade,
+Accountable is always `(Not reviewed)`, source counts collapse by origin, the diligence sentence
+appears only when every row has a quote and a locator, and References ends with the sidecar link.
+It refuses a sidecar whose cited rows lack a `reference` (schema 1.11), and it refuses to run
+without at least one `--agent`, because the fidelity line is mandatory.
