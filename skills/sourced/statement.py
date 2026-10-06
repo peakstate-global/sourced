@@ -19,7 +19,7 @@ Every line follows reference/provenance-block.md:
 A row with no `reference` is refused: a bare URL is not a reference, and an entry is never
 written from memory. --write stores the block in `disclosure`, keeping the file's permissions.
 """
-import argparse, json, os, re, shutil, sys, tempfile
+import argparse, json, os, re, shutil, sys, tempfile, unicodedata
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -43,14 +43,26 @@ def _origin(e):
     return e.get("originGroup") or "url:" + str(e.get("url") or e.get("id", ""))
 
 
+def _sort_key(entry):
+    """APA order by first element, with accents folded rather than dropped (Öztürk sorts under O)."""
+    folded = "".join(ch for ch in unicodedata.normalize("NFKD", entry) if not unicodedata.combining(ch))
+    return "".join(ch for ch in folded.casefold() if ch.isalnum())
+
+
 def build(d, agents, author, accountable, sidecar_link):
     if not agents:
         raise Refused("the fidelity line needs at least one --agent (model, harness or tool, with a version)")
     ev = [e for e in d.get("evidence") or [] if isinstance(e, dict)]
+    # Only cited rows count: an evidence row no claim uses is not something the artefact rests on.
+    cited = {i for c in d.get("claims") or [] for i in (c.get("evidence") or [])}
+    if cited:
+        ev = [e for e in ev if e.get("id") in cited or e.get("supports")]
     missing = sorted({e.get("url") or e.get("id", "?") for e in ev if not (e.get("reference") or "").strip()})
     if missing:
         raise Refused("these rows have no `reference` (full APA 7 entry): " + ", ".join(missing))
     op = d.get("opposed") or {"grade": "not-performed"}
+    if op.get("grade") not in ATTRIBUTION_GRADES and op.get("grade") not in LIMITATION_GRADES:
+        raise Refused(f"unknown adversarial grade {op.get('grade')!r}; run decisions.py validate")
     fill = {"model": op.get("model", "model not recorded"), "at": str(op.get("at", ""))[:10],
             "raised": op.get("raised", 0)}
 
@@ -68,6 +80,12 @@ def build(d, agents, author, accountable, sidecar_link):
     gaps = [e for e in ev if not ((e.get("quote") or "").strip() and str(e.get("locator") or "").strip())]
     if gaps:
         lim.append(f"{len(gaps)} of {len(ev)} evidence rows carry no quote or no locator.")
+    undated = [e for e in ev if not e.get("retrievedAt")]
+    if undated:
+        lim.append(f"{len(undated)} of {len(ev)} evidence rows have no recorded retrieval date.")
+    nd = sorted({_origin(e) for e in ev if "(n.d.)" in e["reference"]})
+    if nd:
+        lim.append(f"{len(nd)} of {len(srcs)} sources carry no publication date (n.d.).")
     si = sorted({_origin(e) for e in ev if e.get("selfInterested")})
     if si:
         lim.append("Sources with an interest in their own finding: " + ", ".join(si) + ".")
@@ -83,8 +101,10 @@ def build(d, agents, author, accountable, sidecar_link):
     if ev:
         dates = sorted({str(e.get("retrievedAt", ""))[:10] for e in ev if e.get("retrievedAt")})
         lead = f"{len(srcs)} source{'' if len(srcs) == 1 else 's'}, retrieved on {', '.join(dates) or 'unrecorded dates'}"
+        if undated:
+            lead += f" ({len(undated)} rows undated)"
         lead += ", each quote with its locator." if not gaps else "."
-        entries = sorted({e["reference"].strip() for e in ev}, key=lambda s: re.sub(r"[^a-z]", "", s.lower()))
+        entries = sorted({e["reference"].strip() for e in ev}, key=_sort_key)
         refs = lead + "\n" + "\n".join(entries)
     else:
         refs = "No external sources."
@@ -137,11 +157,22 @@ def self_check():
             pass
     # 5 no sources at all
     assert build({"evidence": []}, a, "x", "x", "s")["references"].startswith("No external sources.")
+    # 7 unknown grade refused; undated, n.d. and uncited rows handled; accented names sort by base letter
+    try:
+        build({"opposed": {"grade": "typo"}, "evidence": [row(archiveUrl="x")]}, a, "x", "x", "s"); raise AssertionError
+    except Refused:
+        pass
+    b7 = build({"claims": [{"id": "c1", "evidence": ["e1", "e2"]}],
+                "evidence": [row(id="e1", archiveUrl="x", reference="Öztürk, A. (n.d.). T. https://a.example"),
+                             row(id="e2", url="https://c.example", retrievedAt="", archiveUrl="x", reference="Pym, B. (2026). P."),
+                             row(id="e9", url="https://u.example", reference="")]}, a, "x", "x", "s")
+    assert b7["references"].index("Öztürk") < b7["references"].index("Pym") and "u.example" not in b7["references"]
+    assert "no recorded retrieval date" in b7["limitations"] and "(n.d.)" in b7["limitations"]
     # 6 --write keeps the file mode
     with tempfile.TemporaryDirectory() as t:
         p = Path(t) / "f.sourced"; p.write_text("{}"); os.chmod(p, 0o644); write(p, {"a": 1})
         assert oct(p.stat().st_mode & 0o777) == "0o644"
-    print("statement: self-check passed (6 of 6 cases; the threshold is 6 of 6)")
+    print("statement: self-check passed (7 of 7 cases; the threshold is 7 of 7)")
 
 
 if __name__ == "__main__":
