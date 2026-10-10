@@ -6,8 +6,8 @@ The four-label provenance block, in this order, **generated from the sidecar rat
 written by hand**:
 
 ```
-Attribution:  Who authored it, and that AI tools assisted, in one sentence.
-Accountable:  The named person who answers for it, and what they did NOT do.
+Attribution:  The human author, then each AI tool by product and model, what it did, and how.
+Accountable:  The named person who answers for it, and nothing else.
 Limitations:  What is not backed, and how far each claim is from its source.
 References:   What backs it, where it lives, and how it can be checked.
 ```
@@ -21,11 +21,10 @@ comes out.
 - *"Sources verified against originals."* — neither. It asserts diligence, which is the one
   thing a reader cannot verify. **Cut it.**
 
-**Accountable names a person and states their review status in the same breath.** The
-default form is:
+**Accountable is the named person's name, and nothing else.** The default form is:
 
 ```
-Accountable: Andrew Ramsden (Not reviewed).
+Accountable: Andrew Ramsden.
 ```
 
 **A person is accountable for a process without reading every output of it.** That is not a
@@ -33,23 +32,20 @@ compromise or a shortcut, it is how governance and quality control already work 
 large organisation: a named person answers for the system, the sampling and the controls,
 and does not personally read each thing the system produces. Accountability is for the
 process. Review is for the artefact. They are different acts by possibly different people,
-and collapsing them is what makes a signature meaningless.
+and collapsing them is what makes a signature meaningless. That principle lives here, in the
+explanation; it no longer appears on the line itself.
 
-So the name is correct and carries no implication about who read what. The failure is the
-**silence around it**, because a reader takes an unqualified name as a signature on the
-words in front of them.
-
-- **`(Not reviewed)` is the honest default** and it is never an apology. It says the named
-  person answers for how this was produced, and did not read this version line by line.
-- **Only the named person may replace it**, and only about a specific version:
-  `(Reviewed by Andrew Ramsden, version 3, 7 September 2026)`. A model may never write that
-  on their behalf, may never infer it from their name being present, and may never infer it
-  from them having asked for the work.
-- **Never write `expert-reviewed` because a model decided to.** The same rule the
-  `underwrite.py` acts already carry, said where the reader can see it.
-- **The acts in the sidecar are the evidence for whatever this line says.** If no act with a
-  human actor exists, the line says `(Not reviewed)`, and a line claiming otherwise is a
-  defect the sidecar contradicts.
+- **A model never writes a review status, in either direction.** No `(Not reviewed)`, no
+  `(Reviewed ...)`, and never inferred from the name being present or from the named person
+  having asked for the work. The model does not know the person's review status, so any
+  status it writes is an ungrounded claim about a named person.
+- **Only the named person may add anything after the name**, and only their own words,
+  verbatim, once they have said exactly what to add: `Accountable: Andrew Ramsden. Reviewed
+  version 3, 7 September 2026.` Until they say so, the line stops at the name and the full
+  stop.
+- **The acts in the sidecar stay the record of who did what.** The sidecar, not the
+  provenance line, is where a review act is logged (`underwriting`), because it is checkable
+  there and the line only ever reports a person's own words back to them.
 
 There is no `Verified:` label. Verification is a property of the references and belongs
 inside that line, stated as a checkable fact. **Limitations is as short as the truth allows.**
@@ -155,7 +151,7 @@ position) and say so in Limitations. Do not invent a volume or a page range.
     python3 statement.py <file.sourced> --agent "<model and version>" --agent "<harness and version>" --write
 
 It applies every rule above: the grade sentence lands in Attribution or Limitations by grade,
-Accountable is always `(Not reviewed)`, source counts collapse by origin, the diligence sentence
+Accountable is the name alone, source counts collapse by origin, the diligence sentence
 appears only when every row has a quote and a locator, and References ends with the sidecar link.
 It refuses a sidecar whose cited rows lack a `reference` (schema 1.11), and it refuses to run
 without at least one `--agent`, because the fidelity line is mandatory.

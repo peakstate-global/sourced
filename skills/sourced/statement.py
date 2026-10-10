@@ -9,7 +9,9 @@ Every line follows reference/provenance-block.md:
 - Attribution names the author, the fidelity line (each --agent, model, harness and tools, with a
   version each), and the adversarial grade sentence from reference/adversarial-pass.md when the
   grade belongs there (fresh thread, either model).
-- Accountable is always "(Not reviewed)". Only the named person may replace it, by hand.
+- Accountable is the named person, and nothing else. A model never writes a review status on
+  this line, in either direction. Only the named person may add their own words, verbatim, and
+  only after they have said exactly what to add.
 - Limitations holds limits on the evidence only: a weak or missing adversarial pass, sources
   with no third-party archive, rows missing a quote or locator, self-interested sources,
   self-reported figures, and the open-conflict lines from conflicts.py. Otherwise "None material."
@@ -66,7 +68,7 @@ def build(d, agents, author, accountable, sidecar_link):
     fill = {"model": op.get("model", "model not recorded"), "at": str(op.get("at", ""))[:10],
             "raised": op.get("raised", 0)}
 
-    attr = f"Written by {author} with AI assistance. Produced with " + "; ".join(agents) + "."
+    attr = f"Written by {author}. Produced with " + "; ".join(agents) + "."
     if op.get("grade") in ATTRIBUTION_GRADES:
         attr += " " + ATTRIBUTION_GRADES[op["grade"]].format(**fill)
 
@@ -109,7 +111,7 @@ def build(d, agents, author, accountable, sidecar_link):
     else:
         refs = "No external sources."
     refs += f"\n[SOURCED sidecar]({sidecar_link})"
-    return {"attribution": attr, "accountable": f"{accountable} (Not reviewed).",
+    return {"attribution": attr, "accountable": f"{accountable}.",
             "limitations": " ".join(lim) if lim else "None material.", "references": refs}
 
 
@@ -137,7 +139,7 @@ def self_check():
     assert "fresh thread on the same model (m)" in b["attribution"] and "Claude Code 2.1" in b["attribution"]
     assert b["references"].startswith("1 source,") and "each quote with its locator" in b["references"]
     assert b["references"].index("Alpha") < b["references"].index("Zed") and b["references"].endswith("(f.md.sourced)")
-    assert b["limitations"] == "None material." and b["accountable"] == "A. Author (Not reviewed)."
+    assert b["limitations"] == "None material." and b["accountable"] == "A. Author."
     # 2 a missing or self-challenge pass goes to Limitations, never Attribution
     assert "No adversarial pass" in build({"evidence": [row(archiveUrl="x")]}, a, "x", "x", "s")["limitations"]
     b2 = build({"opposed": {"grade": "same-thread-self-challenge", "at": "2026-10-06", "raised": 1},

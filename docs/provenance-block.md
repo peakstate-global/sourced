@@ -12,9 +12,9 @@ Every deliverable that contains model output ships with a **provenance block**:
 four labels, in this order, in a fixed shape.
 
 ```
-Attribution:  Who authored it, and that AI tools assisted, in one sentence,
-              followed by the technical fidelity line.
-Accountable:  The named person who answers for it.
+Attribution:  The human author, then each AI tool by product and model, what it did, and
+              how, followed by the technical fidelity line.
+Accountable:  The named person who answers for it, and nothing else.
 Limitations:  What is not backed, and how far each claim is from its source.
 References:   What backs it, where it lives, and how it can be checked.
 ```
@@ -71,9 +71,13 @@ fact.
   ("read through a citation, not the original"). Reader value is entirely in
   the second kind.
 - **A separate AI-attribution line** — demoted to a clause inside Attribution.
-  A generic disclosure is enough: *"AI tools assisted research and drafting; all
-  outputs verified."* The exact model and division of labour is not what the
-  reader needs. What they need is who stands behind it.
+  "AI tools assisted the research and drafting" is a defect: it names no
+  product, no model and no division of labour, so a reader cannot check any
+  of it. Attribution names the human author, then each AI tool by product
+  and model, what it did, and how: *"Andrew Ramsden wrote this talk. Claude
+  Opus 5.5 in Claude Code drafted the arc and the slides; Claude Sonnet 5 and
+  Opus 5.5 agents ran the research."* That is what the reader needs: who
+  stands behind it, and which tool did which part of the work.
 
 ## Why the block exists at all
 
