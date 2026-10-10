@@ -7,7 +7,7 @@ written by hand**:
 
 ```
 Attribution:  The human author, then each AI tool by product and model, what it did, and how.
-Accountable:  The named person who answers for it, and nothing else.
+Accountable:  The named person who answers for it. Nothing follows the name unless that person told you their review status; then report exactly what they said.
 Limitations:  What is not backed, and how far each claim is from its source.
 References:   What backs it, where it lives, and how it can be checked.
 ```
@@ -21,7 +21,7 @@ comes out.
 - *"Sources verified against originals."* — neither. It asserts diligence, which is the one
   thing a reader cannot verify. **Cut it.**
 
-**Accountable is the named person's name, and nothing else.** The default form is:
+**Accountable is the named person's name, and nothing else unless that person has told you their review status.** The default form is:
 
 ```
 Accountable: Andrew Ramsden.

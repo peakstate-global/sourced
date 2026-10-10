@@ -34,8 +34,8 @@ likely place this document is wrong.
 
 Last, draft a four-line provenance block from what you found, not from how careful the author felt.
 Attribution: the human author, then each AI tool by product and model, what it did, and how.
-Accountable: the named person who answers for it, and nothing else; never add a review status, it
-is not yours to state. Limitations: what is not backed, and how far each claim sits from its
+Accountable: the named person who answers for it; add a review status only when that person told
+you it, and then report exactly what they said. Limitations: what is not backed, and how far each claim sits from its
 source — never empty. References: what backs it, where it lives, and how a reader can check it.
 Every line must either make a limit transparent or let the reader go and check something; cut any
 line that does neither.

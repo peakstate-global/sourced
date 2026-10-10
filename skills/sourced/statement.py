@@ -9,8 +9,8 @@ Every line follows reference/provenance-block.md:
 - Attribution names the author, the fidelity line (each --agent, model, harness and tools, with a
   version each), and the adversarial grade sentence from reference/adversarial-pass.md when the
   grade belongs there (fresh thread, either model).
-- Accountable is the named person, and nothing else. A model never writes a review status on
-  this line, in either direction. Only the named person may add their own words, verbatim, and
+- Accountable is the named person, and nothing else unless that person told you their review
+  status. A model never infers a status on this line, in either direction. Only the named person may add their own words, verbatim, and
   only after they have said exactly what to add.
 - Limitations holds limits on the evidence only: a weak or missing adversarial pass, sources
   with no third-party archive, rows missing a quote or locator, self-interested sources,
