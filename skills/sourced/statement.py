@@ -15,8 +15,8 @@ Every line follows reference/provenance-block.md:
 - Limitations holds limits on the evidence only: a weak or missing adversarial pass, sources
   with no third-party archive, rows missing a quote or locator, self-interested sources,
   self-reported figures, and the open-conflict lines from conflicts.py. Otherwise "None material."
-- References counts distinct origins (shared_claims.origins), says what is checkable only when it
-  is true, lists each row's `reference` (a full APA 7 entry, retrieved this session) in
+- References counts distinct origins among the cited evidence rows, says what is checkable only
+  when it is true, lists each row's `reference` (a full APA 7 entry, retrieved this session) in
   alphabetical order, and ends with the sidecar link.
 A row with no `reference` is refused: a bare URL is not a reference, and an entry is never
 written from memory. --write stores the block in `disclosure`, keeping the file's permissions.
@@ -171,6 +171,7 @@ def self_check():
                              row(id="e9", url="https://u.example", reference="")]}, a, "x", "x", "s")
     assert b7["references"].index("Öztürk") < b7["references"].index("Pym") and "u.example" not in b7["references"]
     assert "no recorded retrieval date" in b7["limitations"] and "(n.d.)" in b7["limitations"]
+    assert b7["references"].startswith("2 sources,")  # e9 is uncited, must not inflate the count
     # 6 --write keeps the file mode
     with tempfile.TemporaryDirectory() as t:
         p = Path(t) / "f.sourced"; p.write_text("{}"); os.chmod(p, 0o644); write(p, {"a": 1})
