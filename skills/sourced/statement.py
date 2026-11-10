@@ -25,7 +25,6 @@ import argparse, json, os, re, shutil, sys, tempfile, unicodedata
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from shared_claims import origins  # noqa: E402
 
 ATTRIBUTION_GRADES = {
     "cross-model-fresh-thread": "The adversarial pass ran in a fresh thread on a different model ({model}) on {at}, and raised {raised} challenges.",
@@ -75,7 +74,9 @@ def build(d, agents, author, accountable, sidecar_link):
     lim = []
     if op.get("grade") in LIMITATION_GRADES:
         lim.append(LIMITATION_GRADES[op["grade"]].format(**fill))
-    srcs = origins(d) if ev else set()
+    # Only the cited rows (`ev`) count, never the sidecar's full evidence list (shared_claims.origins):
+    # an evidence row no claim uses already dropped out of `ev` above, and must stay dropped here.
+    srcs = {_origin(e) for e in ev}
     archived = {_origin(e) for e in ev if (e.get("archiveUrl") or "").strip()}
     if srcs - archived:
         lim.append(f"{len(srcs - archived)} of {len(srcs)} sources have no third-party archived copy.")
@@ -111,7 +112,7 @@ def build(d, agents, author, accountable, sidecar_link):
     else:
         refs = "No external sources."
     refs += f"\n[SOURCED sidecar]({sidecar_link})"
-    return {"attribution": attr, "accountable": f"{accountable}.",
+    return {"attribution": attr, "accountable": accountable if accountable.endswith(".") else f"{accountable}.",
             "limitations": " ".join(lim) if lim else "None material.", "references": refs}
 
 
