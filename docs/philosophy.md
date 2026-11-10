@@ -132,10 +132,12 @@ personal review of every output makes accountability unaffordable, so it gets fa
 stand alone lets a reader infer a review that never happened, so it gets believed. Both end with a
 signature that carries no information.
 
-The practical consequence is that a name in a provenance block states its review status alongside it,
-and `(Not reviewed)` is the honest default rather than an admission. Only the named person may write
-anything stronger, and only about a specific version. A model may never infer review from the presence
-of a name, and may never infer it from that person having commissioned the work.
+The practical consequence is that the Accountable line is the named person's name, and nothing else
+unless that person has told you their review status; then it reports exactly what they said. A model
+never infers a status in either direction: it does not know it, so an inferred status is an
+ungrounded claim about a named person. Only the named person may
+add anything after the name, in their own words, once they have said exactly what to add. The
+accountability-versus-review principle stays true. It now lives in the explanation, not on the line.
 
 ---
 

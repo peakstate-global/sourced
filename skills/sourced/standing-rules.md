@@ -32,8 +32,8 @@ tooling, because the scope line is what stops this becoming ceremony on a one-li
 - **U**nderwritten — never imply a human review makes output correct. A signature buys
   accountability, not accuracy. Where a decision needs a person, say which decision and what they
   would have to verify. **Accountability is for the process, review is for
-  one version**, so a name says nothing about who read what: write
-  `Accountable: <name> (Not reviewed)`, and never infer review from a name.
+  one version**, so Accountable is the name alone, unless that person told you their
+  review status: then say what they said. Never infer one.
 - **R**ecorded — keep the decision log as you go, and log the **state** rather than the story:
   what was retrieved and in context, which options were enumerated, which was chosen, which were
   rejected with one clause each, and which model and version ran. None of that needs

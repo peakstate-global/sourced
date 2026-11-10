@@ -61,8 +61,8 @@ building them into systems rather than teaching them as a discipline.
 ## The output: a provenance block
 
 ```
-Attribution:  Who authored it, and that AI tools assisted, in one sentence.
-Accountable:  The named person who answers for it.
+Attribution:  The human author, then each AI tool by product and model, what it did, and how.
+Accountable:  The named person who answers for it. Nothing follows the name unless that person told you their review status; then report exactly what they said.
 Limitations:  What is not backed, and how far each claim is from its source.
 References:   What backs it, where it lives, and how it can be checked.
 ```
@@ -359,8 +359,7 @@ The framework was run on its own README. The result is in
 one recalled**.
 
 ```
-Attribution:  Authored by the maintainer. AI tools assisted research and
-              drafting; all outputs verified.
+Attribution:  Authored by the maintainer, with <name each AI tool, what it did, and how>.
 Accountable:  The maintainer of this repository.
 Limitations:  One claim on this page is externally checkable and it is the NIST
               risk count. Everything else is our own reasoning, a crosswalk we

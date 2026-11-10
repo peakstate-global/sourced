@@ -62,8 +62,8 @@ naming them as engineering work is how they get funded.
 ## 4. The provenance block — D's output
 
 ```
-Attribution:  Who authored it, and that AI tools assisted, in one sentence.
-Accountable:  The named person who answers for it.
+Attribution:  The human author, then each AI tool by product and model, what it did, and how.
+Accountable:  The named person who answers for it. Nothing follows the name unless that person told you their review status; then report exactly what they said.
 Limitations:  What is not backed, and how far each claim is from its source.
 References:   What backs it, where it lives, and how it can be checked.
 ```

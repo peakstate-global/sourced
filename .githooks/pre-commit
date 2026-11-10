@@ -11,7 +11,7 @@ python3 "$ROOT/scripts/check-no-leaks.py"
 cd "$ROOT/skills/sourced"
 fail=0
 for m in sourced claims decisions boundary shared_claims \
-         sophistication kinds dimensions conflicts integrate vocabulary skill_check; do
+         sophistication kinds dimensions conflicts integrate vocabulary skill_check statement; do
   if ! out=$(python3 "$m.py" --self-check 2>&1); then
     echo "$out" >&2
     fail=1
